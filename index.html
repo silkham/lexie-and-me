@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F6F2E9">
+<title>Lexie &amp; Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* paper & ink */
+  --bg:#F6F2E9; --bg2:#FDFBF6; --tile:#FDFBF6; --tile2:#EDE8DA;
+  --ink:#23281F; --ink2:#5F665A; --ink3:#9BA08F; --line:#E3DDCB;
+  /* pine is the one accent; legacy token names preserved */
+  --accent:#31503F; --accent2:#4A6B57; --sage:#7E9474; --terra:#A65A40; --sky:#6E8796;
+  --r:18px; --r2:14px;
+  --safe-t:env(safe-area-inset-top); --safe-b:env(safe-area-inset-bottom);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;overscroll-behavior-y:none}
+body{padding-bottom:calc(88px + var(--safe-b))}
+::selection{background:var(--accent);color:var(--bg)}
+.wrap{max-width:480px;margin:0 auto;min-height:100vh;position:relative}
+h1,h2,h3,.serif{font-family:'Young Serif',serif;font-weight:400;letter-spacing:-.01em}
+.eyebrow{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.muted{color:var(--ink3)}
+.faded{color:var(--ink2)}
+
+/* Header — the editorial opening of every screen */
+.hdr{padding:calc(var(--safe-t) + 30px) 22px 10px}
+.hdr .date{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.22em}
+.hdr h1{font-size:31px;line-height:1.12;margin-top:8px;color:var(--ink)}
+.hdr .sub{color:var(--ink2);margin-top:8px;font-family:'Newsreader',serif;font-style:italic;font-size:17px;line-height:1.4;max-width:32ch}
+
+/* Screens */
+.screen{display:none;padding:0 18px 40px;animation:fade .4s ease}
+.screen.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Soft cards — shadow, never borders */
+.tile{background:var(--tile);border-radius:var(--r);padding:18px;margin:12px 0;position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(35,40,31,.04),0 10px 28px -18px rgba(35,40,31,.22)}
+.tile.flush{padding:0}
+.row{display:flex;align-items:center;gap:13px}
+.between{justify-content:space-between}
+
+/* ——— THE DAYLINE (signature) ——— */
+.dayline{position:relative;margin:14px 4px 2px}
+.dayline::before{content:"";position:absolute;left:7px;top:30px;bottom:30px;width:1.5px;background:var(--line)}
+.slot{display:flex;gap:18px;padding:17px 0;align-items:flex-start;position:relative}
+.slot .node{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--accent);background:var(--bg);flex:none;margin-top:4px;position:relative;z-index:1}
+.slot .node.solid{background:var(--accent)}
+.slot .body{flex:1;min-width:0}
+.slot .lbl{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);font-weight:600;display:flex;align-items:center;gap:8px}
+.slot .ttl{font-family:'Young Serif',serif;font-size:19px;margin-top:5px;line-height:1.25}
+.slot .meta{font-size:15px;color:var(--ink2);margin-top:4px;font-family:'Newsreader',serif;font-style:italic;line-height:1.35}
+.screen.on .slot{animation:rise .55s cubic-bezier(.25,.8,.3,1) both}
+.screen.on .slot:nth-child(2){animation-delay:.06s}
+.screen.on .slot:nth-child(3){animation-delay:.12s}
+.screen.on .slot:nth-child(4){animation-delay:.18s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pin{font-size:9px;color:var(--accent);padding:3px 8px;border-radius:20px;letter-spacing:.12em;font-weight:600;border:1px solid var(--accent)}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;background:var(--tile2);color:var(--ink2);margin:4px 5px 0 0}
+
+/* practical strip — a quiet hairline ledger, not boxes */
+.strip{display:flex;justify-content:space-between;margin:10px 4px 0;padding:15px 4px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:none;border-radius:0;overflow:visible;gap:0}
+.strip>div{background:none;padding:0 6px;text-align:center;flex:1}
+.strip .v{font-family:'Young Serif',serif;font-size:17px;color:var(--ink)}
+.strip .k{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:4px;font-weight:600}
+
+/* buttons — pills, one filled voice */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--bg2);border:none;border-radius:999px;padding:15px 20px;font-family:'Instrument Sans';font-weight:600;font-size:15px;cursor:pointer;width:100%;transition:transform .12s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink2);border:1px solid var(--line)}
+.btn.sm{width:auto;padding:10px 16px;font-size:13px}
+.chip{background:var(--bg2);border:1px solid var(--line);color:var(--ink2);padding:9px 15px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap;font-weight:500}
+.chip:active{transform:scale(.95)}
+
+/* Week strip — type, not boxes */
+.weekrow{display:flex;gap:4px;overflow-x:auto;padding:6px 0 12px;scrollbar-width:none}
+.weekrow::-webkit-scrollbar{display:none}
+.day{flex-shrink:0;width:56px;text-align:center;padding:8px 0;background:none;border:none;cursor:pointer;transition:.2s}
+.day .dn{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.day .dd{font-family:'Young Serif',serif;font-size:17px;margin:6px auto 0;width:36px;height:36px;line-height:36px;border-radius:50%;color:var(--ink);transition:.2s}
+.day.sel .dd{background:var(--accent);color:var(--bg2)}
+.day .dot{width:4.5px;height:4.5px;border-radius:50%;background:var(--accent);margin:6px auto 0}
+.day.sel .dot{background:var(--accent)}
+
+/* dashboard scores — numerals over hairlines, no boxes */
+.scoregrid{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;margin:6px 4px}
+.score{background:none;border:none;border-top:1px solid var(--line);border-radius:0;padding:16px 0 18px}
+.score .n{font-family:'Young Serif',serif;font-size:36px;line-height:1;color:var(--ink)}
+.score .lab{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-top:9px;font-weight:600}
+.bar{height:3px;background:var(--tile2);border-radius:3px;margin-top:12px;overflow:hidden}
+.bar>span{display:block;height:100%;background:var(--accent);border-radius:3px}
+
+/* activity cards — soft, emoji unboxed */
+.act{display:flex;gap:14px;padding:16px;background:var(--tile);border:none;border-radius:var(--r2);margin:10px 0;cursor:pointer;transition:.15s;align-items:flex-start;
+  box-shadow:0 1px 2px rgba(35,40,31,.04),0 8px 22px -16px rgba(35,40,31,.2)}
+.act:active{transform:scale(.99)}
+.act .emoji{font-size:21px;width:auto;height:auto;border-radius:0;background:none;display:block;flex:none;margin-top:1px;filter:saturate(.8)}
+.act .nm{font-family:'Young Serif',serif;font-size:16px;line-height:1.3}
+.act .ds{font-size:14px;color:var(--ink2);margin-top:3px;font-family:'Newsreader',serif;font-style:italic;line-height:1.4}
+.act .mt{font-size:11.5px;color:var(--ink3);margin-top:7px;display:flex;gap:12px;flex-wrap:wrap;font-style:normal}
+
+/* nav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50}
+.navin{max-width:480px;margin:0 auto;background:rgba(246,242,233,.88);backdrop-filter:blur(20px);border-top:1px solid var(--line);display:flex;padding:10px 6px calc(10px + var(--safe-b))}
+.nav button{flex:1;background:none;border:none;color:var(--ink3);font-family:'Instrument Sans';font-size:10px;font-weight:600;letter-spacing:.05em;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0}
+.nav button.on{color:var(--accent)}
+.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+/* forms */
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--ink);padding:13px 15px;border-radius:13px;font-family:'Instrument Sans';font-size:15px;margin-top:7px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600;display:block;margin-top:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(35,40,31,.32);backdrop-filter:blur(2px);z-index:60;opacity:0;pointer-events:none;transition:.3s}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-width:480px;margin:0 auto;background:var(--bg);border-radius:26px 26px 0 0;padding:8px 22px calc(28px + var(--safe-b));transform:translateY(100%);transition:transform .34s cubic-bezier(.3,.9,.3,1);max-height:88vh;overflow-y:auto;
+  box-shadow:0 -12px 40px rgba(35,40,31,.18)}
+.sheet.on{transform:none}
+.grab{width:36px;height:4px;background:var(--line);border-radius:4px;margin:10px auto 18px}
+
+/* AI */
+.bubble{padding:13px 17px;border-radius:18px;margin:9px 0;font-size:14.5px;line-height:1.5;max-width:88%}
+.bubble.ai{background:var(--tile);border:none;border-bottom-left-radius:6px;font-family:'Newsreader',serif;font-size:16.5px;
+  box-shadow:0 1px 2px rgba(35,40,31,.04),0 6px 18px -14px rgba(35,40,31,.2)}
+.bubble.me{background:var(--accent);color:var(--bg2);margin-left:auto;border-bottom-right-radius:6px;font-weight:500}
+.typing{display:inline-flex;gap:4px}
+.typing span{width:6px;height:6px;background:var(--ink3);border-radius:50%;animation:bob 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+.empty{text-align:center;padding:50px 20px;color:var(--ink3)}
+.empty .big{font-size:38px;margin-bottom:12px;filter:saturate(.8)}
+.divider{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:26px 4px 10px}
+.check{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:none}
+.check .box{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--bg2);font-size:13px}
+.check.done .box{background:var(--accent);border-color:var(--accent)}
+.check.done .lbl{text-decoration:line-through;color:var(--ink3)}
+
+@media (min-width:481px){
+  #aifab{right:calc(50% - 240px + 18px)!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- TODAY -->
+<section id="today" class="screen on">
+  <div class="hdr">
+    <div class="date" id="t-date">—</div>
+    <h1 id="t-greet">Today with Lexie</h1>
+    <div class="sub" id="t-weather">—</div>
+  </div>
+
+  <div class="dayline" id="t-slots"></div>
+
+  <div class="strip" id="t-strip"></div>
+
+  <div class="row between" style="margin:16px 4px 6px">
+    <div class="eyebrow">What to pack</div>
+    <span class="muted" style="font-size:12px" id="t-cost">—</span>
+  </div>
+  <div class="tile" id="t-pack" style="margin-top:4px"></div>
+
+  <button class="btn ghost" style="margin-top:8px" onclick="go('plan')">Adjust today's plan →</button>
+</section>
+
+<!-- WEEK -->
+<section id="week" class="screen">
+  <div class="hdr"><div class="eyebrow">The week ahead</div><h1>This Week</h1>
+    <div class="sub">A balanced rhythm — in and out, busy and calm.</div></div>
+  <div class="weekrow" id="w-days"></div>
+  <div id="w-detail"></div>
+</section>
+
+<!-- PLAN / suggest -->
+<section id="plan" class="screen">
+  <div class="hdr"><div class="eyebrow">Plan a day</div><h1 id="p-title">Suggestions</h1>
+    <div class="sub">Three days I'd actually do. Pick one, tweak the rest.</div></div>
+  <div class="row" style="gap:8px;overflow-x:auto;padding:6px 4px 14px;scrollbar-width:none">
+    <div class="chip" onclick="filterSug('all')">Everything</div>
+    <div class="chip" onclick="filterSug('out')">Get out</div>
+    <div class="chip" onclick="filterSug('rain')">Rainy day</div>
+    <div class="chip" onclick="filterSug('london')">London</div>
+    <div class="chip" onclick="filterSug('heritage')">NT &amp; EH (free)</div>
+    <div class="chip" onclick="filterSug('quick')">Under 20 min</div>
+  </div>
+  <div id="p-list"></div>
+</section>
+
+<!-- MEALS -->
+<section id="meals" class="screen">
+  <div class="hdr"><div class="eyebrow">Kitchen</div><h1>Breakfast &amp; Lunch</h1>
+    <div class="sub">The two you actually plan — quick, real, baby-led.</div></div>
+  <div class="row between" style="margin:6px 4px"><div class="eyebrow">Breakfast ideas</div>
+    <span class="chip" onclick="addMeal('bf')">+ Add</span></div>
+  <div id="m-bf"></div>
+  <div class="row between" style="margin:16px 4px 6px"><div class="eyebrow">Lunch ideas</div>
+    <span class="chip" onclick="addMeal('ln')">+ Add</span></div>
+  <div id="m-ln"></div>
+  <button class="btn ghost" onclick="shuffleMeals()" style="margin-top:10px">↺ Shuffle unpinned ideas</button>
+  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:16px 4px 0">This is your library of ideas. Set what you&rsquo;re actually eating each day over in <b>Week</b>.</p>
+</section>
+
+
+<!-- DASHBOARD -->
+<section id="dash" class="screen">
+  <div class="hdr"><div class="eyebrow">How it's going</div><h1>Your Rhythm</h1>
+    <div class="sub">Gentle nudges, not a scoreboard.</div></div>
+  <div class="scoregrid" id="d-scores"></div>
+  <div class="tile" id="d-insight" style="margin-top:14px"></div>
+  <div class="divider">Lexie's profile</div>
+  <div class="tile" id="d-profile"></div>
+  <div class="divider">Your booked classes (anchors)</div>
+  <div id="d-commits"></div>
+  <button class="btn ghost" onclick="openCommit()">+ Add a booked class / commitment</button>
+  <button class="btn ghost" style="margin-top:9px" onclick="openProfile()">Edit Lexie's profile</button>
+</section>
+
+<!-- nav -->
+<nav class="nav"><div class="navin">
+  <button data-s="today" class="on" onclick="go('today')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v9h5v-6h4v6h5v-9"/></svg>Today</button>
+  <button data-s="week" onclick="go('week')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Week</button>
+  <button data-s="plan" onclick="go('plan')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Plan</button>
+  <button data-s="meals" onclick="go('meals')"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 003 3v7M5 3v0M8 3v8M19 3c-1.5 1-2 3-2 5s.5 4 2 4v9"/></svg>Meals</button>
+  <button data-s="dash" onclick="go('dash')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2M12 12v-5"/></svg>You</button>
+</div></nav>
+
+<!-- AI fab -->
+<button onclick="openAI()" style="position:fixed;right:18px;bottom:calc(100px + var(--safe-b));z-index:55;width:54px;height:54px;border-radius:50%;background:var(--accent);color:var(--bg2);border:none;box-shadow:0 10px 30px -8px rgba(35,40,31,.5);cursor:pointer;font-size:20px;left:auto" id="aifab">✨</button>
+</div>
+
+<!-- sheet -->
+<div class="sheet-bg" id="sbg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="grab"></div><div id="sheet-c"></div></div>
+
+<script>
+/* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
+const LS='lexieme.v1';
+let today=new Date();
+function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
+window.addEventListener('focus',()=>{if(refreshToday()){getWeather();renderToday()}});
+const fmt=(d)=>d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+const dkey=(d)=>d.toISOString().slice(0,10);
+const DOW=['SU','MO','TU','WE','TH','FR','SA'];
+
+const seedActivities=[
+ // ——— LOCAL CLASSES (on the doorstep) ———
+ {id:'baby-sensory',nm:'Baby Sensory',emoji:'🎈',cat:'class',type:'out',ds:'Lights, bubbles, songs and signing at St Agatha\'s, Hurst Green — built exactly for 6–13 months.',loc:'Hurst Green',mins:4,cost:'£9',nap:'am',age:[0,13],indoor:true},
+ {id:'hartbeeps',nm:'Hartbeeps',emoji:'🎶',cat:'class',type:'out',ds:'Magical musical sensory session at Oxted Community Hall.',loc:'Oxted',mins:5,cost:'£8',nap:'am',age:[0,18],indoor:true},
+ {id:'lullababy',nm:'LullaBaby development class',emoji:'🧸',cat:'class',type:'out',ds:'Small friendly development & messy-play group across Caterham/Oxted.',loc:'Caterham',mins:12,cost:'£9',nap:'am',age:[0,24],indoor:true},
+ {id:'rhymetime',nm:'Library Rhyme Time',emoji:'📖',cat:'class',type:'out',ds:'Free songs & rhymes at Oxted Library — sociable and gentle.',loc:'Oxted',mins:4,cost:'Free',nap:'am',age:[0,36],indoor:true},
+ {id:'swim',nm:'Splash & swim',emoji:'🏊',cat:'class',type:'out',ds:'Warm pool session — tiring in the best way before a nap.',loc:'Caterham',mins:12,cost:'£12',nap:'am',age:[0,48],indoor:true},
+ {id:'babymassage',nm:'Baby massage & yoga',emoji:'🤲',cat:'class',type:'out',ds:'Gentle bonding session with songs and sensory toys, Sevenoaks.',loc:'Sevenoaks',mins:22,cost:'£10',nap:'am',age:[0,12],indoor:true},
+
+ // ——— ANIMALS & FARMS ———
+ {id:'priory-farm',nm:'Priory Farm',emoji:'🐐',cat:'animals',type:'out',ds:'Animal barn, café and easy flat paths near Nutfield.',loc:'Nutfield',mins:14,cost:'£6',nap:'flex',age:[0,99],indoor:false},
+ {id:'godstone-farm',nm:'Godstone Farm',emoji:'🐑',cat:'animals',type:'out',ds:'Friendly farm, indoor barn for showers, under-2s free — pram-easy.',loc:'Godstone',mins:9,cost:'u2 free',nap:'flex',age:[0,99],indoor:false},
+ {id:'bwc',nm:'British Wildlife Centre',emoji:'🦡',cat:'animals',type:'out',ds:'Native species from harvest mice to red deer — keeper talks, woodland trails. Practically local (Lingfield).',loc:'Lingfield',mins:15,cost:'£18',nap:'flex',age:[0,99],indoor:false},
+ {id:'bocketts',nm:'Bocketts Farm Park',emoji:'🐷',cat:'animals',type:'out',ds:'Big working farm — pig races, animal barn, indoor play, under-2s free. A proper day out.',loc:'Leatherhead',mins:38,cost:'u2 free',nap:'flex',age:[0,99],indoor:false},
+ {id:'birdworld',nm:'Birdworld',emoji:'🦜',cat:'animals',type:'out',ds:'26 acres of birds plus farm and aquarium near Farnham.',loc:'Farnham',mins:55,cost:'£16',nap:'flex',age:[0,99],indoor:false},
+
+ // ——— NATIONAL TRUST (your membership = free entry) ———
+ {id:'standen',nm:'Standen House & garden',emoji:'🌿',cat:'nt',type:'out',ds:'Arts & Crafts hillside garden — buggy-doable, lovely café.',loc:'East Grinstead',mins:22,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+ {id:'emmetts',nm:'Emmetts Garden',emoji:'🌸',cat:'nt',type:'out',ds:'Hilltop garden with big views near Sevenoaks.',loc:'Ide Hill',mins:24,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+ {id:'chartwell',nm:'Chartwell',emoji:'🏡',cat:'nt',type:'out',ds:'Churchill\'s home — gardens, lakes, woodland walks and a warm café.',loc:'Westerham',mins:20,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+ {id:'hever-grounds',nm:'Hever Castle grounds',emoji:'🏰',cat:'nt',type:'out',ds:'Storybook moated castle, lake walk and gardens — pram-friendly paths.',loc:'Hever',mins:25,cost:'£22',nap:'flex',age:[0,99],indoor:false},
+ {id:'polesden',nm:'Polesden Lacey',emoji:'🌷',cat:'nt',type:'out',ds:'Edwardian estate, sweeping lawns, baby-changing, pushchair-friendly.',loc:'Dorking',mins:40,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+ {id:'sheffield-park',nm:'Sheffield Park & Garden',emoji:'🍂',cat:'nt',type:'out',ds:'Capability Brown lakes and reflections — flat lakeside loop.',loc:'Uckfield',mins:45,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+ {id:'nymans',nm:'Nymans',emoji:'🌹',cat:'nt',type:'out',ds:'Romantic garden around a partial ruin near Haywards Heath.',loc:'Handcross',mins:40,cost:'NT free',nap:'flex',age:[0,99],indoor:false,member:'nt'},
+
+ // ——— ENGLISH HERITAGE (your membership = free entry) ———
+ {id:'walmer',nm:'Down House (Darwin)',emoji:'🔭',cat:'eh',type:'out',ds:'Darwin\'s home and gardens — gentle grounds, the famous Sandwalk.',loc:'Downe',mins:25,cost:'EH free',nap:'flex',age:[0,99],indoor:false,member:'eh'},
+ {id:'eltham',nm:'Eltham Palace',emoji:'🚪',cat:'eh',type:'out',ds:'Art Deco mansion and moated gardens in SE London.',loc:'Eltham',mins:35,cost:'EH free',nap:'flex',age:[0,99],indoor:true,member:'eh'},
+ {id:'kenwood',nm:'Kenwood House',emoji:'🖼',cat:'eh',type:'london',ds:'Free neoclassical house on Hampstead Heath — art, lawns, café. A beautiful low-effort London day.',loc:'Hampstead',mins:60,cost:'Free',nap:'flex',age:[0,99],indoor:false,member:'eh'},
+ {id:'bayham',nm:'Bayham Old Abbey',emoji:'⛪',cat:'eh',type:'out',ds:'Romantic free-to-roam abbey ruins on the Kent/Sussex border.',loc:'Lamberhurst',mins:45,cost:'EH free',nap:'flex',age:[0,99],indoor:false,member:'eh'},
+
+ // ——— PARKS, GARDENS & WALKS ———
+ {id:'titsey',nm:'Titsey Place walk',emoji:'🌳',cat:'walk',type:'out',ds:'Woodland & estate walk on the doorstep — pram-friendly loop.',loc:'Limpsfield',mins:6,cost:'Free',nap:'pram',age:[0,99],indoor:false},
+ {id:'master-park',nm:'Master Park',emoji:'🌲',cat:'park',type:'out',ds:'Oxted\'s own park — bench, coffee, fresh air, ten minutes\' walk.',loc:'Oxted',mins:3,cost:'Free',nap:'pram',age:[0,99],indoor:false},
+ {id:'staffhurst',nm:'Staffhurst Wood',emoji:'🍄',cat:'walk',type:'out',ds:'Ancient bluebell woodland, quiet trails — a sling walk.',loc:'Oxted',mins:10,cost:'Free',nap:'pram',age:[0,99],indoor:false},
+ {id:'wisley',nm:'RHS Wisley',emoji:'🌺',cat:'park',type:'out',ds:'World-class gardens, glasshouse, smooth wide paths and great café.',loc:'Woking',mins:50,cost:'£18',nap:'flex',age:[0,99],indoor:false},
+ {id:'virginia-water',nm:'Virginia Water lake',emoji:'🦆',cat:'walk',type:'out',ds:'Flat 4.5-mile lakeside loop, totem pole, ruins — pram heaven.',loc:'Egham',mins:45,cost:'Parking',nap:'pram',age:[0,99],indoor:false},
+ {id:'cafe',nm:'Baby-friendly café morning',emoji:'☕',cat:'cafe',type:'out',ds:'A flat white while Lexie watches the world — low effort, high sanity.',loc:'Oxted',mins:4,cost:'£6',nap:'flex',age:[0,99],indoor:true},
+
+ // ——— RAINY DAY ———
+ {id:'soft-play',nm:'Soft play (baby area)',emoji:'🟡',cat:'soft',type:'rain',ds:'Padded baby zone — good wet-weather wriggle space.',loc:'Caterham',mins:12,cost:'£7',nap:'flex',age:[5,99],indoor:true},
+ {id:'messy',nm:'Messy play at home',emoji:'🎨',cat:'home',type:'rain',ds:'Cooked-spaghetti or yoghurt-paint tray on the kitchen floor.',loc:'Home',mins:0,cost:'Free',nap:'flex',age:[5,99],indoor:true},
+ {id:'home-sensory',nm:'Treasure basket & tummy time',emoji:'🧺',cat:'home',type:'rain',ds:'Wooden spoons, fabric, a whisk — heuristic play that genuinely absorbs them.',loc:'Home',mins:0,cost:'Free',nap:'flex',age:[4,18],indoor:true},
+ {id:'tate-modern',nm:'Tate Modern',emoji:'🎭',cat:'london',type:'rain',ds:'Vast, buggy-friendly, free — they encourage noise. Turbine Hall to roam.',loc:'South Bank',mins:60,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'library',nm:'Cosy library hour',emoji:'📚',cat:'soft',type:'rain',ds:'Board books, a warm corner, other parents — a free wet-morning win.',loc:'Oxted',mins:4,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+
+ // ——— LONDON ADVENTURES ———
+ {id:'sci-museum',nm:'Science Museum — The Garden',emoji:'🔬',cat:'london',type:'london',ds:'Step-free, buggy-friendly, free. Under-5 sensory play zone.',loc:'South Kensington',mins:70,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'transport-museum',nm:'London Transport Museum',emoji:'🚌',cat:'london',type:'london',ds:'Climb-aboard buses in buggy-friendly Covent Garden, All Aboard play zone.',loc:'Covent Garden',mins:65,cost:'£24/u18 free',nap:'flex',age:[0,99],indoor:true},
+ {id:'sealife',nm:'SEA LIFE London',emoji:'🐠',cat:'london',type:'london',ds:'Dark, calm, mesmerising tanks — under-3s free, buggies welcome.',loc:'South Bank',mins:60,cost:'£28/u3 free',nap:'flex',age:[0,99],indoor:true},
+ {id:'hyde-park',nm:'Hyde Park & Diana playground',emoji:'🦢',cat:'london',type:'london',ds:'Pirate-ship playground, lake, space to roam. Train then a gentle wander.',loc:'Hyde Park',mins:65,cost:'Free',nap:'pram',age:[0,99],indoor:false},
+ {id:'nhm',nm:'Natural History Museum',emoji:'🦕',cat:'london',type:'london',ds:'Free and iconic — use the buggy-friendly Exhibition Road side entrance.',loc:'South Kensington',mins:70,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'young-va',nm:'Young V&A',emoji:'🧩',cat:'london',type:'london',ds:'Free Bethnal Green museum with a Mini Museum sensory space for under-2s.',loc:'Bethnal Green',mins:65,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'maritime',nm:'National Maritime, Greenwich',emoji:'⚓',cat:'london',type:'london',ds:'Free, with the AHOY! under-7 play space and Cove playground.',loc:'Greenwich',mins:55,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'docklands',nm:'Museum of London Docklands',emoji:'🚢',cat:'london',type:'london',ds:'Mudlarks under-8 soft play and quiet galleries by Canary Wharf.',loc:'West India Quay',mins:60,cost:'Free',nap:'flex',age:[0,99],indoor:true},
+ {id:'kew',nm:'Kew Gardens',emoji:'🌴',cat:'london',type:'london',ds:'Glasshouses, treetop walkway and endless lawns — a whole day, pram-easy.',loc:'Kew',mins:60,cost:'£22',nap:'flex',age:[0,99],indoor:false},
+ {id:'london-zoo',nm:'ZSL London Zoo',emoji:'🦁',cat:'london',type:'london',ds:'Regent\'s Park classic — under-3s free, big bright animals to point at.',loc:'Regent\'s Park',mins:70,cost:'u3 free',nap:'flex',age:[0,99],indoor:false},
+ {id:'battersea-zoo',nm:'Battersea Children\'s Zoo',emoji:'🐒',cat:'london',type:'london',ds:'Small, gentle, baby-scaled zoo in a lovely riverside park.',loc:'Battersea',mins:55,cost:'£13',nap:'flex',age:[0,99],indoor:false},
+];
+
+const seedBreakfast=[
+ {nm:'Porridge fingers + banana',ings:['oats','banana','milk'],baby:'Soft fingers to self-feed'},
+ {nm:'Scrambled egg + toast soldiers',ings:['eggs','bread','butter'],baby:'Egg is great for grip'},
+ {nm:'Greek yoghurt, berries & oats',ings:['greek yoghurt','berries','oats'],baby:'Spoon-led or pre-loaded'},
+ {nm:'Weetabix + grated pear',ings:['weetabix','pear','milk'],baby:'Soft and easy'},
+ {nm:'Crumpet + nut butter',ings:['crumpets','nut butter'],baby:'Thin smear only'},
+ {nm:'Overnight oats + apple',ings:['oats','milk','apple'],baby:'Make night before'},
+];
+const seedLunch=[
+ {nm:'Avocado toast + cheese',ings:['avocado','bread','cheese'],baby:'Easy finger food'},
+ {nm:'Hummus & pitta + cucumber',ings:['hummus','pitta','cucumber'],baby:'Soft strips'},
+ {nm:'Cheese omelette + tomato',ings:['eggs','cheese','tomatoes'],baby:'Omelette fingers'},
+ {nm:'Jacket potato + beans',ings:['baking potato','baked beans','cheese'],baby:'Mash, low-salt beans'},
+ {nm:'Beans on toast + spinach',ings:['baked beans','bread','spinach'],baby:'Soft toast fingers'},
+ {nm:'Pasta + peas & pesto',ings:['pasta','peas','pesto'],baby:'Soft pasta, light pesto'},
+];
+
+function load(){
+  let s=localStorage.getItem(LS);
+  if(s) return JSON.parse(s);
+  return {
+    baby:{name:'Lexie',dob:'2025-08-15',naps:'am ~9:30, pm ~13:30',feeds:'3 meals + 2 milk',likes:['water','music','animals']},
+    commitments:[],
+    plans:{},
+    meals:{bf:seedBreakfast.slice(0,3),ln:seedLunch.slice(0,3)},
+    dayMeals:{},
+    history:[],
+    pack:{}
+  };
+}
+let S=load();
+function save(){localStorage.setItem(LS,JSON.stringify(S))}
+// migrate older saved state
+if(Array.isArray(S.meals)||!S.meals||!S.meals.bf){S.meals={bf:seedBreakfast.slice(0,3),ln:seedLunch.slice(0,3)};S.plans={};save()}
+if(S.plans){for(const k in S.plans){if('am'in S.plans[k]||'pm'in S.plans[k]){S.plans={};break}}save()}
+// old commitments used weekday/nap instead of a real date — clear them
+if(!S.dayMeals)S.dayMeals={};
+if(S.commitments&&S.commitments.some(c=>!c.date)){S.commitments=S.commitments.filter(c=>c.date);S.plans={}}
+save();
+
+/* age in months */
+function ageM(){const d=new Date(S.baby.dob);return (today.getFullYear()-d.getFullYear())*12+today.getMonth()-d.getMonth()}
+
+/* ---------- weather (open-meteo, no key; Oxted) ---------- */
+let WX=null;
+async function getWeather(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.257&longitude=-0.005&daily=weathercode,temperature_2m_max,precipitation_probability_max&timezone=Europe%2FLondon&forecast_days=7');
+    WX=await r.json();
+  }catch(e){WX=null}
+  // weather now known: discard auto-plans that were generated blind, so they re-pick correctly
+  for(const k in S.plans){const p=S.plans[k];if(p&&p.auto&&p.noWx&&!p.commit){delete S.plans[k]}}
+  save();
+  renderToday();
+  const wk=document.getElementById('week');if(wk&&wk.classList.contains('on'))renderWeek();
+}
+const wxText=(code)=>{
+  if(code==null)return{t:'Weather unavailable',rain:false,e:'🌤'};
+  if(code===0)return{t:'Clear & bright',rain:false,e:'☀️'};
+  if(code<=3)return{t:'Some cloud',rain:false,e:'⛅'};
+  if(code<=48)return{t:'Misty',rain:false,e:'🌫'};
+  if(code<=67)return{t:'Rain about',rain:true,e:'🌧'};
+  if(code<=77)return{t:'Wintry',rain:true,e:'🌨'};
+  if(code<=82)return{t:'Showers',rain:true,e:'🌦'};
+  return{t:'Stormy',rain:true,e:'⛈'};
+};
+function wxFor(d){
+  if(!WX)return wxText(null);
+  const i=WX.daily.time.indexOf(dkey(d));
+  if(i<0)return wxText(null);
+  const w=wxText(WX.daily.weathercode[i]);
+  w.temp=Math.round(WX.daily.temperature_2m_max[i]);
+  w.pop=WX.daily.precipitation_probability_max[i];
+  if(w.pop>=55)w.rain=true;
+  return w;
+}
+
+/* ---------- planning engine (assisted) ---------- */
+function commitmentsFor(d){
+  const k=dkey(d);
+  return S.commitments.filter(c=>{
+    if(!c.weekly)return c.date===k;
+    const start=new Date(c.date);
+    return d>=start && new Date(c.date).getDay()===d.getDay();
+  });
+}
+function napWindows(){ // parse "am ~9:30, pm ~13:30" → [9.5,13.5]; fall back to defaults
+  const out=[];const re=/(\d{1,2})[:.](\d{2})/g;let m;
+  while((m=re.exec(S.baby.naps||''))){out.push(+m[1]+(+m[2])/60)}
+  return out.length?out:[9.5,13.5];
+}
+function napClash(time){
+  const m=(time||'').match(/(\d+)[:.]?(\d+)?/);if(!m)return false;
+  const t=+m[1]+(+(m[2]||0))/60;
+  return napWindows().some(w=>t>=w-0.75&&t<=w+1); // within ~45min before to 1h into a nap
+}
+function actById(id){return seedActivities.find(a=>a.id===id)}
+function eligible(a){const m=ageM();return m>=a.age[0]&&m<=a.age[1]}
+
+// build a plan object for a date: {act, commit}  — ONE activity per day
+function planFor(d){
+  const k=dkey(d);
+  if(S.plans[k])return S.plans[k];
+  const w=wxFor(d);
+  const com=commitmentsFor(d)[0]||null;
+  const recent=Object.values(S.plans).map(p=>p.act).filter(Boolean).slice(-6);
+  const pick=(pred)=>{
+    const pool=seedActivities.filter(a=>eligible(a)&&pred(a)&&!recent.includes(a.id));
+    return (pool[Math.floor(Math.random()*pool.length)]||seedActivities.filter(a=>eligible(a)&&pred(a))[0])?.id;
+  };
+  // If there's a booked class, that IS the day's activity. Otherwise suggest one.
+  let act=null;
+  if(!com){
+    act=w.rain?pick(a=>a.type==='rain'||a.cat==='cafe'):pick(a=>a.type==='out');
+  }
+  const known=!!(WX&&WX.daily&&WX.daily.time.indexOf(dkey(d))>=0);
+  const plan={act,commit:com,auto:true,noWx:!known,weatherNote:w.rain?'Rain likely — a calmer day at home suits':'Dry enough for the one outing'};
+  S.plans[k]=plan;save();
+  return plan;
+}
+
+/* ---------- RENDER: TODAY ---------- */
+function packList(d){
+  const w=wxFor(d);const m=ageM();
+  let items=['Nappies & wipes','Spare outfit','Two milk feeds / snacks','Water','Muslin'];
+  if(m<10)items.push('Pram blanket');
+  if(w.rain)items.push('Rain cover','Your waterproof');
+  else if(w.temp>=20)items.push('Sun hat & SPF');
+  const p=planFor(d);
+  if(p.commit&&/swim/i.test(p.commit.name))items.push('Swim nappy & towel');
+  const a=p.act&&actById(p.act);
+  if(a&&(a.cat==='cafe'||['park','walk','nt','animals'].includes(a.cat)))items.push('Picnic / snack');
+  return items;
+}
+function renderToday(){
+  const d=today;const w=wxFor(d);const p=planFor(d);
+  document.getElementById('t-date').textContent=fmt(d).toUpperCase();
+  const h=d.getHours();
+  document.getElementById('t-greet').textContent=h<11?'Morning, let\'s plan':h<17?'This afternoon':'Winding down';
+  document.getElementById('t-weather').textContent=`${w.e} ${w.t}${w.temp?', '+w.temp+'°':''} in Oxted — ${p.weatherNote.toLowerCase()}.`;
+
+  const slots=[];
+  slots.push(slotHTML('🍳','Breakfast',dayMeal(today,'bf'),mealIsSet(today,'bf')?'Planned':'Suggested for today',false));
+  if(p.commit){
+    slots.push(slotHTML('📍',p.commit.time+' · booked',p.commit.name,(p.commit.location||'On the calendar')+(p.commit.weekly?' · weekly':''),true));
+  }else if(p.act){const a=actById(p.act);slots.push(slotHTML(a.emoji,'The outing',a.nm,a.loc+' · '+a.ds.split('—')[0],false,a.id))}
+  else{slots.push(slotHTML('🏡','A home day','Cosy one today','Treasure basket, a walk round the block, nothing forced',false))}
+  slots.push(slotHTML('🥪','Lunch',dayMeal(today,'ln'),mealIsSet(today,'ln')?'Planned':'Suggested for today',false));
+  document.getElementById('t-slots').innerHTML=slots.join('');
+
+  // strip
+  const a=p.commit?null:(p.act&&actById(p.act));
+  const travel=a?a.mins||0:0;
+  const napFit=p.commit?(napClash(p.commit.time)?'Nap clash':'Nap-clear'):a?'Fits '+(a.nap==='pram'?'pram nap':a.nap+' window'):'Flexible';
+  document.getElementById('t-strip').innerHTML=`
+    <div><div class="v">${travel?travel+'m':'0'}</div><div class="k">Travel</div></div>
+    <div><div class="v">${w.temp?w.temp+'°':'—'}</div><div class="k">High</div></div>
+    <div><div class="v">${w.pop!=null?w.pop+'%':'—'}</div><div class="k">Rain</div></div>
+    <div><div class="v" style="font-size:12px">${napFit}</div><div class="k">Naps</div></div>`;
+
+  // pack
+  const pk=packList(d);
+  document.getElementById('t-pack').innerHTML=pk.map((it)=>{
+    const key=dkey(d)+'|'+it;
+    const done=S.pack[key];
+    return `<div class="check ${done?'done':''}" onclick="togglePack('${it.replace(/'/g,"\\'")}')"><div class="box">${done?'✓':''}</div><div class="lbl">${it}</div></div>`;
+  }).join('');
+  // cost
+  let cost=a?(()=>{const m=(a.cost||'').match(/£(\d+)/);return m?+m[1]:0})():0;
+  document.getElementById('t-cost').textContent='~£'+cost+' today';
+}
+function slotHTML(ic,lbl,ttl,meta,pin,actId){
+  return `<div class="slot" ${actId?`onclick="swapSlot('${actId}')"`:''}>
+    <div class="node${pin?' solid':''}"></div>
+    <div class="body">
+      <div class="lbl">${lbl} ${pin?'<span class="pin">BOOKED</span>':''}</div>
+      <div class="ttl">${ttl}</div>
+      <div class="meta">${meta}</div>
+    </div></div>`;
+}
+function mealIsSet(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];return !!(m&&m[sec])}
+function autoMeal(d,sec){const a=S.meals[sec];if(!a.length)return 'Your choice';
+  const idx=(new Date(d).getDate())%a.length;return a[idx].nm}
+function dayMeal(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];
+  if(m&&m[sec])return m[sec];return autoMeal(d,sec)}
+function togglePack(it){const k=dkey(today)+'|'+it;S.pack[k]=!S.pack[k];save();renderToday()}
+function swapSlot(id){const a=actById(id);openSheet(`
+  <h2 style="font-size:22px">${a.emoji} ${a.nm}</h2>
+  <p class="faded" style="font-family:Newsreader,serif;font-size:16px;margin:10px 0 4px">${a.ds}</p>
+  <div style="margin:10px 0">${a.loc} · ${a.mins} min · ${a.cost} · nap: ${a.nap}</div>
+  <button class="btn" onclick="markDone('${id}');closeSheet()">✓ We did this</button>
+  <button class="btn ghost" style="margin-top:9px" onclick="reswap('${id}')">Swap for something else</button>`)}
+function markDone(id){S.history.push(id);save();renderDash();closeSheet();toast('Logged — lovely.')}
+function reswap(id){const a=actById(id);const alt=seedActivities.filter(x=>eligible(x)&&x.type===a.type&&x.id!==id);
+  const k=dkey(today);const p=S.plans[k];
+  if(alt.length){p.act=alt[Math.floor(Math.random()*alt.length)].id;p.auto=false;p.noWx=false;save();renderToday()}closeSheet()}
+
+/* ---------- WEEK ---------- */
+let weekSel=dkey(today);
+function renderWeek(){
+  const start=new Date(today);start.setDate(start.getDate()-start.getDay()+1);
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const k=dkey(d);const w=wxFor(d);
+    const sel=k===weekSel?'sel':'';
+    html+=`<div class="day ${sel}" onclick="selWeek('${k}')">
+      <div class="dn">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div>
+      <div class="dd">${d.getDate()}</div><div class="dot" style="${commitmentsFor(d).length?'':'opacity:.3'}"></div></div>`;
+  }
+  document.getElementById('w-days').innerHTML=html;
+  const d=new Date(weekSel);const p=planFor(d);const w=wxFor(d);
+  const acts=[p.commit?{emoji:p.commit.weekly?'🔁':'📍',nm:p.commit.name,loc:p.commit.location||'Calendar',ds:p.commit.time+(p.commit.weekly?' · weekly class':' · booked'),mins:0}:null,
+    !p.commit&&p.act&&actById(p.act)].filter(Boolean);
+  document.getElementById('w-detail').innerHTML=`
+   <div class="tile"><div class="row between"><div><div class="eyebrow">${fmt(d)}</div></div>
+     <div class="faded" style="font-size:13px">${w.e} ${w.temp?w.temp+'°':''}</div></div></div>
+   <div class="divider" style="margin-top:14px">Activity</div>
+   ${acts.length?acts.map(a=>`<div class="act"><div class="emoji">${a.emoji}</div><div>
+     <div class="nm">${a.nm}</div><div class="ds">${a.ds}</div>
+     <div class="mt"><span>📍 ${a.loc}</span>${a.mins?`<span>🚗 ${a.mins}m</span>`:''}</div></div></div>`).join(''):
+     '<div class="act"><div class="emoji">🏡</div><div><div class="nm">Home day</div><div class="ds">Nothing booked — a gentle one.</div></div></div>'}
+   <button class="btn ghost" onclick="regenDay('${weekSel}')" style="margin-top:6px">↺ Suggest a different day</button>
+   <div class="divider">Meals</div>
+   ${mealRow(d,'bf')}
+   ${mealRow(d,'ln')}`;
+}
+function mealRow(d,sec){const set=mealIsSet(d,sec);
+  return `<div class="act" onclick="pickDayMeal('${dkey(d)}','${sec}')"><div class="emoji">${sec==='bf'?'🍳':'🥪'}</div><div style="flex:1">
+    <div class="lbl" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600">${sec==='bf'?'Breakfast':'Lunch'}</div>
+    <div class="nm" style="margin-top:2px">${dayMeal(d,sec)}</div>
+    <div class="ds">${set?'Set for this day · tap to change':'Suggested · tap to choose'}</div></div>
+    <div class="muted" style="font-size:18px">›</div></div>`}
+function pickDayMeal(k,sec){const lib=S.meals[sec];
+  openSheet(`<h2 style="font-size:22px">${sec==='bf'?'Breakfast':'Lunch'}</h2>
+   <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:6px 0 12px">Pick from your library, or leave it on suggested.</p>
+   <div style="max-height:56vh;overflow-y:auto">
+   ${lib.map(m=>`<div class="act" onclick="setDayMeal('${k}','${sec}','${m.nm.replace(/'/g,"\\'")}')"><div class="emoji">${sec==='bf'?'🍳':'🥪'}</div><div style="flex:1"><div class="nm">${m.nm}</div>${m.baby?`<div class="ds">Baby: ${m.baby}</div>`:''}</div></div>`).join('')}
+   </div>
+   <button class="btn ghost" style="margin-top:10px" onclick="clearDayMeal('${k}','${sec}')">↺ Back to suggested</button>`)}
+function setDayMeal(k,sec,nm){if(!S.dayMeals[k])S.dayMeals[k]={};S.dayMeals[k][sec]=nm;save();closeSheet();renderWeek();if(k===dkey(today))renderToday();toast('Set')}
+function clearDayMeal(k,sec){if(S.dayMeals[k]){delete S.dayMeals[k][sec];if(!Object.keys(S.dayMeals[k]).length)delete S.dayMeals[k]}save();closeSheet();renderWeek();if(k===dkey(today))renderToday();toast('Back to suggested')}
+function selWeek(k){weekSel=k;renderWeek()}
+function regenDay(k){delete S.plans[k];planFor(new Date(k));renderWeek();if(k===dkey(today))renderToday()}
+
+/* ---------- PLAN suggestions ---------- */
+let sugFilter='all';
+function renderPlan(){
+  const m=ageM();
+  let pool=seedActivities.filter(eligible);
+  if(sugFilter==='out')pool=pool.filter(a=>a.type==='out');
+  if(sugFilter==='rain')pool=pool.filter(a=>a.type==='rain');
+  if(sugFilter==='london')pool=pool.filter(a=>a.type==='london');
+  if(sugFilter==='heritage')pool=pool.filter(a=>a.member);
+  if(sugFilter==='quick')pool=pool.filter(a=>a.mins<=20&&a.type!=='london');
+  const recent=S.history.slice(-5);
+  pool.sort((a,b)=>(recent.includes(a.id)?1:0)-(recent.includes(b.id)?1:0));
+  document.getElementById('p-list').innerHTML=pool.map(a=>{
+    const fresh=!S.history.includes(a.id);
+    const badge=a.member?`<span class="pin" style="background:rgba(139,161,126,.18);border-color:rgba(139,161,126,.4);color:#a9c39a">${a.member.toUpperCase()} · FREE</span>`:(fresh?'<span class="pin">NEW</span>':'');
+    return `<div class="act" onclick="planInto('${a.id}')"><div class="emoji">${a.emoji}</div><div style="flex:1">
+      <div class="row between"><div class="nm">${a.nm}</div>${badge}</div>
+      <div class="ds">${a.ds}</div>
+      <div class="mt"><span>📍 ${a.loc}</span><span>🚗 ${a.mins} min</span><span>💷 ${a.cost}</span></div></div></div>`;
+  }).join('')||'<div class="empty"><div class="big">🍃</div>Nothing matches — try another filter.</div>';
+}
+function filterSug(f){sugFilter=f;renderPlan()}
+function planInto(id){const a=actById(id);
+  let rows='';
+  for(let i=0;i<14;i++){
+    const d=new Date(today);d.setDate(d.getDate()+i);
+    const k=dkey(d);const com=commitmentsFor(d)[0];
+    const cur=S.plans[k]&&S.plans[k].act;
+    const lbl=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+    let note='',dis='';
+    if(com){note=`<span class="muted" style="font-size:12px">📍 ${com.name}</span>`;dis='style="opacity:.45;pointer-events:none"'}
+    else if(cur&&cur!==id){const ca=actById(cur);note=`<span class="muted" style="font-size:12px">${ca?ca.emoji+' '+ca.nm:''}</span>`}
+    rows+=`<button class="btn ${i===0?'':'ghost'}" ${dis} style="margin-top:9px;justify-content:space-between" onclick="assignDate('${id}','${k}')">
+      <span>${lbl}</span>${note}</button>`;
+  }
+  openSheet(`<h2 style="font-size:22px">Add ${a.nm}</h2>
+  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:8px 0">Pick a day. Booked-class days are locked; days with a plan will be replaced.</p>
+  <div style="max-height:56vh;overflow-y:auto">${rows}</div>`)}
+function assignDate(id,k){const p=planFor(new Date(k));
+  if(p.commit){toast('That day has a booked class');return}
+  p.act=id;p.auto=false;p.noWx=false;save();closeSheet();
+  const lbl=k===dkey(today)?'today':'that day';toast('Set as '+lbl+'\u2019s outing');
+  if(k===dkey(today))renderToday();renderWeek();}
+
+/* ---------- MEALS ---------- */
+function mealCard(m,sec,i){const e=sec==='bf'?'🍳':'🥪';
+  return `<div class="act" onclick="editMeal('${sec}',${i})"><div class="emoji">${e}</div><div style="flex:1">
+    <div class="row between"><div class="nm">${m.nm}</div>${m.pin?'<span style="color:var(--terra)">♥</span>':''}</div>
+    <div class="ds">Baby: ${m.baby||'—'}</div>
+    ${m.ings&&m.ings.length?`<div class="mt"><span>🛒 ${m.ings.join(', ')}</span></div>`:''}</div></div>`}
+function renderMeals(){
+  document.getElementById('m-bf').innerHTML=S.meals.bf.map((m,i)=>mealCard(m,'bf',i)).join('')||emptyMeal();
+  document.getElementById('m-ln').innerHTML=S.meals.ln.map((m,i)=>mealCard(m,'ln',i)).join('')||emptyMeal();
+}
+const emptyMeal=()=>'<div class="faded" style="padding:6px 4px;font-family:Newsreader,serif;font-size:15px">Nothing here yet — tap + Add.</div>';
+function shuffleMeals(){
+  ['bf','ln'].forEach(sec=>{
+    const seed=sec==='bf'?seedBreakfast:seedLunch;
+    const pinned=S.meals[sec].filter(m=>m.pin);
+    const pinnedNames=pinned.map(m=>m.nm);
+    const fresh=seed.filter(m=>!pinnedNames.includes(m.nm)).sort(()=>Math.random()-.5);
+    S.meals[sec]=[...pinned,...fresh].slice(0,Math.max(3,pinned.length));
+  });
+  save();renderMeals();renderToday();toast('Shuffled (kept your ♥)')}
+
+function editMeal(sec,i){const m=S.meals[sec][i];openSheet(`
+  <h2 style="font-size:22px">${m.nm}</h2>
+  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:6px 0 14px">${m.ings&&m.ings.length?'🛒 '+m.ings.join(', '):'No ingredients set'}</p>
+  <button class="btn ${m.pin?'':'ghost'}" onclick="pinMeal('${sec}',${i})">${m.pin?'♥ Pinned — keep on shuffle':'♡ Pin so shuffle keeps it'}</button>
+  <button class="btn ghost" style="margin-top:9px" onclick="openMealForm('${sec}',${i})">✎ Edit name &amp; ingredients</button>
+  <button class="btn ghost" style="margin-top:9px" onclick="swapMeal('${sec}',${i})">⇄ Swap for another idea</button>
+  <button class="btn ghost" style="margin-top:9px;color:var(--terra)" onclick="delMeal('${sec}',${i})">Remove</button>`)}
+function pinMeal(sec,i){S.meals[sec][i].pin=!S.meals[sec][i].pin;save();renderMeals();closeSheet();toast(S.meals[sec][i].pin?'Pinned':'Unpinned')}
+function delMeal(sec,i){S.meals[sec].splice(i,1);save();renderMeals();renderToday();closeSheet();toast('Removed')}
+function swapMeal(sec,i){
+  const seed=sec==='bf'?seedBreakfast:seedLunch;
+  const have=S.meals[sec].map(m=>m.nm);
+  const options=seed.filter(m=>!have.includes(m.nm));
+  if(!options.length){toast('No more in the library — add your own');return}
+  openSheet(`<h2 style="font-size:22px">Swap in…</h2>
+    <div style="max-height:60vh;overflow-y:auto;margin-top:10px">
+    ${options.map((m,j)=>`<div class="act" onclick="doSwap('${sec}',${i},${j})"><div class="emoji">${sec==='bf'?'🍳':'🥪'}</div><div style="flex:1">
+      <div class="nm">${m.nm}</div><div class="ds">${m.ings.join(', ')}</div></div></div>`).join('')}</div>`);
+  window._swapPool=options;}
+function doSwap(sec,i,j){const m=window._swapPool[j];S.meals[sec][i]={...m};save();renderMeals();renderToday();closeSheet();toast('Swapped')}
+function addMeal(sec){openMealForm(sec,-1)}
+function openMealForm(sec,i){const m=i>=0?S.meals[sec][i]:{nm:'',ings:[],baby:''};
+  openSheet(`<h2 style="font-size:22px">${i>=0?'Edit':'Add'} ${sec==='bf'?'breakfast':'lunch'}</h2>
+  <label>Name</label><input id="mf-nm" value="${(m.nm||'').replace(/"/g,'&quot;')}" placeholder="e.g. Egg muffins">
+  <label>Ingredients <span class="muted" style="text-transform:none;letter-spacing:0">(comma separated — feeds the shopping list)</span></label>
+  <input id="mf-ings" value="${(m.ings||[]).join(', ').replace(/"/g,'&quot;')}" placeholder="eggs, spinach, cheese">
+  <label>Baby tip <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label>
+  <input id="mf-baby" value="${(m.baby||'').replace(/"/g,'&quot;')}" placeholder="e.g. Soft fingers to self-feed">
+  <button class="btn" style="margin-top:18px" onclick="saveMeal('${sec}',${i})">Save</button>`)}
+function saveMeal(sec,i){const nm=val('mf-nm').trim();if(!nm){toast('Give it a name');return}
+  const ings=val('mf-ings').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const baby=val('mf-baby').trim();
+  const obj={nm,ings,baby,pin:i>=0?(S.meals[sec][i].pin||false):false};
+  if(i>=0)S.meals[sec][i]=obj;else S.meals[sec].push(obj);
+  save();renderMeals();renderToday();closeSheet();toast(i>=0?'Saved':'Added')}
+
+/* ---------- DASHBOARD ---------- */
+function renderDash(){
+  const h=S.history;const out=h.filter(id=>actById(id)&&actById(id).type!=='rain'&&actById(id).cat!=='home').length;
+  const total=Math.max(h.length,1);
+  const variety=Math.min(100,Math.round(new Set(h).size/Math.max(h.length,1)*100));
+  const outRatio=Math.round(out/total*100);
+  const londonN=h.filter(id=>actById(id)?.type==='london').length;
+  const newExp=new Set(h).size;
+  document.getElementById('d-scores').innerHTML=`
+   ${scoreHTML('Variety',variety+'%',variety)}
+   ${scoreHTML('Out vs home',outRatio+'%',outRatio)}
+   ${scoreHTML('Outings logged',out,Math.min(100,out*12))}
+   ${scoreHTML('New experiences',newExp,Math.min(100,newExp*14))}`;
+  let msg;
+  if(h.length<2)msg='Log a couple of days and I\'ll start spotting patterns — like if you\'re drifting toward too many home days.';
+  else if(outRatio<40)msg='You\'ve been home a lot lately. Tomorrow looks dry-ish — even a café and a park loop counts as a win.';
+  else if(londonN===0)msg='No London adventures yet. The Science Museum garden is step-free and free — a gentle first big day out.';
+  else msg='Lovely balance this week — varied, plenty of fresh air. Keep going.';
+  document.getElementById('d-insight').innerHTML=`<div class="eyebrow">A gentle nudge</div><p style="font-family:Newsreader,serif;font-size:16px;margin-top:8px;line-height:1.5">${msg}</p>`;
+  document.getElementById('d-profile').innerHTML=`
+    <div class="row between"><div class="nm serif" style="font-size:18px">${S.baby.name}</div><span class="faded">${ageM()} months</span></div>
+    <div class="mt" style="font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.7">
+      🛌 ${S.baby.naps}<br>🍼 ${S.baby.feeds}<br>💛 Loves: ${S.baby.likes.join(', ')}</div>`;
+  document.getElementById('d-commits').innerHTML=S.commitments.length?S.commitments.map((c,i)=>{
+    const d=new Date(c.date);
+    const when=c.weekly?`Every ${d.toLocaleDateString('en-GB',{weekday:'long'})} · ${c.time}`:`${d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})} · ${c.time}`;
+    return `<div class="act"><div class="emoji">${c.weekly?'🔁':'📍'}</div><div style="flex:1">
+      <div class="nm">${c.name}</div><div class="ds">${when}${c.location?' · '+c.location:''}</div></div>
+      <button class="chip" onclick="delCommit(${i})">✕</button></div>`;}).join(''):
+    '<div class="faded" style="padding:8px 4px;font-family:Newsreader,serif;font-size:15px">Nothing booked yet. Add classes or appointments so plans build around them.</div>';
+}
+function scoreHTML(lab,n,pct){return `<div class="score"><div class="n">${n}</div><div class="lab">${lab}</div><div class="bar"><span style="width:${pct}%"></span></div></div>`}
+const full=(d)=>({MO:'Mon',TU:'Tue',WE:'Wed',TH:'Thu',FR:'Fri',SA:'Sat',SU:'Sun'}[d]||d);
+
+/* commitments form */
+function openCommit(){const todayK=dkey(today);openSheet(`
+  <h2 style="font-size:22px">Add a class or event</h2>
+  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin-top:6px">Booked classes, appointments, visitors — anything that pins a day. It locks that day so plans build around it.</p>
+  <label>Name</label><input id="c-nm" placeholder="e.g. Baby Sensory, or GP appointment">
+  <div class="grid2"><div><label>Date</label><input id="c-date" type="date" value="${todayK}"></div>
+  <div><label>Time</label><input id="c-time" placeholder="9:30"></div></div>
+  <label>Location <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Caterham">
+  <div class="act" style="margin-top:16px;cursor:pointer" onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()">
+    <div class="emoji" id="c-wicon">📍</div><div style="flex:1">
+      <div class="nm" style="font-size:15px">Repeats weekly</div>
+      <div class="ds" id="c-wlabel">One-off on this date</div></div>
+    <div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center"></div>
+    <input type="checkbox" id="c-weekly" style="display:none">
+  </div>
+  <button class="btn" style="margin-top:18px" onclick="saveCommit()">Save</button>`);}
+function syncWeekly(){const on=document.getElementById('c-weekly').checked;
+  document.getElementById('c-wbox').style.background=on?'var(--sage)':'transparent';
+  document.getElementById('c-wbox').textContent=on?'✓':'';
+  document.getElementById('c-wicon').textContent=on?'🔁':'📍';
+  document.getElementById('c-wlabel').textContent=on?'Every week on this weekday':'One-off on this date';}
+function saveCommit(){const date=val('c-date');if(!date){toast('Pick a date');return}
+  const c={name:val('c-nm')||'Class',date,time:val('c-time')||'9:30',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked};
+  S.commitments.push(c);S.plans={};save();closeSheet();renderDash();renderWeek();renderToday();toast(c.weekly?'Weekly class added':'Event added')}
+function delCommit(i){S.commitments.splice(i,1);S.plans={};save();renderDash();renderWeek();renderToday()}
+function openProfile(){openSheet(`
+  <h2 style="font-size:22px">Lexie's profile</h2>
+  <label>Name</label><input id="p-nm" value="${S.baby.name}">
+  <label>Date of birth</label><input id="p-dob" type="date" value="${S.baby.dob}">
+  <label>Nap schedule</label><input id="p-naps" value="${S.baby.naps}">
+  <label>Feeding</label><input id="p-feeds" value="${S.baby.feeds}">
+  <label>Loves (comma separated)</label><input id="p-likes" value="${S.baby.likes.join(', ')}">
+  <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>`)}
+function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
+  S.plans={};save();closeSheet();renderDash();renderToday();renderWeek();toast('Profile saved')}
+const val=(id)=>document.getElementById(id)?.value||'';
+
+/* ---------- AI assistant (Claude in artifacts) ---------- */
+let chat=[];
+function openAI(){openSheet(`
+  <div class="row between"><h2 style="font-size:22px">✨ Day Concierge</h2></div>
+  <div id="ai-log" style="margin:10px 0;max-height:48vh;overflow-y:auto"></div>
+  <div class="row" style="gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none">
+    <div class="chip" onclick="ask('What should we do tomorrow?')">Tomorrow?</div>
+    <div class="chip" onclick="ask('We need a rainy-day activity')">Rainy day</div>
+    <div class="chip" onclick="ask('Suggest something within 20 minutes')">Under 20 min</div>
+    <div class="chip" onclick="ask('Suggest a London adventure')">London</div>
+    <div class="chip" onclick="ask('We have 2 hours free this afternoon')">2 hours</div>
+  </div>
+  <div class="row" style="gap:8px"><input id="ai-in" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')ask()"><button class="btn sm" onclick="ask()" style="width:auto">↑</button></div>`);
+  if(!chat.length)addAI('Morning. I know your area, Lexie\'s age and what you\'ve done lately. What are we planning?');
+}
+function addAI(t){chat.push({r:'ai',t});drawChat()}
+function drawChat(){const l=document.getElementById('ai-log');if(!l)return;
+  l.innerHTML=chat.map(m=>`<div class="bubble ${m.r}">${m.t}</div>`).join('');l.scrollTop=l.scrollHeight}
+async function ask(q){
+  q=q||val('ai-in');if(!q)return;document.getElementById('ai-in').value='';
+  chat.push({r:'me',t:q});drawChat();
+  chat.push({r:'ai',t:'<span class="typing"><span></span><span></span><span></span></span>'});drawChat();
+  const ctx=`You are a warm, sharp family day-planning concierge for a dad on parental leave in Oxted, Surrey, caring for his ${ageM()}-month-old daughter ${S.baby.name}. Naps: ${S.baby.naps}. Loves: ${S.baby.likes.join(', ')}. Booked commitments (fixed): ${S.commitments.map(c=>c.name+' '+(c.weekly?'every ':'')+new Date(c.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+' '+c.time).join('; ')||'none'}. Recent activities done: ${[...new Set(S.history)].map(id=>actById(id)?.nm).filter(Boolean).join(', ')||'none yet'}. Local activity library you can draw on: ${seedActivities.map(a=>a.nm+' ('+a.loc+', '+a.mins+'min, '+a.type+')').join('; ')}. Give ONE realistic, specific suggestion a real parent would do — respect nap windows, weather, and avoid repeating recent activities. Be concise (2-4 sentences), warm, no bullet points, no preamble.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:ctx,messages:[{role:'user',content:q}]})});
+    const data=await res.json();
+    const txt=data.content.map(i=>i.type==='text'?i.text:'').join('').trim();
+    chat.pop();chat.push({r:'ai',t:txt||'I had trouble there — try again?'});drawChat();
+  }catch(e){chat.pop();chat.push({r:'ai',t:'I couldn\'t reach my brain just now. But based on what I know: try '+suggestOffline()+'.'});drawChat()}
+}
+function suggestOffline(){const w=wxFor(today);const pool=seedActivities.filter(a=>eligible(a)&&(w.rain?a.type==='rain':a.type==='out')&&!S.history.slice(-4).includes(a.id));
+  const a=pool[Math.floor(Math.random()*pool.length)]||seedActivities[0];return a.nm+' in '+a.loc}
+
+/* ---------- sheet + nav ---------- */
+function openSheet(html){document.getElementById('sheet-c').innerHTML=html;document.getElementById('sheet').classList.add('on');document.getElementById('sbg').classList.add('on')}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('sbg').classList.remove('on')}
+function go(s){refreshToday();document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));document.getElementById(s).classList.add('on');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));window.scrollTo(0,0);
+  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='meals')renderMeals();if(s==='dash')renderDash();if(s==='today')renderToday()}
+function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--tile2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:30px;z-index:80;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
+
+/* init */
+renderToday();getWeather();
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 -- IMPORTANT (security): the anon key lives in your public app, so anyone who
 -- finds your repo could read/write this table IF they can guess the row id.
 -- So DON'T use a guessable id like 'oxted'. Before running this, replace every
--- 'household-CHANGE-ME-to-a-long-random-string' below with the SAME long random
+-- 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088' below with the SAME long random
 -- string (e.g. generate one at https://www.uuidgenerator.net or mash the
 -- keyboard for 30+ characters). Use that identical string in supabase-sync.js.
 -- It acts as a shared secret only you and Christine know.
@@ -16,14 +16,14 @@
 -- holds state in S = {...}.
 
 create table if not exists household_state (
-  id text primary key,            -- we use a single fixed id, e.g. 'household-CHANGE-ME-to-a-long-random-string'
+  id text primary key,            -- we use a single fixed id, e.g. 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088'
   state jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
 
 -- Seed the one row the app will use.
 insert into household_state (id, state)
-values ('household-CHANGE-ME-to-a-long-random-string', '{}'::jsonb)
+values ('household-a755d170726cc15c5cb55a1b5cfd45db4795f088', '{}'::jsonb)
 on conflict (id) do nothing;
 
 -- Row Level Security: keep it on, but allow read+write to the anon key for
@@ -33,16 +33,16 @@ alter table household_state enable row level security;
 
 create policy "read oxted row"
   on household_state for select
-  using (id = 'household-CHANGE-ME-to-a-long-random-string');
+  using (id = 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088');
 
 create policy "update oxted row"
   on household_state for update
-  using (id = 'household-CHANGE-ME-to-a-long-random-string')
-  with check (id = 'household-CHANGE-ME-to-a-long-random-string');
+  using (id = 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088')
+  with check (id = 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088');
 
 create policy "insert oxted row"
   on household_state for insert
-  with check (id = 'household-CHANGE-ME-to-a-long-random-string');
+  with check (id = 'household-a755d170726cc15c5cb55a1b5cfd45db4795f088');
 
 -- Optional: let the app subscribe to live changes (so Christine's phone updates
 -- without a manual refresh). Safe to run; ignore any "already member" notice.

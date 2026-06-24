@@ -762,7 +762,7 @@ async function ask(q){
   const ctx=`You are a warm, sharp family day-planning concierge for a dad on parental leave in Oxted, Surrey, caring for his ${ageM()}-month-old daughter ${S.baby.name}. Naps: ${S.baby.naps}. Loves: ${S.baby.likes.join(', ')}. Booked commitments (fixed): ${S.commitments.map(c=>c.name+' '+(c.weekly?'every ':'')+new Date(c.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+' '+c.time).join('; ')||'none'}. Recent activities done: ${[...new Set(S.history)].map(id=>actById(id)?.nm).filter(Boolean).join(', ')||'none yet'}. Local activity library you can draw on: ${seedActivities.map(a=>a.nm+' ('+a.loc+', '+a.mins+'min, '+a.type+')').join('; ')}. Give ONE realistic, specific suggestion a real parent would do — respect nap windows, weather, and avoid repeating recent activities. Be concise (2-4 sentences), warm, no bullet points, no preamble.`;
   try{
     const res=await fetch('https://lexie-and-me.lachlanmclean1990-2a4.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:ctx,messages:[{role:'user',content:q}]})});
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:ctx,messages:[{role:'user',content:q}]})});
     const data=await res.json();
     const txt=data.content.map(i=>i.type==='text'?i.text:'').join('').trim();
     chat.pop();chat.push({r:'ai',t:txt||'I had trouble there — try again?'});drawChat();

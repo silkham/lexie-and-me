@@ -10,6 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <!-- ===== Supabase sync (shared family state) ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -21,7 +23,7 @@
 <style>
 :root{
   /* paper & ink */
-  --bg:#F6F2E9; --bg2:#FDFBF6; --tile:#FDFBF6; --tile2:#EDE8DA;
+  --bg:#FFF8EF; --bg2:#FDFBF6; --tile:#FDFBF6; --tile2:#EDE8DA;
   --ink:#23281F; --ink2:#5F665A; --ink3:#9BA08F; --line:#E3DDCB;
   /* pine is the one accent; legacy token names preserved */
   --accent:#31503F; --accent2:#4A6B57; --sage:#7E9474; --terra:#A65A40; --sky:#6E8796;
@@ -147,35 +149,38 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .check.done .box{background:var(--accent);border-color:var(--accent)}
 .check.done .lbl{text-decoration:line-through;color:var(--ink3)}
 
-/* ——— TODAY: premium hero ——— */
-.today-hero{padding:calc(var(--safe-t) + 32px) 22px 6px;position:relative}
-.th-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.th-date{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.22em}
-.th-age{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:600;white-space:nowrap}
-.th-greet{font-size:33px;line-height:1.08;margin-top:11px;color:var(--ink)}
-.th-standfirst{color:var(--ink2);margin-top:9px;font-family:'Newsreader',serif;font-style:italic;font-size:17.5px;line-height:1.45;max-width:31ch}
-.th-weather{display:flex;align-items:center;gap:14px;margin:17px 0 2px;padding:13px 16px;border-radius:16px;
-  background:linear-gradient(135deg,var(--bg2) 0%,var(--tile2) 140%);
-  box-shadow:0 1px 2px rgba(35,40,31,.04),0 12px 28px -20px rgba(35,40,31,.3)}
-.thw-emoji{font-size:27px;filter:saturate(.82);line-height:1}
-.thw-text{display:flex;flex-direction:column;gap:3px;min-width:0}
-.thw-cond{font-family:'Young Serif',serif;font-size:16px;color:var(--ink);line-height:1.1}
-.thw-meta{font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
-.screen.on .today-hero>*{animation:rise .6s cubic-bezier(.25,.8,.3,1) both}
-.screen.on .today-hero>*:nth-child(2){animation-delay:.05s}
-.screen.on .today-hero>*:nth-child(3){animation-delay:.1s}
-.screen.on .today-hero>*:nth-child(4){animation-delay:.15s}
-/* dayline: extend the stagger + a quiet nap marker */
-.screen.on .slot:nth-child(5){animation-delay:.24s}
-.screen.on .slot:nth-child(6){animation-delay:.3s}
-.slot.nap{padding:11px 0;opacity:.8}
-.slot.nap .node{width:9px;height:9px;border-style:dashed;border-color:var(--sage);background:var(--bg);margin-top:6px;margin-left:3px}
-.slot.nap .lbl{color:var(--sage)}
-.slot.nap .ttl{font-size:15px;color:var(--ink2);font-family:'Young Serif',serif}
-.slot.nap .meta{font-size:13.5px}
-/* pack: progress affordance */
-.packbar{height:3px;background:var(--tile2);border-radius:3px;margin:0 4px 11px;overflow:hidden}
-.packbar>span{display:block;height:100%;background:var(--accent);border-radius:3px;width:0;transition:width .7s cubic-bezier(.25,.8,.3,1)}
+/* ——— TODAY v1.0 — playful redesign (scoped to #today) ——— */
+#today{--co:#FF7A45;--cod:#E85D2C;--lf:#57C98A;--lfd:#2E8E5A;--tk:#2B2A33;--tk2:#6F6B7A;--tk3:#B3AEBC;
+  font-family:'Nunito',system-ui,sans-serif;padding:0 0 40px}
+#today .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#today.on>*{animation:rise .5s cubic-bezier(.25,.8,.3,1) both}
+#today.on>*:nth-child(2){animation-delay:.05s}
+#today.on>*:nth-child(3){animation-delay:.1s}
+#today.on>*:nth-child(4){animation-delay:.15s}
+#today.on>*:nth-child(5){animation-delay:.2s}
+#today .t-head{display:flex;justify-content:space-between;align-items:flex-start;padding:calc(var(--safe-t) + 16px) 22px 0}
+#today .t-eyebrow{font-size:11px;letter-spacing:.16em;color:var(--cod);font-weight:700}
+#today .t-greet{font-size:31px;color:var(--tk);margin:8px 0 0;line-height:1.02}
+#today .t-sub{font-size:15.5px;color:var(--tk2);margin:6px 22px 0;font-weight:600;line-height:1.4}
+#today .prof{width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:var(--cod);display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;box-shadow:0 2px 6px rgba(43,42,51,.15);flex:none}
+#today .adv{margin:16px 18px 0;background:#fff;border-radius:30px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(43,42,51,.05),0 24px 44px -30px rgba(43,42,51,.45)}
+#today .adv-ill{position:relative;line-height:0}
+#today .adv-tag{position:absolute;top:13px;left:16px;font-size:11px;letter-spacing:.14em;font-weight:700;color:#fff;background:rgba(43,42,51,.32);padding:6px 11px;border-radius:999px}
+#today .adv-body{padding:15px 19px 18px}
+#today .adv-ttl{font-size:23px;color:var(--tk);margin:0;line-height:1.08}
+#today .adv-ds{font-size:14.5px;color:var(--tk2);margin:5px 0 12px;font-weight:600;line-height:1.4}
+#today .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:6px 11px;border-radius:999px;background:#FCE7DB;color:var(--cod);font-weight:700;line-height:1}
+#today .chip i{font-size:14px}
+#today .t-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 18px 0}
+#today .tile2{border-radius:22px;padding:14px 16px}
+#today .tile2>i{font-size:21px}
+#today .tl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+#today .packbar2{height:6px;background:#BBE6CC;border-radius:6px;margin-top:6px;overflow:hidden}
+#today .packbar2>span{display:block;height:100%;background:var(--lf);border-radius:6px;width:0;transition:width .7s cubic-bezier(.25,.8,.3,1)}
+#today .t-meals{margin:15px 18px 0;background:#fff;border-radius:22px;padding:15px 18px;box-shadow:0 1px 2px rgba(43,42,51,.05)}
+#today .mrow{display:flex;align-items:center;gap:11px;padding:9px 0;cursor:pointer}
+#today .mdot{width:9px;height:9px;border-radius:50%;flex:none}
+.nav button.on{color:#FF7A45}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -187,34 +192,45 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 
 <!-- TODAY -->
 <section id="today" class="screen on">
-  <header class="today-hero">
-    <div class="th-top">
-      <div class="th-date" id="t-date">—</div>
-      <div class="th-age" id="t-age"></div>
+  <div class="t-head">
+    <div>
+      <div class="t-eyebrow" id="t-date">—</div>
+      <h1 class="fr t-greet" id="t-greet">Morning!</h1>
     </div>
-    <h1 class="th-greet" id="t-greet">Good morning</h1>
-    <p class="th-standfirst" id="t-standfirst">—</p>
-    <div class="th-weather">
-      <span class="thw-emoji" id="t-wxemoji">🌤</span>
-      <div class="thw-text">
-        <span class="thw-cond" id="t-wxcond">—</span>
-        <span class="thw-meta" id="t-wxmeta"></span>
-      </div>
-    </div>
-  </header>
-
-  <div class="dayline" id="t-slots"></div>
-
-  <div class="strip" id="t-strip"></div>
-
-  <div class="row between" style="margin:18px 4px 9px">
-    <div class="eyebrow">What to pack</div>
-    <span class="muted" style="font-size:12px" id="t-cost">—</span>
+    <button class="prof" onclick="openProfile()" aria-label="Settings">L</button>
   </div>
-  <div class="packbar"><span id="t-packbar"></span></div>
-  <div class="tile" id="t-pack" style="margin-top:0"></div>
+  <p class="t-sub" id="t-sub">—</p>
 
-  <button class="btn ghost" style="margin-top:8px" onclick="go('plan')">Adjust today's plan →</button>
+  <div class="adv" onclick="openAdventure()">
+    <div class="adv-ill">
+      <svg viewBox="0 0 392 150" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="tsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE6FB"/><stop offset="1" stop-color="#EAF7FF"/></linearGradient></defs>
+        <rect width="392" height="150" fill="url(#tsky)"/>
+        <g stroke="#FFD16B" stroke-width="4" stroke-linecap="round"><line x1="320" y1="16" x2="320" y2="5"/><line x1="296" y1="24" x2="288" y2="15"/><line x1="344" y1="24" x2="352" y2="15"/></g>
+        <circle cx="320" cy="44" r="20" fill="#FFC24B"/>
+        <g fill="#FFFFFF"><ellipse cx="72" cy="40" rx="24" ry="14"/><ellipse cx="96" cy="46" rx="18" ry="11"/></g>
+        <path d="M0 104 Q110 80 220 100 T392 92 L392 150 L0 150 Z" fill="#86D8AA"/>
+        <path d="M0 124 Q120 102 250 118 T392 114 L392 150 L0 150 Z" fill="#54C088"/>
+        <g><rect x="250" y="92" width="14" height="26" fill="#FBE7C8"/><polygon points="250,92 257,82 264,92" fill="#FF8A5B"/><rect x="281" y="92" width="14" height="26" fill="#FBE7C8"/><polygon points="281,92 288,82 295,92" fill="#FF8A5B"/><rect x="264" y="86" width="17" height="32" fill="#FFF1DC"/><polygon points="264,86 272.5,73 281,86" fill="#E85D2C"/></g>
+      </svg>
+      <span class="adv-tag" id="t-adv-tag">TODAY'S ADVENTURE</span>
+    </div>
+    <div class="adv-body">
+      <h2 class="fr adv-ttl" id="t-adv-ttl">—</h2>
+      <p class="adv-ds" id="t-adv-ds">—</p>
+      <div id="t-adv-chips" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+    </div>
+  </div>
+
+  <div class="t-tiles">
+    <div class="tile2" style="background:#DCF0FB"><i class="ti ti-sun" id="t-wx-icon" style="color:#2A7FB0"></i><div class="tl" style="color:#3E8FBD">Weather</div><div class="fr" style="font-size:18px;color:#1C6791" id="t-wx-main">—</div><div style="font-size:12.5px;font-weight:600;color:#3E8FBD" id="t-wx-sub">—</div></div>
+    <div class="tile2" style="background:#DBF4E6;cursor:pointer" onclick="openPack()"><i class="ti ti-backpack" style="color:#2E8E5A"></i><div class="tl" style="color:#37925E">Pack bag</div><div class="fr" style="font-size:18px;color:#247A49" id="t-pack-count">—</div><div class="packbar2"><span id="t-pack-bar"></span></div></div>
+  </div>
+
+  <div class="t-meals">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B3AEBC">Today's meals</div><span style="font-size:12px;font-weight:700;color:#FF7A45;cursor:pointer" onclick="go('meals')">Kitchen</span></div>
+    <div id="t-meals-list"></div>
+  </div>
 </section>
 
 <!-- WEEK -->
@@ -536,81 +552,66 @@ function packList(d){
   if(a&&(a.cat==='cafe'||['park','walk','nt','animals'].includes(a.cat)))items.push('Picnic / snack');
   return items;
 }
+let _todayAct=null;
 function renderToday(){
   const d=today;const w=wxFor(d);const p=planFor(d);
   document.getElementById('t-date').textContent=fmt(d).toUpperCase();
-  const mo=ageM();
-  document.getElementById('t-age').textContent='Lexie · '+mo+' month'+(mo===1?'':'s');
   const h=d.getHours();
-  document.getElementById('t-greet').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  // weather chip
-  document.getElementById('t-wxemoji').textContent=w.e;
-  document.getElementById('t-wxcond').textContent=w.t;
-  const wxbits=[];
-  if(w.temp!=null)wxbits.push('High '+w.temp+'°');
-  if(w.pop!=null)wxbits.push(w.pop+'% rain');
-  wxbits.push('Oxted');
-  document.getElementById('t-wxmeta').textContent=wxbits.join(' · ');
-  // standfirst — the day in a warm line
-  document.getElementById('t-standfirst').textContent=composeStandfirst(d,w,p);
+  document.getElementById('t-greet').textContent=h<12?'Morning! Let\'s play':h<17?'Afternoon adventures':'Evening, winding down';
+  const wxNice=w.rain?'A rainy one — cosy plans suit':(w.temp>=20?'Warm and bright today':'Dry enough to get out');
+  document.getElementById('t-sub').textContent=wxNice+'.';
 
-  // dayline — the day at a glance, with nap windows woven in
-  const naps=napWindows().map(fmtHour);
-  const slots=[];
-  slots.push(slotHTML('🍳','Breakfast',dayMeal(today,'bf'),mealIsSet(today,'bf')?'Planned':'Suggested for today',false));
-  if(naps[0])slots.push(napSlotHTML(naps[0],'Morning nap'));
+  // adventure card
+  let title,desc,chips=[];_todayAct=null;
   if(p.commit){
-    slots.push(slotHTML('📍',p.commit.time+' · booked',p.commit.name,(p.commit.location||'On the calendar')+(p.commit.weekly?' · weekly':''),true));
-  }else if(p.act){const a=actById(p.act);slots.push(slotHTML(a.emoji,'The outing',a.nm,a.loc+' · '+a.ds.split('—')[0],false,a.id))}
-  else{slots.push(slotHTML('🏡','A home day','Cosy one today','Treasure basket, a walk round the block, nothing forced',false))}
-  slots.push(slotHTML('🥪','Lunch',dayMeal(today,'ln'),mealIsSet(today,'ln')?'Planned':'Suggested for today',false));
-  if(naps[1])slots.push(napSlotHTML(naps[1],'Afternoon nap'));
-  document.getElementById('t-slots').innerHTML=slots.join('');
+    title=p.commit.name;
+    desc=(p.commit.location?p.commit.location+' · ':'')+'booked'+(p.commit.weekly?' · every week':'');
+    chips=[['ti-clock',p.commit.time]];
+    document.getElementById('t-adv-tag').textContent='BOOKED TODAY';
+  }else if(p.act){
+    const a=actById(p.act);_todayAct=a.id;
+    title=a.nm;desc=a.ds.split('—')[0].trim();
+    const mem=a.member?a.member.toUpperCase()+' · free':a.cost;
+    chips=[['ti-car',(a.mins||0)+' min'],['ti-ticket',mem||'—'],[a.indoor?'ti-home':'ti-tree',a.indoor?'Indoor':'Outdoors']];
+    document.getElementById('t-adv-tag').textContent='TODAY\'S ADVENTURE';
+  }else{
+    title='A gentle day at home';
+    desc='Treasure basket, a wander round the block, nothing forced';
+    chips=[['ti-home','Home day'],['ti-mood-happy','No pressure']];
+    document.getElementById('t-adv-tag').textContent='TODAY';
+  }
+  document.getElementById('t-adv-ttl').textContent=title;
+  document.getElementById('t-adv-ds').textContent=desc;
+  document.getElementById('t-adv-chips').innerHTML=chips.map(c=>`<span class="chip"><i class="ti ${c[0]}"></i>${c[1]}</span>`).join('');
 
-  // strip — numbers count up on render
-  const a=p.commit?null:(p.act&&actById(p.act));
-  const travel=a?a.mins||0:0;
-  const napFit=p.commit?(napClash(p.commit.time)?'Nap clash':'Nap-clear'):a?'Fits '+(a.nap==='pram'?'pram nap':a.nap+' window'):'Flexible';
-  document.getElementById('t-strip').innerHTML=`
-    <div><div class="v" data-count="${travel}" data-suffix="m">${travel?'0m':'0'}</div><div class="k">Travel</div></div>
-    <div><div class="v" ${w.temp!=null?`data-count="${w.temp}" data-suffix="°"`:''}>${w.temp!=null?'0°':'—'}</div><div class="k">High</div></div>
-    <div><div class="v" ${w.pop!=null?`data-count="${w.pop}" data-suffix="%"`:''}>${w.pop!=null?'0%':'—'}</div><div class="k">Rain</div></div>
-    <div><div class="v" style="font-size:12px">${napFit}</div><div class="k">Naps</div></div>`;
-  document.querySelectorAll('#t-strip .v[data-count]').forEach(el=>countUp(el,+el.dataset.count,el.dataset.suffix||''));
+  // weather tile
+  const wxi=w.rain?'ti-cloud-rain':(w.temp!=null&&w.temp>=18&&!/cloud|mist/i.test(w.t)?'ti-sun':'ti-cloud');
+  document.getElementById('t-wx-icon').className='ti '+wxi;
+  document.getElementById('t-wx-main').textContent=w.temp!=null?w.temp+'°':w.t;
+  document.getElementById('t-wx-sub').textContent=w.pop!=null?(w.rain?w.pop+'% rain':'Dry · '+w.pop+'%'):w.t;
 
-  // pack + progress
-  const pk=packList(d);
-  let done=0;
-  document.getElementById('t-pack').innerHTML=pk.map((it)=>{
-    const key=dkey(d)+'|'+it;
-    const isDone=S.pack[key];if(isDone)done++;
-    return `<div class="check ${isDone?'done':''}" onclick="togglePack('${it.replace(/'/g,"\\'")}')"><div class="box">${isDone?'✓':''}</div><div class="lbl">${it}</div></div>`;
-  }).join('');
+  // pack tile
+  const pk=packList(d);let done=0;pk.forEach(it=>{if(S.pack[dkey(d)+'|'+it])done++});
+  document.getElementById('t-pack-count').textContent=done+' of '+pk.length+' ready';
   const pct=pk.length?Math.round(done/pk.length*100):0;
-  requestAnimationFrame(()=>{const b=document.getElementById('t-packbar');if(b)b.style.width=pct+'%'});
-  const cost=a?(()=>{const mm=(a.cost||'').match(/£(\d+)/);return mm?+mm[1]:0})():0;
-  document.getElementById('t-cost').textContent=`${done} of ${pk.length} packed · ~£${cost}`;
+  requestAnimationFrame(()=>{const b=document.getElementById('t-pack-bar');if(b)b.style.width=pct+'%'});
+
+  // today's meals
+  const k=dkey(today);
+  const meals=[['#FFC24B','Breakfast',dayMeal(today,'bf'),"pickDayMeal('"+k+"','bf')"],
+               ['#56B6E8','Lunch',dayMeal(today,'ln'),"pickDayMeal('"+k+"','ln')"],
+               ['#FF7A45','Dinner','Plan with Christine',"go('meals')"]];
+  document.getElementById('t-meals-list').innerHTML=meals.map((m,i)=>`<div class="mrow" style="${i<2?'border-bottom:1px solid #F2EEE3':''}" onclick="${m[3]}"><span class="mdot" style="background:${m[0]}"></span><div style="flex:1;font-size:14.5px;font-weight:700;color:#2B2A33">${m[2]}</div><span style="font-size:12px;font-weight:600;color:#B3AEBC">${m[1]}</span></div>`).join('');
 }
-const fmtHour=(h)=>{const hh=Math.floor(h);const mm=Math.round((h-hh)*60);return hh+':'+String(mm).padStart(2,'0')};
-function napSlotHTML(t,lbl){return `<div class="slot nap"><div class="node nap"></div><div class="body"><div class="lbl">${lbl}</div><div class="ttl">${t}</div><div class="meta">A window to rest — and maybe you too.</div></div></div>`}
-function composeStandfirst(d,w,p){
-  const napN=napWindows().length;
-  const napPhrase=napN?`${napN} nap${napN>1?'s':''} to plan around`:'';
-  let lead;
-  if(p.commit){lead=`${p.commit.name} at ${p.commit.time}`}
-  else if(p.act){const a=actById(p.act);lead=`A trip to ${a.nm.split('—')[0].trim()}`}
-  else{lead='A gentle day at home'}
-  const wxPhrase=w.rain?'rain about':(w.temp>=20?'warm and bright':'dry enough to get out');
-  return `${lead} — ${wxPhrase}${napPhrase?', '+napPhrase:''}.`;
-}
-const prefersReduced=()=>!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches);
-function countUp(el,target,suffix){
-  if(!isFinite(target))return;
-  if(prefersReduced()){el.textContent=target+suffix;return}
-  const dur=700,start=performance.now();
-  const tick=now=>{const t=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-t,3);el.textContent=Math.round(target*e)+suffix;if(t<1)requestAnimationFrame(tick)};
-  requestAnimationFrame(tick);
-}
+function openAdventure(){ if(_todayAct){swapSlot(_todayAct)}else{go('plan')} }
+function packSheetRows(d,pk){return pk.map(it=>{const done=S.pack[dkey(d)+'|'+it];
+  return `<div class="check ${done?'done':''}" onclick="togglePackSheet('${it.replace(/'/g,"\\'")}')"><div class="box">${done?'✓':''}</div><div class="lbl">${it}</div></div>`}).join('')}
+function openPack(){const d=today;openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-size:22px;color:#2B2A33;margin:2px 0 4px">What to pack</h2>
+  <p style="font-size:14px;color:#9BA08F;font-weight:600;margin-bottom:10px">Weather adds rain covers or SPF automatically.</p>
+  <div id="pack-sheet">${packSheetRows(d,packList(d))}</div>`)}
+function togglePackSheet(it){const kk=dkey(today)+'|'+it;S.pack[kk]=!S.pack[kk];save();
+  const el=document.getElementById('pack-sheet');if(el)el.innerHTML=packSheetRows(today,packList(today));
+  renderToday();}
 function slotHTML(ic,lbl,ttl,meta,pin,actId){
   return `<div class="slot" ${actId?`onclick="swapSlot('${actId}')"`:''}>
     <div class="node${pin?' solid':''}"></div>

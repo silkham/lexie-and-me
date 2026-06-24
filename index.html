@@ -138,15 +138,6 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .grab{width:36px;height:4px;background:var(--line);border-radius:4px;margin:10px auto 18px}
 
 /* AI */
-.bubble{padding:13px 17px;border-radius:18px;margin:9px 0;font-size:14.5px;line-height:1.5;max-width:88%}
-.bubble.ai{background:var(--tile);border:none;border-bottom-left-radius:6px;font-family:'Newsreader',serif;font-size:16.5px;
-  box-shadow:0 1px 2px rgba(35,40,31,.04),0 6px 18px -14px rgba(35,40,31,.2)}
-.bubble.me{background:var(--accent);color:var(--bg2);margin-left:auto;border-bottom-right-radius:6px;font-weight:500}
-.typing{display:inline-flex;gap:4px}
-.typing span{width:6px;height:6px;background:var(--ink3);border-radius:50%;animation:bob 1s infinite}
-.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
-@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-
 .empty{text-align:center;padding:50px 20px;color:var(--ink3)}
 .empty .big{font-size:38px;margin-bottom:12px;filter:saturate(.8)}
 .divider{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:26px 4px 10px}
@@ -156,9 +147,6 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .check.done .box{background:var(--accent);border-color:var(--accent)}
 .check.done .lbl{text-decoration:line-through;color:var(--ink3)}
 
-@media (min-width:481px){
-  #aifab{right:calc(50% - 240px + 18px)!important}
-}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -249,8 +237,6 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <button data-s="dash" onclick="go('dash')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2M12 12v-5"/></svg>You</button>
 </div></nav>
 
-<!-- AI fab -->
-<button onclick="openAI()" style="position:fixed;right:18px;bottom:calc(100px + var(--safe-b));z-index:55;width:54px;height:54px;border-radius:50%;background:var(--accent);color:var(--bg2);border:none;box-shadow:0 10px 30px -8px rgba(35,40,31,.5);cursor:pointer;font-size:20px;left:auto" id="aifab">✨</button>
 </div>
 
 <!-- sheet -->
@@ -791,40 +777,6 @@ function openProfile(){openSheet(`
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
   S.plans={};save();closeSheet();renderDash();renderToday();renderWeek();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';
-
-/* ---------- AI assistant (Claude in artifacts) ---------- */
-let chat=[];
-function openAI(){openSheet(`
-  <div class="row between"><h2 style="font-size:22px">✨ Day Concierge</h2></div>
-  <div id="ai-log" style="margin:10px 0;max-height:48vh;overflow-y:auto"></div>
-  <div class="row" style="gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none">
-    <div class="chip" onclick="ask('What should we do tomorrow?')">Tomorrow?</div>
-    <div class="chip" onclick="ask('We need a rainy-day activity')">Rainy day</div>
-    <div class="chip" onclick="ask('Suggest something within 20 minutes')">Under 20 min</div>
-    <div class="chip" onclick="ask('Suggest a London adventure')">London</div>
-    <div class="chip" onclick="ask('We have 2 hours free this afternoon')">2 hours</div>
-  </div>
-  <div class="row" style="gap:8px"><input id="ai-in" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')ask()"><button class="btn sm" onclick="ask()" style="width:auto">↑</button></div>`);
-  if(!chat.length)addAI('Morning. I know your area, Lexie\'s age and what you\'ve done lately. What are we planning?');
-}
-function addAI(t){chat.push({r:'ai',t});drawChat()}
-function drawChat(){const l=document.getElementById('ai-log');if(!l)return;
-  l.innerHTML=chat.map(m=>`<div class="bubble ${m.r}">${m.t}</div>`).join('');l.scrollTop=l.scrollHeight}
-async function ask(q){
-  q=q||val('ai-in');if(!q)return;document.getElementById('ai-in').value='';
-  chat.push({r:'me',t:q});drawChat();
-  chat.push({r:'ai',t:'<span class="typing"><span></span><span></span><span></span></span>'});drawChat();
-  const ctx=`You are a warm, sharp family day-planning concierge for a dad on parental leave in Oxted, Surrey, caring for his ${ageM()}-month-old daughter ${S.baby.name}. Naps: ${S.baby.naps}. Loves: ${S.baby.likes.join(', ')}. Booked commitments (fixed): ${S.commitments.map(c=>c.name+' '+(c.weekly?'every ':'')+new Date(c.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+' '+c.time).join('; ')||'none'}. Recent activities done: ${[...new Set(S.history)].map(id=>actById(id)?.nm).filter(Boolean).join(', ')||'none yet'}. Local activity library you can draw on: ${seedActivities.map(a=>a.nm+' ('+a.loc+', '+a.mins+'min, '+a.type+')').join('; ')}. Give ONE realistic, specific suggestion a real parent would do — respect nap windows, weather, and avoid repeating recent activities. Be concise (2-4 sentences), warm, no bullet points, no preamble.`;
-  try{
-    const res=await fetch('https://lexie-and-me.lachlanmclean1990-2a4.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:ctx,messages:[{role:'user',content:q}]})});
-    const data=await res.json();
-    const txt=data.content.map(i=>i.type==='text'?i.text:'').join('').trim();
-    chat.pop();chat.push({r:'ai',t:txt||'I had trouble there — try again?'});drawChat();
-  }catch(e){chat.pop();chat.push({r:'ai',t:'I couldn\'t reach my brain just now. But based on what I know: try '+suggestOffline()+'.'});drawChat()}
-}
-function suggestOffline(){const w=wxFor(today);const pool=seedActivities.filter(a=>eligible(a)&&(w.rain?a.type==='rain':a.type==='out')&&!S.history.slice(-4).includes(a.id));
-  const a=pool[Math.floor(Math.random()*pool.length)]||seedActivities[0];return a.nm+' in '+a.loc}
 
 /* ---------- sheet + nav ---------- */
 function openSheet(html){document.getElementById('sheet-c').innerHTML=html;document.getElementById('sheet').classList.add('on');document.getElementById('sbg').classList.add('on')}

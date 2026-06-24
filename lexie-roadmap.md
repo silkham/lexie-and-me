@@ -1,6 +1,7 @@
 # Lexie & Me — Roadmap (LOCKED)
 
-> Status: LOCKED 2026-06-24. Thesis, design north star, IA and decisions A/B/C all agreed.
+> Status: LOCKED 2026-06-24. Thesis, design system, IA and decisions A/B/C all agreed.
+> Design + data validated via rendered concept boards (process now: **boards before build**).
 
 ## Thesis
 **From "a basic planner that drifted" → "the premium planning & discovery tool Christine
@@ -11,32 +12,38 @@ and I run Lexie's days with."** Two unlocks, learned from Stride:
 
 Built for **two people** (Lachlan + Christine), already shared live via Supabase.
 
-## Design north star — premium, but keep the soul
-Stride got premium by adding **atmosphere + motion + substance** on top of a strong
-identity. Apply the *lesson*, not the *look*:
-- **Keep & deepen the warm "paper & ink" editorial identity** (Young Serif / Newsreader /
-  Instrument Sans, pine accent, soft cards). It suits a baby app far better than Stride's
-  emerald-on-black. **Do NOT port the dark system over.** (Decision: agreed.)
-- Premium = real **place photography/illustration**, generous editorial layout, tasteful
-  **motion** (staggered entrances, count-ups, draw-ons), live touches ("open now",
-  distance, weather-matched), characterful empty states, satisfying micro-interactions.
-- The bar: every screen should feel considered enough that you *want* to open it.
+## Design system — playful, colourful, premium (LOCKED, replaces the old "paper & ink")
+The warm muted editorial direction was tried and **rejected as boring**. The agreed
+direction is **bright, joyful and playful** — premium but full of fun (it's an app about
+their daughter). Established and approved via concept boards:
+- **Type:** rounded, friendly — **Fredoka** (display/headings) + **Nunito** (body). No serif.
+- **Canvas:** warm off-white `#FFF8EF`; big rounded corners (cards ~22–30px, phone ~46px).
+- **Colour:** a multi-hue playful palette used to *colour-code* content, not one accent —
+  coral `#FF7A45`/`#E85D2C` (primary/active), sky `#56B6E8`/`#2A7FB0`, grape `#A98BEA`/`#6E4FB0`,
+  leaf `#57C98A`/`#2E8E5A`, sunny `#FFC24B`/`#C77F12`. Tiles/cards each carry their own hue.
+- **Imagery:** bespoke **illustration** (sunny skies, hills, little castles, balloons),
+  **never stock photos**. Clean **line icons** (Tabler-style), **no emoji** anywhere.
+- **Chrome:** bottom nav (Today · Discover · Meals · Calendar) that recolours to the active
+  tab; a **profile/settings button** (round "L" avatar) top-right on every screen.
+- The bar: bright, rounded, characterful — you *want* to open it.
 
-## Information architecture (4 tabs + tasks)
-- **Today** — "what's on today": today's meals, the day's activity / booked class, weather,
-  what to pack, anything you need to know. A premium Stride-style hero. *(Mostly recomposes
-  what exists — low risk; the place to set the craft standard.)*
-- **Meals** — the weekly meal list both of you plan from. *(Decision B below.)*
-- **Discover** *(the activity planner — the heart of the app)* — a big, browsable,
-  filterable database of **places** (not events/classes): National Trust, English Heritage,
-  historic homes, aquariums, farms, parks, soft play, and more. Each with **opening hours,
-  cost, indoor/outdoor, rain-friendly / sun-friendly, age suitability, travel time, and
-  membership-free flags (NT/EH)**. Used by you *and* Christine to decide where to go.
-  *(Decision A below.)* Booked classes (e.g. Hartbeeps) are **not** DB places — they're
-  personal bookings on the Calendar/Today.
-- **Calendar** — month view of planned activities + booked classes, shared between you two,
-  with **two-way sync to a real "Lexie" phone calendar**. *(Decision C below.)*
-- **Tasks** — lightweight shared checklist for baby admin (jabs, shopping, nursery, errands).
+## Information architecture (4 tabs + settings)
+- **Today** — the front page: the day's **adventure** (illustrated discovery card),
+  **today's meals** (B/L/D brought onto home), **weather** (Open-Meteo), and the **pack bag**
+  (progress). **No naps shown** — 2 naps is a given, not worth surfacing. No fixed clock
+  times anywhere.
+- **Discover** *(the heart)* — **map-first**: a nationwide map of curated child-worthy
+  **places** with coloured pins, **location search** up top (works out & about / on holiday),
+  **categories as the filter row**, and a list of places below. Scale on show ("1,240 places").
+  *(Data = Decision A below.)* Booked classes (Hartbeeps) are NOT places — Calendar items.
+- **Meals** — a **week planner** (every day's B/L/D at a glance; empty days invite a plan).
+  Shared + synced to Stride. *(Decision B below.)*
+- **Calendar** — month view with colour-dotted bookings, a "coming up" list, an **add-event
+  sheet** (name, type chips, date/time, where, repeat-weekly, "add to my phone calendar"),
+  and two-way phone-calendar sync. *(Decision C below.)*
+- **Settings** (via the top-right profile button) — Lexie's profile, **"what's in your bag"**
+  (editable default pack list; weather auto-adds rain covers/SPF), home area, shared-with,
+  calendar-sync + meals-sync toggles. (Tasks/baby-admin can live here or as a later add.)
 
 ## What we already have for free
 The Supabase sync (built 2026-06-24) means **Today, Meals, the in-app Calendar and Tasks
@@ -45,13 +52,21 @@ are already shared between you and Christine** — that foundation is done. Stri
 schedule) is the proven template for the two-way phone-calendar bridge (Decision C, Path 1).
 
 ## Decisions (LOCKED)
-- **A — Discover = a curated database of *places*, in Supabase.** The target is **places to
-  go**, not events/classes — and places (NT, EH, historic homes, parks, aquariums…) are
-  stable institutions whose core details don't change, so a big curated DB is robust. Only
-  hours/cost drift: handle with a **"last checked"** date + **tap-through to the official
-  site** for live hours. Seed a curated core into a Supabase **`places`** table that you and
-  Christine can **add to and correct**. Booked classes (Hartbeeps) are NOT places — they're
-  personal Calendar/Today bookings.
+- **A — Discover = an exhaustive, nationwide, directory-sourced `places` DB (1,000+).** The
+  killer principle: **don't scrape raw map tags and try to clean the junk — seed from
+  accreditation/membership directories, because membership IS the quality filter.** Sources:
+  **National Trust (~500, all "free for you")**, **English Heritage (400+, "free for you")**,
+  Historic Houses & stately homes (1,400+), RHS & partner gardens (200+), zoos & aquariums
+  (BIAZA, ~130), farm parks (NFAN, ~200), Arts-Council-accredited museums (1,700+), and
+  designated **Country Parks / Forestry / Royal Parks (~250)**. **Play** (its own gate, no
+  single body): soft-play chains + Association of Indoor Play + top-rated independents
+  (4★+), plus **destination/adventure playgrounds** (named, with facilities) and playgrounds
+  inside already-listed parks. **Filtered out by construction:** OSM `leisure=park`/commons
+  (e.g. Oxted's green common), verges, every street swing-set, unrated venues — if it's in
+  no recognised directory, it doesn't get in. Memberships held = **NT + EH only** → a **"Free
+  for you" lens/filter** surfaces every nearby NT/EH place. Hours/cost drift → **"last
+  checked"** date + **tap-through to the official site**. Seed once, refresh periodically;
+  Lachlan + Christine can add/correct. Booked classes (Hartbeeps) are NOT places — Calendar items.
 - **B — Meals = one shared family plan; Lexie eats what you eat.** Single source of truth in
   Supabase **`week_plans`** (the table Stride already uses), read/written by both apps —
   plan dinner once, it shows in Stride *and* Lexie & Me. Lexie's only addition is an optional
@@ -71,10 +86,11 @@ schedule) is the proven template for the two-way phone-calendar bridge (Decision
 
 ## Data model shift
 Activities move from the hardcoded `seedActivities` JS array → a Supabase **`places`** table:
-`name, category, area, lat/lng, travel_mins, cost, membership (nt/eh/none), indoor/outdoor,
-rain_ok, sun_ok, age_min, age_max, opening_hours, website, notes, last_checked`. Day plans /
-bookings stay in the existing shared `household_state` blob (or graduate to their own table
-if needed).
+`name, category, source (nt/eh/historic-houses/biaza/nfan/museum/country-park/play/…),
+membership (nt/eh/none), lat/lng, area, cost, indoor/outdoor, rain_ok, sun_ok, age_min,
+age_max, opening_hours, website, rating, last_checked, notes`. Seeded nationwide from the
+Decision-A directories. Day plans / bookings stay in the shared `household_state` blob (or
+their own table if needed); meals use Stride's `week_plans` (Decision B).
 
 ## Sequencing
 - **v1.0 — premium bar + foundation:** redesign pass on **Today** + the app shell; establish
@@ -89,6 +105,14 @@ if needed).
 Premium-first on purpose: v1.0 sets the standard, so the big Discover build (v1.1) is held
 to it from the start.
 
+## Process
+**Boards before build.** Design every screen as a rendered concept board, get sign-off, then
+implement in `index.html`. Concept boards approved 2026-06-24: Today (adventure + meals +
+weather + pack), Discover (map-first), Meals (week planner), Calendar (+ add-event sheet),
+Settings (bag + toggles), and the Discover data-source / Play-gate boards.
+
 ## To start v1.0
-Redesign **Today** to the premium bar (richer hero, motion, real imagery direction) and lock
-the **`places`** schema so v1.1 can begin against a real table.
+Build the approved **Today** board into `index.html` (Fredoka/Nunito, warm-white, illustrated
+adventure card, colour tiles, today's meals, profile button) — matching the signed-off board,
+not the old paper version. In parallel, lock the **`places`** schema so v1.1 (Discover) can
+begin against a real seeded table.

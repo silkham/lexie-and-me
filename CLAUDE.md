@@ -50,21 +50,26 @@ design. Built originally in a Claude chat artifact; the code now lives here.
   for ONE warm, specific suggestion. Offline fallback picks from the local pool.
   Model string in code: `claude-sonnet-4-20250514` (outdated — newer ids exist).
 
-## Status: working vs half-finished
-**Working (in the deployed/remote version):** the whole planner UI, weather, activity
-& meal libraries, dashboard, and the AI concierge via the Worker proxy.
+## Status: working vs half-finished (as of 2026-06-24)
+**Live and working:** the whole planner — Today/Week/Plan/Meals/You, weather, activity
+& meal libraries, dashboard — runs client-side and is **live at the canonical home
+https://silkham.github.io/lexie-and-me/** (GitHub Pages, main/root). Also mirrored at a
+Cloudflare Worker `https://lexie-and-me.lachlanmclean1990-2a4.workers.dev/` that
+auto-deploys static assets from this repo (secondary; safe to delete).
 
 **Half-finished / not wired:**
+- **The AI concierge proxy is NOT actually deployed.** The app POSTs to the
+  `…workers.dev/` URL, but that serves the static APP (GET=200 HTML, POST=405) — it is
+  NOT the `cloudflare-worker.js` proxy. So nothing injects the Anthropic key; the
+  concierge fails and falls back to local `suggestOffline()` suggestions. **Deliberately
+  deferred.** To finish: deploy `cloudflare-worker.js` as a SEPARATE Worker (in the
+  Cloudflare dashboard) with the `ANTHROPIC_API_KEY` secret and `ALLOWED` =
+  `https://silkham.github.io`, then point the app's AI fetch at that new proxy URL.
 - **Cloud sync between the two phones is NOT live.** `supabase-sync.js` is paste-in
   instructions only; `index.html` has zero Supabase code (`grep supabase index.html` = 0).
-  Today, state is local-only per device — Lachlan's and Christine's phones don't share.
-  To finish: create the Supabase project, fill the placeholders (URL, anon key, a single
-  long random `HOUSEHOLD_ID` used identically in the SQL and Block A), run the SQL, and
-  paste Blocks A/B/C into `index.html`.
-- **GitHub Pages is not enabled** on the repo, so the app isn't being served publicly yet.
-- **Worker `ALLOWED` origin** is still a placeholder; set it to the real Pages origin
-  once Pages is on.
-- **Model id is stale** (`claude-sonnet-4-20250514`); consider a current id.
+  State is local-only per device. To finish: create the Supabase project, fill the
+  placeholders (URL, anon key, a single long random `HOUSEHOLD_ID` used identically in the
+  SQL and Block A), run the SQL, and paste Blocks A/B/C into `index.html`.
 - **Not a true installable PWA** — has apple-mobile-web-app meta tags but no
   `manifest.json` or service worker, so no offline/install.
 

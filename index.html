@@ -147,6 +147,36 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .check.done .box{background:var(--accent);border-color:var(--accent)}
 .check.done .lbl{text-decoration:line-through;color:var(--ink3)}
 
+/* ——— TODAY: premium hero ——— */
+.today-hero{padding:calc(var(--safe-t) + 32px) 22px 6px;position:relative}
+.th-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.th-date{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.22em}
+.th-age{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:600;white-space:nowrap}
+.th-greet{font-size:33px;line-height:1.08;margin-top:11px;color:var(--ink)}
+.th-standfirst{color:var(--ink2);margin-top:9px;font-family:'Newsreader',serif;font-style:italic;font-size:17.5px;line-height:1.45;max-width:31ch}
+.th-weather{display:flex;align-items:center;gap:14px;margin:17px 0 2px;padding:13px 16px;border-radius:16px;
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--tile2) 140%);
+  box-shadow:0 1px 2px rgba(35,40,31,.04),0 12px 28px -20px rgba(35,40,31,.3)}
+.thw-emoji{font-size:27px;filter:saturate(.82);line-height:1}
+.thw-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+.thw-cond{font-family:'Young Serif',serif;font-size:16px;color:var(--ink);line-height:1.1}
+.thw-meta{font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
+.screen.on .today-hero>*{animation:rise .6s cubic-bezier(.25,.8,.3,1) both}
+.screen.on .today-hero>*:nth-child(2){animation-delay:.05s}
+.screen.on .today-hero>*:nth-child(3){animation-delay:.1s}
+.screen.on .today-hero>*:nth-child(4){animation-delay:.15s}
+/* dayline: extend the stagger + a quiet nap marker */
+.screen.on .slot:nth-child(5){animation-delay:.24s}
+.screen.on .slot:nth-child(6){animation-delay:.3s}
+.slot.nap{padding:11px 0;opacity:.8}
+.slot.nap .node{width:9px;height:9px;border-style:dashed;border-color:var(--sage);background:var(--bg);margin-top:6px;margin-left:3px}
+.slot.nap .lbl{color:var(--sage)}
+.slot.nap .ttl{font-size:15px;color:var(--ink2);font-family:'Young Serif',serif}
+.slot.nap .meta{font-size:13.5px}
+/* pack: progress affordance */
+.packbar{height:3px;background:var(--tile2);border-radius:3px;margin:0 4px 11px;overflow:hidden}
+.packbar>span{display:block;height:100%;background:var(--accent);border-radius:3px;width:0;transition:width .7s cubic-bezier(.25,.8,.3,1)}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -157,21 +187,32 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 
 <!-- TODAY -->
 <section id="today" class="screen on">
-  <div class="hdr">
-    <div class="date" id="t-date">—</div>
-    <h1 id="t-greet">Today with Lexie</h1>
-    <div class="sub" id="t-weather">—</div>
-  </div>
+  <header class="today-hero">
+    <div class="th-top">
+      <div class="th-date" id="t-date">—</div>
+      <div class="th-age" id="t-age"></div>
+    </div>
+    <h1 class="th-greet" id="t-greet">Good morning</h1>
+    <p class="th-standfirst" id="t-standfirst">—</p>
+    <div class="th-weather">
+      <span class="thw-emoji" id="t-wxemoji">🌤</span>
+      <div class="thw-text">
+        <span class="thw-cond" id="t-wxcond">—</span>
+        <span class="thw-meta" id="t-wxmeta"></span>
+      </div>
+    </div>
+  </header>
 
   <div class="dayline" id="t-slots"></div>
 
   <div class="strip" id="t-strip"></div>
 
-  <div class="row between" style="margin:16px 4px 6px">
+  <div class="row between" style="margin:18px 4px 9px">
     <div class="eyebrow">What to pack</div>
     <span class="muted" style="font-size:12px" id="t-cost">—</span>
   </div>
-  <div class="tile" id="t-pack" style="margin-top:4px"></div>
+  <div class="packbar"><span id="t-packbar"></span></div>
+  <div class="tile" id="t-pack" style="margin-top:0"></div>
 
   <button class="btn ghost" style="margin-top:8px" onclick="go('plan')">Adjust today's plan →</button>
 </section>
@@ -498,39 +539,77 @@ function packList(d){
 function renderToday(){
   const d=today;const w=wxFor(d);const p=planFor(d);
   document.getElementById('t-date').textContent=fmt(d).toUpperCase();
+  const mo=ageM();
+  document.getElementById('t-age').textContent='Lexie · '+mo+' month'+(mo===1?'':'s');
   const h=d.getHours();
-  document.getElementById('t-greet').textContent=h<11?'Morning, let\'s plan':h<17?'This afternoon':'Winding down';
-  document.getElementById('t-weather').textContent=`${w.e} ${w.t}${w.temp?', '+w.temp+'°':''} in Oxted — ${p.weatherNote.toLowerCase()}.`;
+  document.getElementById('t-greet').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  // weather chip
+  document.getElementById('t-wxemoji').textContent=w.e;
+  document.getElementById('t-wxcond').textContent=w.t;
+  const wxbits=[];
+  if(w.temp!=null)wxbits.push('High '+w.temp+'°');
+  if(w.pop!=null)wxbits.push(w.pop+'% rain');
+  wxbits.push('Oxted');
+  document.getElementById('t-wxmeta').textContent=wxbits.join(' · ');
+  // standfirst — the day in a warm line
+  document.getElementById('t-standfirst').textContent=composeStandfirst(d,w,p);
 
+  // dayline — the day at a glance, with nap windows woven in
+  const naps=napWindows().map(fmtHour);
   const slots=[];
   slots.push(slotHTML('🍳','Breakfast',dayMeal(today,'bf'),mealIsSet(today,'bf')?'Planned':'Suggested for today',false));
+  if(naps[0])slots.push(napSlotHTML(naps[0],'Morning nap'));
   if(p.commit){
     slots.push(slotHTML('📍',p.commit.time+' · booked',p.commit.name,(p.commit.location||'On the calendar')+(p.commit.weekly?' · weekly':''),true));
   }else if(p.act){const a=actById(p.act);slots.push(slotHTML(a.emoji,'The outing',a.nm,a.loc+' · '+a.ds.split('—')[0],false,a.id))}
   else{slots.push(slotHTML('🏡','A home day','Cosy one today','Treasure basket, a walk round the block, nothing forced',false))}
   slots.push(slotHTML('🥪','Lunch',dayMeal(today,'ln'),mealIsSet(today,'ln')?'Planned':'Suggested for today',false));
+  if(naps[1])slots.push(napSlotHTML(naps[1],'Afternoon nap'));
   document.getElementById('t-slots').innerHTML=slots.join('');
 
-  // strip
+  // strip — numbers count up on render
   const a=p.commit?null:(p.act&&actById(p.act));
   const travel=a?a.mins||0:0;
   const napFit=p.commit?(napClash(p.commit.time)?'Nap clash':'Nap-clear'):a?'Fits '+(a.nap==='pram'?'pram nap':a.nap+' window'):'Flexible';
   document.getElementById('t-strip').innerHTML=`
-    <div><div class="v">${travel?travel+'m':'0'}</div><div class="k">Travel</div></div>
-    <div><div class="v">${w.temp?w.temp+'°':'—'}</div><div class="k">High</div></div>
-    <div><div class="v">${w.pop!=null?w.pop+'%':'—'}</div><div class="k">Rain</div></div>
+    <div><div class="v" data-count="${travel}" data-suffix="m">${travel?'0m':'0'}</div><div class="k">Travel</div></div>
+    <div><div class="v" ${w.temp!=null?`data-count="${w.temp}" data-suffix="°"`:''}>${w.temp!=null?'0°':'—'}</div><div class="k">High</div></div>
+    <div><div class="v" ${w.pop!=null?`data-count="${w.pop}" data-suffix="%"`:''}>${w.pop!=null?'0%':'—'}</div><div class="k">Rain</div></div>
     <div><div class="v" style="font-size:12px">${napFit}</div><div class="k">Naps</div></div>`;
+  document.querySelectorAll('#t-strip .v[data-count]').forEach(el=>countUp(el,+el.dataset.count,el.dataset.suffix||''));
 
-  // pack
+  // pack + progress
   const pk=packList(d);
+  let done=0;
   document.getElementById('t-pack').innerHTML=pk.map((it)=>{
     const key=dkey(d)+'|'+it;
-    const done=S.pack[key];
-    return `<div class="check ${done?'done':''}" onclick="togglePack('${it.replace(/'/g,"\\'")}')"><div class="box">${done?'✓':''}</div><div class="lbl">${it}</div></div>`;
+    const isDone=S.pack[key];if(isDone)done++;
+    return `<div class="check ${isDone?'done':''}" onclick="togglePack('${it.replace(/'/g,"\\'")}')"><div class="box">${isDone?'✓':''}</div><div class="lbl">${it}</div></div>`;
   }).join('');
-  // cost
-  let cost=a?(()=>{const m=(a.cost||'').match(/£(\d+)/);return m?+m[1]:0})():0;
-  document.getElementById('t-cost').textContent='~£'+cost+' today';
+  const pct=pk.length?Math.round(done/pk.length*100):0;
+  requestAnimationFrame(()=>{const b=document.getElementById('t-packbar');if(b)b.style.width=pct+'%'});
+  const cost=a?(()=>{const mm=(a.cost||'').match(/£(\d+)/);return mm?+mm[1]:0})():0;
+  document.getElementById('t-cost').textContent=`${done} of ${pk.length} packed · ~£${cost}`;
+}
+const fmtHour=(h)=>{const hh=Math.floor(h);const mm=Math.round((h-hh)*60);return hh+':'+String(mm).padStart(2,'0')};
+function napSlotHTML(t,lbl){return `<div class="slot nap"><div class="node nap"></div><div class="body"><div class="lbl">${lbl}</div><div class="ttl">${t}</div><div class="meta">A window to rest — and maybe you too.</div></div></div>`}
+function composeStandfirst(d,w,p){
+  const napN=napWindows().length;
+  const napPhrase=napN?`${napN} nap${napN>1?'s':''} to plan around`:'';
+  let lead;
+  if(p.commit){lead=`${p.commit.name} at ${p.commit.time}`}
+  else if(p.act){const a=actById(p.act);lead=`A trip to ${a.nm.split('—')[0].trim()}`}
+  else{lead='A gentle day at home'}
+  const wxPhrase=w.rain?'rain about':(w.temp>=20?'warm and bright':'dry enough to get out');
+  return `${lead} — ${wxPhrase}${napPhrase?', '+napPhrase:''}.`;
+}
+const prefersReduced=()=>!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+function countUp(el,target,suffix){
+  if(!isFinite(target))return;
+  if(prefersReduced()){el.textContent=target+suffix;return}
+  const dur=700,start=performance.now();
+  const tick=now=>{const t=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-t,3);el.textContent=Math.round(target*e)+suffix;if(t<1)requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
 }
 function slotHTML(ic,lbl,ttl,meta,pin,actId){
   return `<div class="slot" ${actId?`onclick="swapSlot('${actId}')"`:''}>

@@ -36,8 +36,11 @@ create index if not exists places_membership_idx on places (membership);
 
 -- Public catalogue: anyone can read; the app can add/correct.
 alter table places enable row level security;
+drop policy if exists "read places" on places;
 create policy "read places"   on places for select using (true);
+drop policy if exists "insert places" on places;
 create policy "insert places" on places for insert with check (true);
+drop policy if exists "update places" on places;
 create policy "update places" on places for update using (true) with check (true);
 
 -- Optional: live catalogue updates across devices.

@@ -12,6 +12,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <!-- ===== Supabase sync (shared family state) ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -181,6 +186,32 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 #today .mrow{display:flex;align-items:center;gap:11px;padding:9px 0;cursor:pointer}
 #today .mdot{width:9px;height:9px;border-radius:50%;flex:none}
 .nav button.on{color:#FF7A45}
+/* ——— DISCOVER ——— */
+#discover{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
+#discover .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#discover .dsc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:calc(var(--safe-t) + 16px) 22px 0}
+#discover .dsc-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
+#discover .dsc-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
+#discover .prof{width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none}
+#discover .dsc-search{display:flex;align-items:center;gap:9px;margin:13px 18px 0;background:#fff;border-radius:16px;padding:10px 13px;box-shadow:0 2px 10px -4px rgba(43,42,51,.18)}
+#discover .dsc-search input{flex:1;border:none;background:none;font-family:'Nunito';font-size:14.5px;font-weight:600;color:#2B2A33;margin:0;padding:0}
+#discover .dsc-search input:focus{outline:none}
+#discover .dsc-near{border:none;background:#FFF1E9;color:#FF7A45;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+#discover .dsc-map{height:300px;margin:12px 18px 0;border-radius:22px;overflow:hidden;box-shadow:0 1px 2px rgba(43,42,51,.06);z-index:0}
+#discover .dsc-countrow{padding:12px 24px 0;font-size:12px;font-weight:700;color:#B3AEBC}
+#discover .dsc-filters{display:flex;gap:8px;overflow-x:auto;padding:9px 18px 2px;scrollbar-width:none}
+#discover .dsc-filters::-webkit-scrollbar{display:none}
+#discover .fchip{flex:none;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:#F1EDE3;color:#6F6B7A;cursor:pointer;white-space:nowrap}
+#discover .fchip.on{background:#FF7A45;color:#fff}
+#discover .dsc-list{padding:12px 18px 0}
+#discover .dsc-card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:11px 13px;margin-bottom:9px;box-shadow:0 1px 2px rgba(43,42,51,.05);cursor:pointer}
+#discover .dsc-ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none}
+#discover .dsc-ic i{font-size:18px}
+#discover .dsc-nm{font-size:14.5px;font-weight:700;color:#2B2A33;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#discover .dsc-meta{font-size:12.5px;font-weight:600;color:#9BA08F;margin-top:1px}
+.dchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;background:#FCE7DB;color:#C44E22;line-height:1}
+.dchip i{font-size:14px}
+.leaflet-container{font-family:'Nunito',sans-serif}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -231,6 +262,32 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
     <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B3AEBC">Today's meals</div><span style="font-size:12px;font-weight:700;color:#FF7A45;cursor:pointer" onclick="go('meals')">Kitchen</span></div>
     <div id="t-meals-list"></div>
   </div>
+</section>
+
+<!-- DISCOVER -->
+<section id="discover" class="screen">
+  <div class="dsc-head">
+    <div><div class="dsc-eyebrow">DISCOVER</div><h1 class="fr dsc-title">Explore</h1></div>
+    <button class="prof" onclick="openProfile()" aria-label="Settings">L</button>
+  </div>
+  <div class="dsc-search">
+    <i class="ti ti-search" style="font-size:18px;color:#B3AEBC"></i>
+    <input id="dsc-q" placeholder="Search a place or town…" oninput="dscSearch(this.value)">
+    <button class="dsc-near" onclick="dscNearMe()" aria-label="Near me"><i class="ti ti-current-location" style="font-size:18px"></i></button>
+  </div>
+  <div id="dsc-map" class="dsc-map"></div>
+  <div class="dsc-countrow"><span id="dsc-count">…</span></div>
+  <div id="dsc-filters" class="dsc-filters">
+    <span class="fchip on" data-f="all" onclick="dscFilter('all')">All</span>
+    <span class="fchip" data-f="free" onclick="dscFilter('free')">Free for you</span>
+    <span class="fchip" data-f="nt" onclick="dscFilter('nt')">NT</span>
+    <span class="fchip" data-f="eh" onclick="dscFilter('eh')">EH</span>
+    <span class="fchip" data-f="zoo-aquarium" onclick="dscFilter('zoo-aquarium')">Zoos</span>
+    <span class="fchip" data-f="historic-house" onclick="dscFilter('historic-house')">Castles</span>
+    <span class="fchip" data-f="museum" onclick="dscFilter('museum')">Museums</span>
+    <span class="fchip" data-f="attraction" onclick="dscFilter('attraction')">Theme parks</span>
+  </div>
+  <div id="dsc-list" class="dsc-list"></div>
 </section>
 
 <!-- WEEK -->
@@ -289,7 +346,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <nav class="nav"><div class="navin">
   <button data-s="today" class="on" onclick="go('today')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v9h5v-6h4v6h5v-9"/></svg>Today</button>
   <button data-s="week" onclick="go('week')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Week</button>
-  <button data-s="plan" onclick="go('plan')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Plan</button>
+  <button data-s="discover" onclick="go('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>Discover</button>
   <button data-s="meals" onclick="go('meals')"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 003 3v7M5 3v0M8 3v8M19 3c-1.5 1-2 3-2 5s.5 4 2 4v9"/></svg>Meals</button>
   <button data-s="dash" onclick="go('dash')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2M12 12v-5"/></svg>You</button>
 </div></nav>
@@ -858,12 +915,92 @@ function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-nap
   S.plans={};save();closeSheet();renderDash();renderToday();renderWeek();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';
 
+/* ---------- DISCOVER (places catalogue) ---------- */
+let PLACES=null,_dmap=null,_dcluster=null,_dfilter='all',_dquery='',_dgeo=null;
+const _dhome=[51.257,-0.005];
+const CAT_COLOR={nt:'#54C088',eh:'#FFB23E','historic-house':'#A98BEA','zoo-aquarium':'#56B6E8',farm:'#FF8A5B',museum:'#9B7BE0','country-park':'#3FB57D',garden:'#57C98A',attraction:'#FF7A45',play:'#F47FB1'};
+const CAT_ICON={nt:'ti-tree',eh:'ti-building-castle','historic-house':'ti-building-monument','zoo-aquarium':'ti-fish',farm:'ti-horse',museum:'ti-building-bank','country-park':'ti-map-pin',garden:'ti-plant-2',attraction:'ti-ferris-wheel',play:'ti-mood-kid'};
+const catColor=c=>CAT_COLOR[c]||'#FF7A45';
+const catIcon=c=>CAT_ICON[c]||'ti-map-pin';
+const catLabel=c=>({nt:'National Trust',eh:'English Heritage','historic-house':'Historic house & castle','zoo-aquarium':'Zoo & aquarium',farm:'Farm park',museum:'Museum','country-park':'Country park',garden:'Garden',attraction:'Theme park & attraction',play:'Play'})[c]||'Place';
+async function loadPlaces(){
+  if(PLACES)return PLACES;
+  try{
+    let all=[],from=0;
+    for(;;){
+      const r=await sb.from('places').select('id,name,category,membership,area,lat,lng,cost,indoor,rain_ok,sun_ok,website').range(from,from+999);
+      if(r.error||!r.data||!r.data.length)break;
+      all=all.concat(r.data); if(r.data.length<1000)break; from+=1000;
+    }
+    if(all.length)PLACES=all;
+  }catch(e){}
+  if(!PLACES)PLACES=seedActivities.map(a=>({id:a.id,name:a.nm,category:a.member||a.cat,membership:a.member||null,area:a.loc,lat:null,lng:null,cost:a.cost,indoor:!!a.indoor,rain_ok:a.type==='rain',sun_ok:true,website:null}));
+  return PLACES;
+}
+function haversine(la1,lo1,la2,lo2){const R=6371,r=x=>x*Math.PI/180;const dLa=r(la2-la1),dLo=r(lo2-lo1);const s=Math.sin(dLa/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s))}
+function placeDist(p){if(p.lat==null)return null;const o=_dgeo||_dhome;return haversine(o[0],o[1],p.lat,p.lng)}
+async function showDiscover(){
+  const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent='Loading…';
+  await loadPlaces();
+  if(!_dmap&&window.L)initDiscoverMap();
+  renderDiscover();
+  setTimeout(()=>{if(_dmap)_dmap.invalidateSize()},150);
+}
+function initDiscoverMap(){
+  _dmap=L.map('dsc-map',{attributionControl:true}).setView(_dgeo||_dhome,9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(_dmap);
+  _dcluster=L.markerClusterGroup({chunkedLoading:true,maxClusterRadius:55});
+  _dmap.addLayer(_dcluster);
+}
+function discoverFiltered(){
+  let ps=PLACES.filter(p=>p.lat!=null);
+  if(_dfilter==='free')ps=ps.filter(p=>p.membership);
+  else if(_dfilter!=='all')ps=ps.filter(p=>p.category===_dfilter);
+  if(_dquery){const q=_dquery.toLowerCase();ps=ps.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.area||'').toLowerCase().includes(q))}
+  return ps;
+}
+function renderDiscover(){
+  const ps=discoverFiltered();
+  if(_dcluster){
+    _dcluster.clearLayers();
+    _dcluster.addLayers(ps.map(p=>L.circleMarker([p.lat,p.lng],{radius:7,color:'#fff',weight:2,fillColor:catColor(p.category),fillOpacity:1}).on('click',()=>openPlaceDetail(p.id))));
+  }
+  const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent=ps.length.toLocaleString()+' places'+(_dgeo?' · nearest first':'');
+  const near=ps.map(p=>({p,d:placeDist(p)})).sort((a,b)=>(a.d==null?1e9:a.d)-(b.d==null?1e9:b.d)).slice(0,40);
+  document.getElementById('dsc-list').innerHTML=near.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${p.name}</div><div class="dsc-meta">${catLabel(p.category)}${d!=null?' · '+Math.round(d)+' km':''}${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places match — try another filter.</div>';
+}
+function dscFilter(f){_dfilter=f;document.querySelectorAll('#dsc-filters .fchip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderDiscover()}
+function dscSearch(v){_dquery=v||'';renderDiscover()}
+function dscNearMe(){if(!navigator.geolocation){toast('Location not available');return}toast('Finding you…');navigator.geolocation.getCurrentPosition(pos=>{_dgeo=[pos.coords.latitude,pos.coords.longitude];if(_dmap)_dmap.setView(_dgeo,11);renderDiscover()},()=>toast('Could not get location'))}
+function savePlace(id){S.saved=S.saved||[];if(!S.saved.includes(id))S.saved.push(id);save();closeSheet();toast('Saved to your list')}
+function openPlaceDetail(id){
+  const p=PLACES.find(x=>(x.id+'')===(id+''));if(!p)return;
+  const dist=placeDist(p);
+  const free=p.membership?`<div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fff;background:#3FA76B;padding:7px 13px;border-radius:999px"><i class="ti ti-ticket"></i>Free with your ${p.membership.toUpperCase()} membership</div>`:'';
+  const mapsUrl=p.lat!=null?`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+  openSheet(`
+   <div style="margin:-8px -22px 8px;height:104px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center"><i class="ti ${catIcon(p.category)}" style="font-size:44px;color:#fff;opacity:.92"></i></div>
+   <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:23px;color:#2B2A33;margin:0 0 4px">${p.name}</h2>
+   <div style="font-size:13.5px;font-weight:700;color:#9BA08F;margin-bottom:11px">${catLabel(p.category)}${p.area?' · '+p.area:''}${dist!=null?' · '+Math.round(dist)+' km away':''}</div>
+   ${free?`<div style="margin-bottom:13px">${free}</div>`:''}
+   <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px">
+     ${p.cost?`<span class="dchip"><i class="ti ti-ticket"></i>${p.cost}</span>`:''}
+     <span class="dchip"><i class="ti ${p.indoor?'ti-home':'ti-tree'}"></i>${p.indoor?'Indoor':'Outdoors'}</span>
+     ${p.rain_ok?'<span class="dchip"><i class="ti ti-umbrella"></i>Good in rain</span>':''}
+   </div>
+   <div onclick="savePlace('${(p.id+'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF7A45;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Save to my list <i class="ti ti-heart"></i></div>
+   <div style="display:flex;gap:10px;margin-top:10px">
+     <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#56B6E8;vertical-align:-2px"></i> Directions</div>
+     ${p.website?`<div onclick="window.open('${p.website}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
+   </div>`);
+}
+
 /* ---------- sheet + nav ---------- */
 function openSheet(html){document.getElementById('sheet-c').innerHTML=html;document.getElementById('sheet').classList.add('on');document.getElementById('sbg').classList.add('on')}
 function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('sbg').classList.remove('on')}
 function go(s){refreshToday();document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));document.getElementById(s).classList.add('on');
   document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));window.scrollTo(0,0);
-  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='meals')renderMeals();if(s==='dash')renderDash();if(s==='today')renderToday()}
+  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='dash')renderDash();if(s==='today')renderToday()}
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--tile2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:30px;z-index:80;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
 
 /* init */

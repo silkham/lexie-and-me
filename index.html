@@ -934,7 +934,7 @@ function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-nap
 const val=(id)=>document.getElementById(id)?.value||'';
 
 /* ---------- DISCOVER (places catalogue) ---------- */
-let PLACES=null,_dmap=null,_dcluster=null,_dfilter='all',_dquery='',_dgeo=null,_dsearchPt=null,_dsearchLabel='',_dsearchTimer=null;
+let PLACES=null,_dmap=null,_dcluster=null,_dfilter='all',_dquery='',_dgeo=null,_dsearchPt=null,_dsearchLabel='',_dsearchTimer=null,_dmoveTimer=null;
 const _dhome=[51.257,-0.005];
 const CAT_COLOR={nt:'#54C088',eh:'#FFB23E','historic-house':'#A98BEA','zoo-aquarium':'#56B6E8',farm:'#FF8A5B',museum:'#9B7BE0','country-park':'#3FB57D',garden:'#57C98A',attraction:'#FF7A45',play:'#F47FB1'};
 const CAT_ICON={nt:'ti-tree',eh:'ti-building-castle','historic-house':'ti-building-monument','zoo-aquarium':'ti-fish',farm:'ti-horse',museum:'ti-building-bank','country-park':'ti-map-pin',garden:'ti-plant-2',attraction:'ti-ferris-wheel',play:'ti-mood-kid'};
@@ -962,13 +962,14 @@ async function showDiscover(){
   await loadPlaces();
   if(!_dmap&&window.L)initDiscoverMap();
   renderDiscover();
-  setTimeout(()=>{if(_dmap)_dmap.invalidateSize()},150);
+  setTimeout(()=>{if(_dmap){_dmap.invalidateSize();renderDiscoverList()}},150);
 }
 function initDiscoverMap(){
   _dmap=L.map('dsc-map',{attributionControl:true}).setView(_dgeo||_dhome,9);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:'© OpenStreetMap, © CARTO'}).addTo(_dmap);
   _dcluster=L.markerClusterGroup({chunkedLoading:true,maxClusterRadius:55});
   _dmap.addLayer(_dcluster);
+  _dmap.on('moveend',()=>{clearTimeout(_dmoveTimer);_dmoveTimer=setTimeout(renderDiscoverList,120)});
 }
 function discoverFiltered(){
   let ps=PLACES.filter(p=>p.lat!=null);
@@ -982,9 +983,17 @@ function renderDiscover(){
     _dcluster.clearLayers();
     _dcluster.addLayers(ps.map(p=>L.circleMarker([p.lat,p.lng],{radius:7,color:'#fff',weight:2,fillColor:catColor(p.category),fillOpacity:1}).on('click',()=>openPlaceDetail(p.id))));
   }
-  const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent=ps.length.toLocaleString()+' places'+(_dsearchPt?' · near '+_dsearchLabel:(_dgeo?' · nearest first':''));
-  const near=ps.map(p=>({p,d:placeDist(p)})).sort((a,b)=>(a.d==null?1e9:a.d)-(b.d==null?1e9:b.d)).slice(0,40);
-  document.getElementById('dsc-list').innerHTML=near.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)}${d!=null?' · '+Math.round(d)+' km':''}${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places match — try another filter.</div>';
+  renderDiscoverList();
+}
+function renderDiscoverList(){
+  if(!PLACES)return;
+  const ps=discoverFiltered();
+  let center,inView;
+  if(_dmap){const b=_dmap.getBounds();const c=_dmap.getCenter();center=[c.lat,c.lng];inView=ps.filter(p=>b.contains([p.lat,p.lng]));}
+  else{center=_dsearchPt||_dgeo||_dhome;inView=ps;}
+  const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent=_dmap?(inView.length.toLocaleString()+' place'+(inView.length===1?'':'s')+' in view'):(ps.length.toLocaleString()+' places');
+  const shown=inView.map(p=>({p,d:haversine(center[0],center[1],p.lat,p.lng)})).sort((a,b)=>a.d-b.d).slice(0,40);
+  document.getElementById('dsc-list').innerHTML=shown.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)} · ${Math.round(d)} km${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places in view — pan the map or zoom out.</div>';
 }
 function dscFilter(f){_dfilter=f;document.querySelectorAll('#dsc-filters .fchip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderDiscover()}
 function dscSearch(v){_dquery=v||'';clearTimeout(_dsearchTimer);_dsearchTimer=setTimeout(()=>showSuggestions(_dquery),280);}

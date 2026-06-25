@@ -378,7 +378,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.1 (build 1)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.1 (build 2)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1055,7 +1055,7 @@ function openPlaceDetail(id){
   const mapsUrl=p.lat!=null?`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nm)}`;
   const hasWiki=!!p.notes;
   openSheet(`
-   <div id="pd-hero" style="margin:-8px -22px 12px;height:150px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center;overflow:hidden"><i class="ti ${catIcon(p.category)}" style="font-size:50px;color:#fff;opacity:.92"></i></div>
+   <div id="pd-hero" style="margin:-8px -22px 12px;height:170px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative"><i class="ti ${catIcon(p.category)}" style="font-size:50px;color:#fff;opacity:.92"></i></div>
    <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:23px;color:#2B2A33;margin:0 0 4px;line-height:1.1">${nm}</h2>
    <div style="font-size:13.5px;font-weight:700;color:#9BA08F;margin-bottom:11px">${catLabel(p.category)}${p.area?' · '+p.area:''}${dist!=null?' · '+Math.round(dist)+' km away':''}</div>
    ${free?`<div style="margin-bottom:13px">${free}</div>`:''}
@@ -1072,7 +1072,7 @@ function openPlaceDetail(id){
      ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
    </div>`);
   if(hasWiki)placeMedia(p).then(m=>{
-    if(m.image){const h=document.getElementById('pd-hero');if(h)h.innerHTML=`<img src="${m.image}" alt="" style="width:100%;height:100%;object-fit:cover">`}
+    if(m.image){const h=document.getElementById('pd-hero');if(h){const u=(m.image+'').replace(/'/g,'%27');h.innerHTML=`<div style="position:absolute;inset:0;background:url('${u}') center/cover no-repeat;filter:blur(20px);transform:scale(1.25);opacity:.5"></div><img src="${u}" alt="" style="position:relative;width:100%;height:100%;object-fit:contain;display:block">`}}
     const d=document.getElementById('pd-desc');if(d)d.textContent=m.extract||(p.website?'Tap Website below for full details.':'No description available.');
   });
 }

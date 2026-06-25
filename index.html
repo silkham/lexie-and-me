@@ -231,6 +231,24 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.65)!important}
 .leaflet-bar a{border-radius:8px!important;color:#2B2A33!important}
 
+/* ——— MEALS week planner ——— */
+#meals{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
+#meals .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#meals .m-head{padding:calc(var(--safe-t) + 16px) 22px 0}
+#meals .m-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
+#meals .m-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
+#meals .m-sub{font-size:12.5px;font-weight:600;color:#6F6B7A;margin-top:6px}
+#meals .dcard{background:#fff;border-radius:20px;padding:13px 16px;margin:11px 18px 0;box-shadow:0 1px 2px rgba(43,42,51,.05)}
+#meals .dcard.today{outline:2px solid #FF7A45}
+#meals .dhead{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
+#meals .dhead b{font-family:'Fredoka';font-size:17px;color:#2B2A33}
+#meals .mslot{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-top:1px solid #F4F0E6}
+#meals .mslot:first-of-type{border-top:none}
+#meals .mslot .mdotm{width:8px;height:8px;border-radius:50%;flex:none}
+#meals .mslot .ml{font-size:11px;font-weight:800;color:#C7C2B8;width:14px}
+#meals .mslot .mv{flex:1;font-size:14px;font-weight:700;color:#2B2A33}
+#meals .mslot .mv.empty{color:#C7C2B8;font-weight:600}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -337,16 +355,14 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 
 <!-- MEALS -->
 <section id="meals" class="screen">
-  <div class="hdr"><div class="eyebrow">Kitchen</div><h1>Breakfast &amp; Lunch</h1>
-    <div class="sub">The two you actually plan — quick, real, baby-led.</div></div>
-  <div class="row between" style="margin:6px 4px"><div class="eyebrow">Breakfast ideas</div>
-    <span class="chip" onclick="addMeal('bf')">+ Add</span></div>
-  <div id="m-bf"></div>
-  <div class="row between" style="margin:16px 4px 6px"><div class="eyebrow">Lunch ideas</div>
-    <span class="chip" onclick="addMeal('ln')">+ Add</span></div>
-  <div id="m-ln"></div>
-  <button class="btn ghost" onclick="shuffleMeals()" style="margin-top:10px">↺ Shuffle unpinned ideas</button>
-  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:16px 4px 0">This is your library of ideas. Set what you&rsquo;re actually eating each day over in <b>Week</b>.</p>
+  <div class="m-head">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div class="m-eyebrow">MEALS · THIS WEEK</div><h1 class="fr m-title">Plan the week</h1></div>
+      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
+    </div>
+    <div class="m-sub"><i class="ti ti-refresh" style="font-size:13px;vertical-align:-2px"></i> Shared with Christine · same plan for the family</div>
+  </div>
+  <div id="m-week"></div>
 </section>
 
 
@@ -382,7 +398,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.2 (build 7)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.2 (build 8)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -698,9 +714,9 @@ function renderToday(){
 
   // today's meals
   const k=dkey(today);
-  const meals=[['#FFC24B','Breakfast',dayMeal(today,'bf'),"pickDayMeal('"+k+"','bf')"],
-               ['#56B6E8','Lunch',dayMeal(today,'ln'),"pickDayMeal('"+k+"','ln')"],
-               ['#FF7A45','Dinner','Plan with Christine',"go('meals')"]];
+  const meals=[['#FFC24B','Breakfast',dayMeal(today,'bf'),"openMealEditor('"+k+"','bf')"],
+               ['#56B6E8','Lunch',dayMeal(today,'ln'),"openMealEditor('"+k+"','ln')"],
+               ['#FF7A45','Dinner',dayMeal(today,'dn')||'Plan dinner',"openMealEditor('"+k+"','dn')"]];
   document.getElementById('t-meals-list').innerHTML=meals.map((m,i)=>`<div class="mrow" style="${i<2?'border-bottom:1px solid #F2EEE3':''}" onclick="${m[3]}"><span class="mdot" style="background:${m[0]}"></span><div style="flex:1;font-size:14.5px;font-weight:700;color:#2B2A33">${m[2]}</div><span style="font-size:12px;font-weight:600;color:#B3AEBC">${m[1]}</span></div>`).join('');
 }
 function openAdventure(){ if(_todayAct){if((_todayAct+'').indexOf('place:')===0){openPlaceDetail(_todayAct.slice(6))}else{swapSlot(_todayAct)}}else{go('discover')} }
@@ -722,7 +738,7 @@ function slotHTML(ic,lbl,ttl,meta,pin,actId){
     </div></div>`;
 }
 function mealIsSet(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];return !!(m&&m[sec])}
-function autoMeal(d,sec){const a=S.meals[sec];if(!a.length)return 'Your choice';
+function autoMeal(d,sec){const a=S.meals[sec];if(!a||!a.length)return sec==='dn'?'':'Your choice';
   const idx=(new Date(d).getDate())%a.length;return a[idx].nm}
 function dayMeal(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];
   if(m&&m[sec])return m[sec];return autoMeal(d,sec)}
@@ -782,7 +798,7 @@ function pickDayMeal(k,sec){const lib=S.meals[sec];
    </div>
    <button class="btn ghost" style="margin-top:10px" onclick="clearDayMeal('${k}','${sec}')">↺ Back to suggested</button>`)}
 function setDayMeal(k,sec,nm){if(!S.dayMeals[k])S.dayMeals[k]={};S.dayMeals[k][sec]=nm;save();closeSheet();renderWeek();if(k===dkey(today))renderToday();toast('Set')}
-function clearDayMeal(k,sec){if(S.dayMeals[k]){delete S.dayMeals[k][sec];if(!Object.keys(S.dayMeals[k]).length)delete S.dayMeals[k]}save();closeSheet();renderWeek();if(k===dkey(today))renderToday();toast('Back to suggested')}
+function clearDayMeal(k,sec){if(S.dayMeals[k]){delete S.dayMeals[k][sec];if(!Object.keys(S.dayMeals[k]).length)delete S.dayMeals[k]}save();closeSheet();renderMeals();if(k===dkey(today))renderToday();toast('Cleared')}
 function selWeek(k){weekSel=k;renderWeek()}
 function regenDay(k){delete S.plans[k];planFor(new Date(k));renderWeek();if(k===dkey(today))renderToday()}
 
@@ -837,9 +853,29 @@ function mealCard(m,sec,i){const e=sec==='bf'?'🍳':'🥪';
     <div class="ds">Baby: ${m.baby||'—'}</div>
     ${m.ings&&m.ings.length?`<div class="mt"><span>🛒 ${m.ings.join(', ')}</span></div>`:''}</div></div>`}
 function renderMeals(){
-  document.getElementById('m-bf').innerHTML=S.meals.bf.map((m,i)=>mealCard(m,'bf',i)).join('')||emptyMeal();
-  document.getElementById('m-ln').innerHTML=S.meals.ln.map((m,i)=>mealCard(m,'ln',i)).join('')||emptyMeal();
+  const start=new Date(today);start.setDate(start.getDate()-((start.getDay()+6)%7));
+  const slots=[['bf','Breakfast','#FFC24B'],['ln','Lunch','#56B6E8'],['dn','Dinner','#FF7A45']];
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d);const isT=k===dkey(today);
+    html+=`<div class="dcard ${isT?'today':''}">
+      <div class="dhead"><b>${d.toLocaleDateString('en-GB',{weekday:'long'})}</b><span style="font-size:12px;font-weight:700;color:${isT?'#FF7A45':'#B3AEBC'}">${isT?'today':d.getDate()+' '+d.toLocaleDateString('en-GB',{month:'short'})}</span></div>
+      ${slots.map(([sec,lbl,col])=>{const v=dayMeal(d,sec);const empty=!v;return `<div class="mslot" onclick="openMealEditor('${k}','${sec}')"><span class="mdotm" style="background:${col}"></span><span class="ml">${lbl[0]}</span><span class="mv ${empty?'empty':''}">${empty?'Plan '+lbl.toLowerCase():v}</span><i class="ti ti-chevron-right" style="font-size:16px;color:#D9D4C8"></i></div>`}).join('')}
+    </div>`;
+  }
+  const el=document.getElementById('m-week');if(el)el.innerHTML=html;
 }
+function openMealEditor(k,sec){
+  const labels={bf:'Breakfast',ln:'Lunch',dn:'Dinner'};
+  const cur=(S.dayMeals[k]&&S.dayMeals[k][sec])||'';
+  const lib=sec==='dn'?[]:(S.meals[sec]||[]);
+  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 6px">${labels[sec]} · ${new Date(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'})}</h2>
+    <input id="me-in" placeholder="What's for ${labels[sec].toLowerCase()}?" value="${(cur||'').replace(/"/g,'&quot;')}">
+    ${lib.length?`<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:16px 2px 8px">From your ideas</div><div style="display:flex;flex-wrap:wrap;gap:7px">${lib.map(mm=>`<span onclick="document.getElementById('me-in').value='${(mm.nm+'').replace(/'/g,"\\'")}'" style="font-size:13px;font-weight:700;color:#C44E22;background:#FCE7DB;padding:8px 12px;border-radius:999px;cursor:pointer">${mm.nm}</span>`).join('')}</div>`:''}
+    <button class="btn" style="margin-top:18px" onclick="saveMealSlot('${k}','${sec}')">Save</button>
+    ${cur?`<button class="btn ghost" style="margin-top:9px" onclick="clearDayMeal('${k}','${sec}')">Clear</button>`:''}`);
+}
+function saveMealSlot(k,sec){const v=val('me-in').trim();if(!v){toast('Type a meal');return}if(!S.dayMeals[k])S.dayMeals[k]={};S.dayMeals[k][sec]=v;save();closeSheet();renderMeals();if(k===dkey(today))renderToday();toast('Saved')}
 const emptyMeal=()=>'<div class="faded" style="padding:6px 4px;font-family:Newsreader,serif;font-size:15px">Nothing here yet — tap + Add.</div>';
 function shuffleMeals(){
   ['bf','ln'].forEach(sec=>{

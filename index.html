@@ -231,6 +231,25 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.65)!important}
 .leaflet-bar a{border-radius:8px!important;color:#2B2A33!important}
 
+/* ——— CALENDAR ——— */
+#calendar{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
+#calendar .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#calendar .c-head{padding:calc(var(--safe-t) + 16px) 22px 0}
+#calendar .c-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
+#calendar .c-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
+#calendar .c-monthnav{display:flex;justify-content:flex-end;gap:8px;padding:6px 18px 0}
+#calendar .c-monthnav button{width:34px;height:34px;border-radius:11px;border:none;background:#fff;box-shadow:0 1px 3px rgba(43,42,51,.1);color:#2B2A33;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#calendar .c-monthnav i{font-size:18px}
+#calendar .c-gridhead{display:grid;grid-template-columns:repeat(7,1fr);padding:12px 18px 2px}
+#calendar .c-gridhead span{text-align:center;font-size:11px;font-weight:700;color:#B3AEBC}
+#calendar .c-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 18px}
+#calendar .c-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#2B2A33;border-radius:50%;cursor:pointer}
+#calendar .c-cell.today{background:#FF7A45;color:#fff}
+#calendar .c-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
+#calendar .c-coming-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9BA08F;font-weight:700;padding:20px 24px 4px}
+#calendar .c-up{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid #F0EADD}
+#calendar .c-updot{width:11px;height:11px;border-radius:50%;flex:none}
+
 /* ——— MEALS week planner ——— */
 #meals{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
 #meals .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
@@ -380,13 +399,28 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <button class="btn ghost" style="margin-top:9px" onclick="openProfile()">Edit Lexie's profile</button>
 </section>
 
+<!-- CALENDAR -->
+<section id="calendar" class="screen">
+  <div class="c-head">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div class="c-eyebrow">CALENDAR</div><h1 class="fr c-title" id="c-month">—</h1></div>
+      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
+    </div>
+  </div>
+  <div class="c-monthnav"><button onclick="calNav(-1)" aria-label="Previous month"><i class="ti ti-chevron-left"></i></button><button onclick="calNav(1)" aria-label="Next month"><i class="ti ti-chevron-right"></i></button></div>
+  <div class="c-gridhead"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+  <div id="c-grid" class="c-grid"></div>
+  <div class="c-coming-label">Coming up</div>
+  <div id="c-coming" style="padding:0 22px"></div>
+  <button onclick="openCommit()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF7A45;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer;margin:18px 18px 0"><i class="ti ti-plus"></i> Add to calendar</button>
+</section>
+
 <!-- nav -->
 <nav class="nav"><div class="navin">
   <button data-s="today" class="on" onclick="go('today')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v9h5v-6h4v6h5v-9"/></svg>Today</button>
-  <button data-s="week" onclick="go('week')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Week</button>
   <button data-s="discover" onclick="go('discover')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>Discover</button>
   <button data-s="meals" onclick="go('meals')"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 003 3v7M5 3v0M8 3v8M19 3c-1.5 1-2 3-2 5s.5 4 2 4v9"/></svg>Meals</button>
-  <button data-s="dash" onclick="go('dash')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2M12 12v-5"/></svg>You</button>
+  <button data-s="calendar" onclick="go('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>Calendar</button>
 </div></nav>
 
 </div>
@@ -398,7 +432,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.2 (build 8)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.3 (build 9)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -958,30 +992,52 @@ function scoreHTML(lab,n,pct){return `<div class="score"><div class="n">${n}</di
 const full=(d)=>({MO:'Mon',TU:'Tue',WE:'Wed',TH:'Thu',FR:'Fri',SA:'Sat',SU:'Sun'}[d]||d);
 
 /* commitments form */
-function openCommit(){const todayK=dkey(today);openSheet(`
-  <h2 style="font-size:22px">Add a class or event</h2>
-  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin-top:6px">Booked classes, appointments, visitors — anything that pins a day. It locks that day so plans build around it.</p>
-  <label>Name</label><input id="c-nm" placeholder="e.g. Baby Sensory, or GP appointment">
-  <div class="grid2"><div><label>Date</label><input id="c-date" type="date" value="${todayK}"></div>
-  <div><label>Time</label><input id="c-time" placeholder="9:30"></div></div>
-  <label>Location <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Caterham">
-  <div class="act" style="margin-top:16px;cursor:pointer" onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()">
-    <div class="emoji" id="c-wicon">📍</div><div style="flex:1">
-      <div class="nm" style="font-size:15px">Repeats weekly</div>
-      <div class="ds" id="c-wlabel">One-off on this date</div></div>
-    <div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center"></div>
-    <input type="checkbox" id="c-weekly" style="display:none">
-  </div>
-  <button class="btn" style="margin-top:18px" onclick="saveCommit()">Save</button>`);}
-function syncWeekly(){const on=document.getElementById('c-weekly').checked;
-  document.getElementById('c-wbox').style.background=on?'var(--sage)':'transparent';
-  document.getElementById('c-wbox').textContent=on?'✓':'';
-  document.getElementById('c-wicon').textContent=on?'🔁':'📍';
-  document.getElementById('c-wlabel').textContent=on?'Every week on this weekday':'One-off on this date';}
+/* ---------- CALENDAR ---------- */
+let _calMonth=null,_evType='class';
+const typeColor=t=>({class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visitor:'#FFB23E'}[t]||'#FF7A45');
+const typeIcon=t=>({class:'ti-music',appointment:'ti-stethoscope',outing:'ti-map-pin',visitor:'ti-users'}[t]||'ti-calendar');
+function eventsForDay(d){const out=[];const k=dkey(d);
+  S.commitments.forEach((c,idx)=>{const m=c.weekly?(d>=new Date(c.date)&&new Date(c.date).getDay()===d.getDay()):c.date===k;
+    if(m)out.push({name:c.name,time:c.time,color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),del:"delCommitFromSheet('"+k+"',"+idx+")"})});
+  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),del:"unplanDay('"+k+"')"})}
+  return out;}
+function renderCalendar(){
+  if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);
+  const mo=_calMonth;
+  document.getElementById('c-month').textContent=mo.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const days=new Date(mo.getFullYear(),mo.getMonth()+1,0).getDate();
+  const blanks=(new Date(mo.getFullYear(),mo.getMonth(),1).getDay()+6)%7;
+  let html='';for(let i=0;i<blanks;i++)html+='<div></div>';
+  for(let dn=1;dn<=days;dn++){const d=new Date(mo.getFullYear(),mo.getMonth(),dn);const k=dkey(d);const isT=k===dkey(today);const ev=eventsForDay(d);
+    html+=`<div class="c-cell ${isT?'today':''}" onclick="selCalDay('${k}')"><span>${dn}</span><span class="c-dot" style="background:${ev.length?(isT?'#fff':ev[0].color):'transparent'}"></span></div>`;}
+  document.getElementById('c-grid').innerHTML=html;
+  renderComing();}
+function renderComing(){let items=[];for(let i=0;i<35;i++){const d=new Date(today);d.setDate(d.getDate()+i);eventsForDay(d).forEach(e=>items.push({d,e}))}items=items.slice(0,12);
+  document.getElementById('c-coming').innerHTML=items.length?items.map(({d,e})=>{const when=dkey(d)===dkey(today)?'Today':d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    return `<div class="c-up"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}</div></div><i class="ti ${e.icon}" style="font-size:17px;color:${e.color}"></i></div>`}).join(''):'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
+function calNav(n){if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);_calMonth=new Date(_calMonth.getFullYear(),_calMonth.getMonth()+n,1);renderCalendar()}
+function selCalDay(k){const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">${lbl}</h2>
+   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}</div></div><i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
+   <button class="btn" style="margin-top:16px" onclick="openCommit('${k}')">+ Add to this day</button>`);}
+function delCommitFromSheet(k,i){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();selCalDay(k)}
+function unplanDay(k){if(S.dayPlace)delete S.dayPlace[k];save();renderCalendar();if(k===dkey(today))renderToday();selCalDay(k)}
+function openCommit(k){const dateK=k||dkey(today);_evType='class';
+  const types=[['class','Class','#A98BEA'],['appointment','Appointment','#56B6E8'],['outing','Outing','#57C98A'],['visitor','Visitor','#FFB23E']];
+  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">Add to calendar</h2>
+   <input id="c-nm" placeholder="What is it? e.g. Hartbeeps, GP visit">
+   <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:14px 2px 8px">Type</div>
+   <div id="c-types" style="display:flex;flex-wrap:wrap;gap:8px">${types.map(([t,l,c])=>`<span class="c-typechip" data-t="${t}" onclick="pickEvType('${t}')" style="font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;background:${t==='class'?c:'#F1EFE8'};color:${t==='class'?'#fff':'#6F6B7A'}">${l}</span>`).join('')}</div>
+   <div style="display:flex;gap:11px;margin-top:14px"><div style="flex:1"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div><div style="flex:1"><label>Time</label><input id="c-time" placeholder="10:00"></div></div>
+   <label>Where <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Oxted Hall">
+   <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#A98BEA"></i><div style="flex:1;font-size:15px;font-weight:700;color:#2B2A33">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff"></div><input type="checkbox" id="c-weekly" style="display:none"></div>
+   <button class="btn" style="margin-top:18px" onclick="saveCommit()">Add event</button>`);}
+function pickEvType(t){_evType=t;const c={class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visitor:'#FFB23E'};document.querySelectorAll('#c-types .c-typechip').forEach(x=>{const on=x.dataset.t===t;x.style.background=on?c[x.dataset.t]:'#F1EFE8';x.style.color=on?'#fff':'#6F6B7A'})}
+function syncWeekly(){const on=document.getElementById('c-weekly').checked;const b=document.getElementById('c-wbox');if(b){b.style.background=on?'#57C98A':'transparent';b.style.borderColor=on?'#57C98A':'var(--line)';b.textContent=on?'✓':''}}
 function saveCommit(){const date=val('c-date');if(!date){toast('Pick a date');return}
-  const c={name:val('c-nm')||'Class',date,time:val('c-time')||'9:30',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked};
-  S.commitments.push(c);S.plans={};save();closeSheet();renderDash();renderWeek();renderToday();toast(c.weekly?'Weekly class added':'Event added')}
-function delCommit(i){S.commitments.splice(i,1);S.plans={};save();renderDash();renderWeek();renderToday()}
+  const c={name:val('c-nm')||'Event',date,time:val('c-time')||'',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
+  S.commitments.push(c);S.plans={};save();closeSheet();renderCalendar();renderToday();toast(c.weekly?'Weekly event added':'Event added')}
+function delCommit(i){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday()}
 function openProfile(){openSheet(`
   <h2 style="font-size:22px">Lexie's profile</h2>
   <label>Name</label><input id="p-nm" value="${S.baby.name}">
@@ -1189,7 +1245,7 @@ function openSheet(html){document.getElementById('sheet-c').innerHTML=html;docum
 function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('sbg').classList.remove('on')}
 function go(s){refreshToday();document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));document.getElementById(s).classList.add('on');
   document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));window.scrollTo(0,0);
-  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='dash')renderDash();if(s==='today')renderToday()}
+  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='calendar')renderCalendar();if(s==='dash')renderDash();if(s==='today')renderToday()}
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--tile2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:30px;z-index:80;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
 
 /* init */

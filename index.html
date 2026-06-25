@@ -193,7 +193,17 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 #discover .dsc-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
 #discover .dsc-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
 #discover .prof{width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none}
-#discover .dsc-search{display:flex;align-items:center;gap:9px;margin:13px 18px 0;background:#fff;border-radius:16px;padding:10px 13px;box-shadow:0 2px 10px -4px rgba(43,42,51,.18)}
+#discover .dsc-searchwrap{position:relative;margin:13px 18px 0;z-index:1200}
+#discover .dsc-search{display:flex;align-items:center;gap:9px;background:#fff;border-radius:16px;padding:10px 13px;box-shadow:0 2px 10px -4px rgba(43,42,51,.18)}
+#discover .dsc-sug{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border-radius:16px;box-shadow:0 14px 34px -10px rgba(43,42,51,.34);overflow-y:auto;max-height:330px;display:none}
+#discover .dsc-sug.on{display:block}
+#discover .dsc-sug .shead{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B3AEBC;padding:10px 14px 4px}
+#discover .dsc-sug .srow{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;border-top:1px solid #F4F0E6}
+#discover .dsc-sug .srow:active{background:#F6F2E9}
+#discover .dsc-sug .sic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none}
+#discover .dsc-sug .sic i{font-size:16px}
+#discover .dsc-sug .st{font-size:14px;font-weight:700;color:#2B2A33;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#discover .dsc-sug .ss{font-size:12px;font-weight:600;color:#9BA08F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #discover .dsc-search input{flex:1;border:none;background:none;font-family:'Nunito';font-size:14.5px;font-weight:600;color:#2B2A33;margin:0;padding:0}
 #discover .dsc-search input:focus{outline:none}
 #discover .dsc-near{border:none;background:#FFF1E9;color:#FF7A45;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
@@ -270,10 +280,13 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
     <div><div class="dsc-eyebrow">DISCOVER</div><h1 class="fr dsc-title">Explore</h1></div>
     <button class="prof" onclick="openProfile()" aria-label="Settings">L</button>
   </div>
-  <div class="dsc-search">
-    <i class="ti ti-search" style="font-size:18px;color:#B3AEBC"></i>
-    <input id="dsc-q" placeholder="Search a place or town…" oninput="dscSearch(this.value)">
-    <button class="dsc-near" onclick="dscNearMe()" aria-label="Near me"><i class="ti ti-current-location" style="font-size:18px"></i></button>
+  <div class="dsc-searchwrap">
+    <div class="dsc-search">
+      <i class="ti ti-search" style="font-size:18px;color:#B3AEBC"></i>
+      <input id="dsc-q" placeholder="Search a town, postcode or place…" oninput="dscSearch(this.value)" autocomplete="off">
+      <button class="dsc-near" onclick="dscNearMe()" aria-label="Near me"><i class="ti ti-current-location" style="font-size:18px"></i></button>
+    </div>
+    <div id="dsc-sug" class="dsc-sug"></div>
   </div>
   <div id="dsc-map" class="dsc-map"></div>
   <div class="dsc-countrow"><span id="dsc-count">…</span></div>
@@ -956,7 +969,6 @@ function discoverFiltered(){
   let ps=PLACES.filter(p=>p.lat!=null);
   if(_dfilter==='free')ps=ps.filter(p=>p.membership);
   else if(_dfilter!=='all')ps=ps.filter(p=>p.category===_dfilter);
-  if(_dquery&&!_dsearchPt){const q=_dquery.toLowerCase();ps=ps.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.area||'').toLowerCase().includes(q))}
   return ps;
 }
 function renderDiscover(){
@@ -970,18 +982,29 @@ function renderDiscover(){
   document.getElementById('dsc-list').innerHTML=near.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)}${d!=null?' · '+Math.round(d)+' km':''}${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places match — try another filter.</div>';
 }
 function dscFilter(f){_dfilter=f;document.querySelectorAll('#dsc-filters .fchip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderDiscover()}
-function dscSearch(v){_dquery=v||'';_dsearchPt=null;_dsearchLabel='';clearTimeout(_dsearchTimer);
-  if(_dquery.trim())_dsearchTimer=setTimeout(()=>geocodeSearch(_dquery.trim()),500);
-  renderDiscover();
-}
-async function geocodeSearch(q){
+function dscSearch(v){_dquery=v||'';clearTimeout(_dsearchTimer);_dsearchTimer=setTimeout(()=>showSuggestions(_dquery),280);}
+function _sugRow(onclick,bg,icon,title,sub){return `<div class="srow" onclick="${onclick}"><div class="sic" style="background:${bg}"><i class="ti ${icon}"></i></div><div style="flex:1;min-width:0"><div class="st">${title}</div>${sub?`<div class="ss">${sub}</div>`:''}</div></div>`}
+async function showSuggestions(q){
+  q=(q||'').trim();const box=document.getElementById('dsc-sug');if(!box)return;
+  if(q.length<2){box.classList.remove('on');box.innerHTML='';_dsearchPt=null;_dsearchLabel='';renderDiscover();return}
+  const ql=q.toLowerCase();
+  const pm=(PLACES||[]).filter(p=>cleanName(p.name).toLowerCase().includes(ql)).slice(0,4);
+  let head='';
+  if(pm.length)head='<div class="shead">Places</div>'+pm.map(p=>_sugRow(`pickPlace('${(p.id+'').replace(/'/g,"\\'")}')`,catColor(p.category),catIcon(p.category),cleanName(p.name),catLabel(p.category)+(p.area?' · '+p.area:''))).join('');
+  box.innerHTML=head+'<div class="shead">Locations</div><div class="srow"><div class="ss" style="padding-left:2px">Searching…</div></div>';
+  box.classList.add('on');
   try{
-    const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=gb&limit=1&q=${encodeURIComponent(q)}`);
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=gb&limit=5&q=${encodeURIComponent(q)}`);
     const d=await r.json();
-    if(d&&d.length){_dsearchPt=[+d[0].lat,+d[0].lon];_dsearchLabel=(d[0].display_name||q).split(',')[0];if(_dmap)_dmap.setView(_dsearchPt,11);renderDiscover();return}
-  }catch(e){}
-  _dsearchPt=null;renderDiscover();
+    if(_dquery.trim()!==q)return;
+    let loc;
+    if(d&&d.length)loc=d.map(x=>{const parts=(x.display_name||'').split(',');const nm=parts[0].trim();const sub=parts.slice(1,3).join(',').trim();return _sugRow(`pickLocation(${x.lat},${x.lon},'${nm.replace(/'/g,"\\'")}')`,'#FF7A45','ti-map-pin',nm,sub)}).join('');
+    else loc='<div class="srow"><div class="ss">No matching towns — check spelling?</div></div>';
+    box.innerHTML=head+'<div class="shead">Locations</div>'+loc;
+  }catch(e){box.innerHTML=head||'';if(!head)box.classList.remove('on')}
 }
+function pickPlace(id){const box=document.getElementById('dsc-sug');if(box)box.classList.remove('on');const p=PLACES.find(x=>(x.id+'')===(id+''));if(p&&p.lat!=null&&_dmap)_dmap.setView([p.lat,p.lng],13);openPlaceDetail(id)}
+function pickLocation(lat,lng,label){_dsearchPt=[+lat,+lng];_dsearchLabel=label;const i=document.getElementById('dsc-q');if(i)i.value=label;const box=document.getElementById('dsc-sug');if(box)box.classList.remove('on');if(_dmap)_dmap.setView(_dsearchPt,11);renderDiscover()}
 function dscNearMe(){if(!navigator.geolocation){toast('Location not available');return}toast('Finding you…');navigator.geolocation.getCurrentPosition(pos=>{_dgeo=[pos.coords.latitude,pos.coords.longitude];if(_dmap)_dmap.setView(_dgeo,11);renderDiscover()},()=>toast('Could not get location'))}
 function savePlace(id){S.saved=S.saved||[];if(!S.saved.includes(id))S.saved.push(id);save();closeSheet();toast('Saved to your list')}
 const cleanName=n=>(n||'').split(';')[0].trim();

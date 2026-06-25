@@ -378,7 +378,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.1 (build 3)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.1 (build 4)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1033,7 +1033,7 @@ async function placeMedia(p){
     if(p.notes.indexOf('wp:')===0){const w=p.notes.slice(3);title=w.indexOf(':')>=0?w.slice(w.indexOf(':')+1):w}
     else if(p.notes.indexOf('wd:')===0)qid=p.notes.slice(3);
   }
-  let res={image:null,aspect:null,extract:null};
+  let res={image:null,imageFallback:null,aspect:null,extract:null};
   try{
     if(!title&&qid){
       const r=await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=sitelinks&format=json&origin=*`);
@@ -1042,10 +1042,10 @@ async function placeMedia(p){
     if(title){
       const r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
       const d=await r.json();
-      let img=(d.thumbnail&&d.thumbnail.source)||null;
+      const img330=(d.thumbnail&&d.thumbnail.source)||null;
+      const img500=img330?img330.replace(/\/\d+px-/,'/500px-'):null;  /* 500 is a valid Wikimedia bucket; 512/640 are rejected */
       const aspect=(d.thumbnail&&d.thumbnail.width&&d.thumbnail.height)?d.thumbnail.width/d.thumbnail.height:null;
-      if(img)img=img.replace(/\/\d+px-/,'/640px-');  /* request a larger render */
-      res={image:img, aspect, extract:(d.extract&&d.extract.length>10)?d.extract:null};
+      res={image:img500||img330, imageFallback:img330, aspect, extract:(d.extract&&d.extract.length>10)?d.extract:null};
     }
   }catch(e){}
   _mediaCache[key]=res;return res;
@@ -1079,7 +1079,8 @@ function openPlaceDetail(id){
       const w=h.offsetWidth||360;
       if(m.aspect)h.style.height=Math.max(150,Math.min(320,Math.round(w/m.aspect)))+'px';
       const u=(m.image+'').replace(/'/g,'%27');
-      h.innerHTML=`<div style="position:absolute;inset:0;background:url('${u}') center/cover no-repeat;filter:blur(22px);transform:scale(1.3);opacity:.55"></div><img src="${u}" alt="" style="position:relative;width:100%;height:100%;object-fit:contain;display:block">`;
+      const fb=((m.imageFallback||m.image)+'').replace(/'/g,'%27');
+      h.innerHTML=`<div style="position:absolute;inset:0;background:url('${fb}') center/cover no-repeat;filter:blur(22px);transform:scale(1.3);opacity:.55"></div><img src="${u}" alt="" onerror="this.onerror=null;this.src='${fb}'" style="position:relative;width:100%;height:100%;object-fit:contain;display:block">`;
     }}
     const d=document.getElementById('pd-desc');if(d)d.textContent=m.extract||(p.website?'Tap Website below for full details.':'No description available.');
   });

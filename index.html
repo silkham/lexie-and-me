@@ -928,7 +928,7 @@ async function loadPlaces(){
   try{
     let all=[],from=0;
     for(;;){
-      const r=await sb.from('places').select('id,name,category,membership,area,lat,lng,cost,indoor,rain_ok,sun_ok,website').range(from,from+999);
+      const r=await sb.from('places').select('id,name,category,membership,area,lat,lng,cost,indoor,rain_ok,sun_ok,website,opening_hours,notes').range(from,from+999);
       if(r.error||!r.data||!r.data.length)break;
       all=all.concat(r.data); if(r.data.length<1000)break; from+=1000;
     }
@@ -967,32 +967,64 @@ function renderDiscover(){
   }
   const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent=ps.length.toLocaleString()+' places'+(_dgeo?' · nearest first':'');
   const near=ps.map(p=>({p,d:placeDist(p)})).sort((a,b)=>(a.d==null?1e9:a.d)-(b.d==null?1e9:b.d)).slice(0,40);
-  document.getElementById('dsc-list').innerHTML=near.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${p.name}</div><div class="dsc-meta">${catLabel(p.category)}${d!=null?' · '+Math.round(d)+' km':''}${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places match — try another filter.</div>';
+  document.getElementById('dsc-list').innerHTML=near.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)}${d!=null?' · '+Math.round(d)+' km':''}${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places match — try another filter.</div>';
 }
 function dscFilter(f){_dfilter=f;document.querySelectorAll('#dsc-filters .fchip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderDiscover()}
 function dscSearch(v){_dquery=v||'';renderDiscover()}
 function dscNearMe(){if(!navigator.geolocation){toast('Location not available');return}toast('Finding you…');navigator.geolocation.getCurrentPosition(pos=>{_dgeo=[pos.coords.latitude,pos.coords.longitude];if(_dmap)_dmap.setView(_dgeo,11);renderDiscover()},()=>toast('Could not get location'))}
 function savePlace(id){S.saved=S.saved||[];if(!S.saved.includes(id))S.saved.push(id);save();closeSheet();toast('Saved to your list')}
+const cleanName=n=>(n||'').split(';')[0].trim();
+const _mediaCache={};
+async function placeMedia(p){
+  const key=p.notes||('n:'+p.name);
+  if(_mediaCache[key])return _mediaCache[key];
+  let title=null,qid=null;
+  if(p.notes){
+    if(p.notes.indexOf('wp:')===0){const w=p.notes.slice(3);title=w.indexOf(':')>=0?w.slice(w.indexOf(':')+1):w}
+    else if(p.notes.indexOf('wd:')===0)qid=p.notes.slice(3);
+  }
+  let res={image:null,extract:null};
+  try{
+    if(!title&&qid){
+      const r=await fetch(`https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=sitelinks&format=json&origin=*`);
+      const d=await r.json();const e=d.entities&&d.entities[qid];title=e&&e.sitelinks&&e.sitelinks.enwiki&&e.sitelinks.enwiki.title;
+    }
+    if(title){
+      const r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+      const d=await r.json();
+      res={image:(d.thumbnail&&d.thumbnail.source)||null, extract:(d.extract&&d.extract.length>10)?d.extract:null};
+    }
+  }catch(e){}
+  _mediaCache[key]=res;return res;
+}
 function openPlaceDetail(id){
   const p=PLACES.find(x=>(x.id+'')===(id+''));if(!p)return;
+  const nm=cleanName(p.name);
   const dist=placeDist(p);
   const free=p.membership?`<div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fff;background:#3FA76B;padding:7px 13px;border-radius:999px"><i class="ti ti-ticket"></i>Free with your ${p.membership.toUpperCase()} membership</div>`:'';
-  const mapsUrl=p.lat!=null?`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+  const mapsUrl=p.lat!=null?`https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nm)}`;
+  const hasWiki=!!p.notes;
   openSheet(`
-   <div style="margin:-8px -22px 8px;height:104px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center"><i class="ti ${catIcon(p.category)}" style="font-size:44px;color:#fff;opacity:.92"></i></div>
-   <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:23px;color:#2B2A33;margin:0 0 4px">${p.name}</h2>
+   <div id="pd-hero" style="margin:-8px -22px 12px;height:150px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center;overflow:hidden"><i class="ti ${catIcon(p.category)}" style="font-size:50px;color:#fff;opacity:.92"></i></div>
+   <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:23px;color:#2B2A33;margin:0 0 4px;line-height:1.1">${nm}</h2>
    <div style="font-size:13.5px;font-weight:700;color:#9BA08F;margin-bottom:11px">${catLabel(p.category)}${p.area?' · '+p.area:''}${dist!=null?' · '+Math.round(dist)+' km away':''}</div>
    ${free?`<div style="margin-bottom:13px">${free}</div>`:''}
-   <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px">
+   <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">
      ${p.cost?`<span class="dchip"><i class="ti ti-ticket"></i>${p.cost}</span>`:''}
      <span class="dchip"><i class="ti ${p.indoor?'ti-home':'ti-tree'}"></i>${p.indoor?'Indoor':'Outdoors'}</span>
      ${p.rain_ok?'<span class="dchip"><i class="ti ti-umbrella"></i>Good in rain</span>':''}
+     ${p.opening_hours?`<span class="dchip"><i class="ti ti-clock"></i>${(p.opening_hours+'').slice(0,38)}</span>`:''}
    </div>
+   <p id="pd-desc" style="font-size:15px;font-weight:600;color:#6F6B7A;line-height:1.5;margin:0 0 18px">${hasWiki?'Loading description…':(p.website?'Tap Website below for full details.':'No description yet.')}</p>
    <div onclick="savePlace('${(p.id+'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF7A45;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Save to my list <i class="ti ti-heart"></i></div>
    <div style="display:flex;gap:10px;margin-top:10px">
      <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#56B6E8;vertical-align:-2px"></i> Directions</div>
-     ${p.website?`<div onclick="window.open('${p.website}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
+     ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
    </div>`);
+  if(hasWiki)placeMedia(p).then(m=>{
+    if(m.image){const h=document.getElementById('pd-hero');if(h)h.innerHTML=`<img src="${m.image}" alt="" style="width:100%;height:100%;object-fit:cover">`}
+    const d=document.getElementById('pd-desc');if(d)d.textContent=m.extract||(p.website?'Tap Website below for full details.':'No description available.');
+  });
 }
 
 /* ---------- sheet + nav ---------- */

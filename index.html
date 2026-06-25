@@ -378,6 +378,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
+const APP_VERSION='Lexie & Me · v1.1 (build 1)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -928,7 +929,8 @@ function openProfile(){openSheet(`
   <label>Nap schedule</label><input id="p-naps" value="${S.baby.naps}">
   <label>Feeding</label><input id="p-feeds" value="${S.baby.feeds}">
   <label>Loves (comma separated)</label><input id="p-likes" value="${S.baby.likes.join(', ')}">
-  <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>`)}
+  <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>
+  <div style="text-align:center;margin-top:18px;font-size:12px;font-weight:600;color:#B3AEBC">${APP_VERSION}</div>`)}
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
   S.plans={};save();closeSheet();renderDash();renderToday();renderWeek();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';

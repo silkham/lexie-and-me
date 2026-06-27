@@ -31,6 +31,14 @@
   const HOUSEHOLD_ID  = "household-a755d170726cc15c5cb55a1b5cfd45db4795f088";
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 </script>
+<script>
+  /* Service worker: offline shell + installable PWA. */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+</script>
 <style>
 :root{
   /* paper & ink */
@@ -398,7 +406,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.3 (build 11)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.3 (build 12)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});

@@ -352,29 +352,6 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div id="dsc-list" class="dsc-list"></div>
 </section>
 
-<!-- WEEK -->
-<section id="week" class="screen">
-  <div class="hdr"><div class="eyebrow">The week ahead</div><h1>This Week</h1>
-    <div class="sub">A balanced rhythm — in and out, busy and calm.</div></div>
-  <div class="weekrow" id="w-days"></div>
-  <div id="w-detail"></div>
-</section>
-
-<!-- PLAN / suggest -->
-<section id="plan" class="screen">
-  <div class="hdr"><div class="eyebrow">Plan a day</div><h1 id="p-title">Suggestions</h1>
-    <div class="sub">Three days I'd actually do. Pick one, tweak the rest.</div></div>
-  <div class="row" style="gap:8px;overflow-x:auto;padding:6px 4px 14px;scrollbar-width:none">
-    <div class="chip" onclick="filterSug('all')">Everything</div>
-    <div class="chip" onclick="filterSug('out')">Get out</div>
-    <div class="chip" onclick="filterSug('rain')">Rainy day</div>
-    <div class="chip" onclick="filterSug('london')">London</div>
-    <div class="chip" onclick="filterSug('heritage')">NT &amp; EH (free)</div>
-    <div class="chip" onclick="filterSug('quick')">Under 20 min</div>
-  </div>
-  <div id="p-list"></div>
-</section>
-
 <!-- MEALS -->
 <section id="meals" class="screen">
   <div class="m-head">
@@ -387,20 +364,6 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div id="m-week"></div>
 </section>
 
-
-<!-- DASHBOARD -->
-<section id="dash" class="screen">
-  <div class="hdr"><div class="eyebrow">How it's going</div><h1>Your Rhythm</h1>
-    <div class="sub">Gentle nudges, not a scoreboard.</div></div>
-  <div class="scoregrid" id="d-scores"></div>
-  <div class="tile" id="d-insight" style="margin-top:14px"></div>
-  <div class="divider">Lexie's profile</div>
-  <div class="tile" id="d-profile"></div>
-  <div class="divider">Your booked classes (anchors)</div>
-  <div id="d-commits"></div>
-  <button class="btn ghost" onclick="openCommit()">+ Add a booked class / commitment</button>
-  <button class="btn ghost" style="margin-top:9px" onclick="openProfile()">Edit Lexie's profile</button>
-</section>
 
 <!-- CALENDAR -->
 <section id="calendar" class="screen">
@@ -435,7 +398,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.3 (build 10)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.3 (build 11)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -611,7 +574,6 @@ async function getWeather(){
   for(const k in S.plans){const p=S.plans[k];if(p&&p.auto&&p.noWx&&!p.commit){delete S.plans[k]}}
   save();
   renderToday();
-  const wk=document.getElementById('week');if(wk&&wk.classList.contains('on'))renderWeek();
 }
 const wxText=(code)=>{
   if(code==null)return{t:'Weather unavailable',rain:false,e:'🌤'};
@@ -786,109 +748,13 @@ function swapSlot(id){const a=actById(id);openSheet(`
   <div style="margin:10px 0">${a.loc} · ${a.mins} min · ${a.cost} · nap: ${a.nap}</div>
   <button class="btn" onclick="markDone('${id}');closeSheet()">✓ We did this</button>
   <button class="btn ghost" style="margin-top:9px" onclick="reswap('${id}')">Swap for something else</button>`)}
-function markDone(id){S.history.push(id);save();renderDash();closeSheet();toast('Logged — lovely.')}
+function markDone(id){S.history.push(id);save();closeSheet();toast('Logged — lovely.')}
 function reswap(id){const a=actById(id);const alt=seedActivities.filter(x=>eligible(x)&&x.type===a.type&&x.id!==id);
   const k=dkey(today);const p=S.plans[k];
   if(alt.length){p.act=alt[Math.floor(Math.random()*alt.length)].id;p.auto=false;p.noWx=false;save();renderToday()}closeSheet()}
 
-/* ---------- WEEK ---------- */
-let weekSel=dkey(today);
-function renderWeek(){
-  const start=new Date(today);start.setDate(start.getDate()-start.getDay()+1);
-  let html='';
-  for(let i=0;i<7;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);
-    const k=dkey(d);const w=wxFor(d);
-    const sel=k===weekSel?'sel':'';
-    html+=`<div class="day ${sel}" onclick="selWeek('${k}')">
-      <div class="dn">${d.toLocaleDateString('en-GB',{weekday:'short'})}</div>
-      <div class="dd">${d.getDate()}</div><div class="dot" style="${commitmentsFor(d).length?'':'opacity:.3'}"></div></div>`;
-  }
-  document.getElementById('w-days').innerHTML=html;
-  const d=new Date(weekSel);const p=planFor(d);const w=wxFor(d);
-  const acts=[p.commit?{emoji:p.commit.weekly?'🔁':'📍',nm:p.commit.name,loc:p.commit.location||'Calendar',ds:p.commit.time+(p.commit.weekly?' · weekly class':' · booked'),mins:0}:null,
-    !p.commit&&p.act&&actById(p.act)].filter(Boolean);
-  document.getElementById('w-detail').innerHTML=`
-   <div class="tile"><div class="row between"><div><div class="eyebrow">${fmt(d)}</div></div>
-     <div class="faded" style="font-size:13px">${w.e} ${w.temp?w.temp+'°':''}</div></div></div>
-   <div class="divider" style="margin-top:14px">Activity</div>
-   ${acts.length?acts.map(a=>`<div class="act"><div class="emoji">${a.emoji}</div><div>
-     <div class="nm">${a.nm}</div><div class="ds">${a.ds}</div>
-     <div class="mt"><span>📍 ${a.loc}</span>${a.mins?`<span>🚗 ${a.mins}m</span>`:''}</div></div></div>`).join(''):
-     '<div class="act"><div class="emoji">🏡</div><div><div class="nm">Home day</div><div class="ds">Nothing booked — a gentle one.</div></div></div>'}
-   <button class="btn ghost" onclick="regenDay('${weekSel}')" style="margin-top:6px">↺ Suggest a different day</button>
-   <div class="divider">Meals</div>
-   ${mealRow(d,'bf')}
-   ${mealRow(d,'ln')}`;
-}
-function mealRow(d,sec){const set=mealIsSet(d,sec);
-  return `<div class="act" onclick="pickDayMeal('${dkey(d)}','${sec}')"><div class="emoji">${sec==='bf'?'🍳':'🥪'}</div><div style="flex:1">
-    <div class="lbl" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600">${sec==='bf'?'Breakfast':'Lunch'}</div>
-    <div class="nm" style="margin-top:2px">${dayMeal(d,sec)}</div>
-    <div class="ds">${set?'Set for this day · tap to change':'Suggested · tap to choose'}</div></div>
-    <div class="muted" style="font-size:18px">›</div></div>`}
-function pickDayMeal(k,sec){const lib=S.meals[sec];
-  openSheet(`<h2 style="font-size:22px">${sec==='bf'?'Breakfast':'Lunch'}</h2>
-   <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:6px 0 12px">Pick from your library, or leave it on suggested.</p>
-   <div style="max-height:56vh;overflow-y:auto">
-   ${lib.map(m=>`<div class="act" onclick="setDayMeal('${k}','${sec}','${m.nm.replace(/'/g,"\\'")}')"><div class="emoji">${sec==='bf'?'🍳':'🥪'}</div><div style="flex:1"><div class="nm">${m.nm}</div>${m.baby?`<div class="ds">Baby: ${m.baby}</div>`:''}</div></div>`).join('')}
-   </div>
-   <button class="btn ghost" style="margin-top:10px" onclick="clearDayMeal('${k}','${sec}')">↺ Back to suggested</button>`)}
-function setDayMeal(k,sec,nm){if(!S.dayMeals[k])S.dayMeals[k]={};S.dayMeals[k][sec]=nm;save();closeSheet();renderWeek();if(k===dkey(today))renderToday();toast('Set')}
 function clearDayMeal(k,sec){if(S.dayMeals[k]){delete S.dayMeals[k][sec];if(!Object.keys(S.dayMeals[k]).length)delete S.dayMeals[k]}save();closeSheet();renderMeals();if(k===dkey(today))renderToday();toast('Cleared')}
-function selWeek(k){weekSel=k;renderWeek()}
-function regenDay(k){delete S.plans[k];planFor(new Date(k));renderWeek();if(k===dkey(today))renderToday()}
-
-/* ---------- PLAN suggestions ---------- */
-let sugFilter='all';
-function renderPlan(){
-  const m=ageM();
-  let pool=seedActivities.filter(eligible);
-  if(sugFilter==='out')pool=pool.filter(a=>a.type==='out');
-  if(sugFilter==='rain')pool=pool.filter(a=>a.type==='rain');
-  if(sugFilter==='london')pool=pool.filter(a=>a.type==='london');
-  if(sugFilter==='heritage')pool=pool.filter(a=>a.member);
-  if(sugFilter==='quick')pool=pool.filter(a=>a.mins<=20&&a.type!=='london');
-  const recent=S.history.slice(-5);
-  pool.sort((a,b)=>(recent.includes(a.id)?1:0)-(recent.includes(b.id)?1:0));
-  document.getElementById('p-list').innerHTML=pool.map(a=>{
-    const fresh=!S.history.includes(a.id);
-    const badge=a.member?`<span class="pin" style="background:rgba(139,161,126,.18);border-color:rgba(139,161,126,.4);color:#a9c39a">${a.member.toUpperCase()} · FREE</span>`:(fresh?'<span class="pin">NEW</span>':'');
-    return `<div class="act" onclick="planInto('${a.id}')"><div class="emoji">${a.emoji}</div><div style="flex:1">
-      <div class="row between"><div class="nm">${a.nm}</div>${badge}</div>
-      <div class="ds">${a.ds}</div>
-      <div class="mt"><span>📍 ${a.loc}</span><span>🚗 ${a.mins} min</span><span>💷 ${a.cost}</span></div></div></div>`;
-  }).join('')||'<div class="empty"><div class="big">🍃</div>Nothing matches — try another filter.</div>';
-}
-function filterSug(f){sugFilter=f;renderPlan()}
-function planInto(id){const a=actById(id);
-  let rows='';
-  for(let i=0;i<14;i++){
-    const d=new Date(today);d.setDate(d.getDate()+i);
-    const k=dkey(d);const com=commitmentsFor(d)[0];
-    const cur=S.plans[k]&&S.plans[k].act;
-    const lbl=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
-    let note='',dis='';
-    if(com){note=`<span class="muted" style="font-size:12px">📍 ${com.name}</span>`;dis='style="opacity:.45;pointer-events:none"'}
-    else if(cur&&cur!==id){const ca=actById(cur);note=`<span class="muted" style="font-size:12px">${ca?ca.emoji+' '+ca.nm:''}</span>`}
-    rows+=`<button class="btn ${i===0?'':'ghost'}" ${dis} style="margin-top:9px;justify-content:space-between" onclick="assignDate('${id}','${k}')">
-      <span>${lbl}</span>${note}</button>`;
-  }
-  openSheet(`<h2 style="font-size:22px">Add ${a.nm}</h2>
-  <p class="faded" style="font-family:Newsreader,serif;font-size:15px;margin:8px 0">Pick a day. Booked-class days are locked; days with a plan will be replaced.</p>
-  <div style="max-height:56vh;overflow-y:auto">${rows}</div>`)}
-function assignDate(id,k){const p=planFor(new Date(k));
-  if(p.commit){toast('That day has a booked class');return}
-  p.act=id;p.auto=false;p.noWx=false;save();closeSheet();
-  const lbl=k===dkey(today)?'today':'that day';toast('Set as '+lbl+'\u2019s outing');
-  if(k===dkey(today))renderToday();renderWeek();}
-
 /* ---------- MEALS ---------- */
-function mealCard(m,sec,i){const e=sec==='bf'?'🍳':'🥪';
-  return `<div class="act" onclick="editMeal('${sec}',${i})"><div class="emoji">${e}</div><div style="flex:1">
-    <div class="row between"><div class="nm">${m.nm}</div>${m.pin?'<span style="color:var(--terra)">♥</span>':''}</div>
-    <div class="ds">Baby: ${m.baby||'—'}</div>
-    ${m.ings&&m.ings.length?`<div class="mt"><span>🛒 ${m.ings.join(', ')}</span></div>`:''}</div></div>`}
 function renderMeals(){
   const start=new Date(today);start.setDate(start.getDate()-((start.getDay()+6)%7));
   const slots=[['bf','Breakfast','#FFC24B'],['ln','Lunch','#56B6E8'],['dn','Dinner','#FF7A45']];
@@ -960,39 +826,6 @@ function saveMeal(sec,i){const nm=val('mf-nm').trim();if(!nm){toast('Give it a n
   if(i>=0)S.meals[sec][i]=obj;else S.meals[sec].push(obj);
   save();renderMeals();renderToday();closeSheet();toast(i>=0?'Saved':'Added')}
 
-/* ---------- DASHBOARD ---------- */
-function renderDash(){
-  const h=S.history;const out=h.filter(id=>actById(id)&&actById(id).type!=='rain'&&actById(id).cat!=='home').length;
-  const total=Math.max(h.length,1);
-  const variety=Math.min(100,Math.round(new Set(h).size/Math.max(h.length,1)*100));
-  const outRatio=Math.round(out/total*100);
-  const londonN=h.filter(id=>actById(id)?.type==='london').length;
-  const newExp=new Set(h).size;
-  document.getElementById('d-scores').innerHTML=`
-   ${scoreHTML('Variety',variety+'%',variety)}
-   ${scoreHTML('Out vs home',outRatio+'%',outRatio)}
-   ${scoreHTML('Outings logged',out,Math.min(100,out*12))}
-   ${scoreHTML('New experiences',newExp,Math.min(100,newExp*14))}`;
-  let msg;
-  if(h.length<2)msg='Log a couple of days and I\'ll start spotting patterns — like if you\'re drifting toward too many home days.';
-  else if(outRatio<40)msg='You\'ve been home a lot lately. Tomorrow looks dry-ish — even a café and a park loop counts as a win.';
-  else if(londonN===0)msg='No London adventures yet. The Science Museum garden is step-free and free — a gentle first big day out.';
-  else msg='Lovely balance this week — varied, plenty of fresh air. Keep going.';
-  document.getElementById('d-insight').innerHTML=`<div class="eyebrow">A gentle nudge</div><p style="font-family:Newsreader,serif;font-size:16px;margin-top:8px;line-height:1.5">${msg}</p>`;
-  document.getElementById('d-profile').innerHTML=`
-    <div class="row between"><div class="nm serif" style="font-size:18px">${S.baby.name}</div><span class="faded">${ageM()} months</span></div>
-    <div class="mt" style="font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.7">
-      🛌 ${S.baby.naps}<br>🍼 ${S.baby.feeds}<br>💛 Loves: ${S.baby.likes.join(', ')}</div>`;
-  document.getElementById('d-commits').innerHTML=S.commitments.length?S.commitments.map((c,i)=>{
-    const d=new Date(c.date);
-    const when=c.weekly?`Every ${d.toLocaleDateString('en-GB',{weekday:'long'})} · ${c.time}`:`${d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})} · ${c.time}`;
-    return `<div class="act"><div class="emoji">${c.weekly?'🔁':'📍'}</div><div style="flex:1">
-      <div class="nm">${c.name}</div><div class="ds">${when}${c.location?' · '+c.location:''}</div></div>
-      <button class="chip" onclick="delCommit(${i})">✕</button></div>`;}).join(''):
-    '<div class="faded" style="padding:8px 4px;font-family:Newsreader,serif;font-size:15px">Nothing booked yet. Add classes or appointments so plans build around them.</div>';
-}
-function scoreHTML(lab,n,pct){return `<div class="score"><div class="n">${n}</div><div class="lab">${lab}</div><div class="bar"><span style="width:${pct}%"></span></div></div>`}
-const full=(d)=>({MO:'Mon',TU:'Tue',WE:'Wed',TH:'Thu',FR:'Fri',SA:'Sat',SU:'Sun'}[d]||d);
 
 /* commitments form */
 /* ---------- CALENDAR ---------- */
@@ -1040,7 +873,6 @@ function syncWeekly(){const on=document.getElementById('c-weekly').checked;const
 function saveCommit(){const date=val('c-date');if(!date){toast('Pick a date');return}
   const c={name:val('c-nm')||'Event',date,time:val('c-time')||'',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
   S.commitments.push(c);S.plans={};save();closeSheet();renderCalendar();renderToday();toast(c.weekly?'Weekly event added':'Event added')}
-function delCommit(i){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday()}
 function openProfile(){openSheet(`
   <h2 style="font-size:22px">Lexie's profile</h2>
   <label>Name</label><input id="p-nm" value="${S.baby.name}">
@@ -1051,7 +883,7 @@ function openProfile(){openSheet(`
   <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>
   <div style="text-align:center;margin-top:18px;font-size:12px;font-weight:600;color:#B3AEBC">${APP_VERSION}</div>`)}
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
-  S.plans={};save();closeSheet();renderDash();renderToday();renderWeek();toast('Profile saved')}
+  S.plans={};save();closeSheet();renderToday();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';
 function bagPills(){return (S.bag||[]).map(it=>`<span onclick="removeBag('${(it+'').replace(/'/g,"\\'")}')" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#2E8E5A;background:#DBF4E6;padding:8px 13px;border-radius:999px;margin:0 7px 8px 0;cursor:pointer">${it} <i class="ti ti-x" style="font-size:13px;opacity:.65"></i></span>`).join('')
   +`<span onclick="addBagItem()" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#B3AEBC;background:#F1EFE8;padding:8px 13px;border-radius:999px;cursor:pointer"><i class="ti ti-plus" style="font-size:13px"></i>Add</span>`}
@@ -1248,7 +1080,7 @@ function openSheet(html){document.getElementById('sheet-c').innerHTML=html;docum
 function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('sbg').classList.remove('on')}
 function go(s){refreshToday();document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));document.getElementById(s).classList.add('on');
   document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));window.scrollTo(0,0);
-  if(s==='week')renderWeek();if(s==='plan')renderPlan();if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='calendar')renderCalendar();if(s==='dash')renderDash();if(s==='today')renderToday()}
+  if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='calendar')renderCalendar();if(s==='today')renderToday()}
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--tile2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:30px;z-index:80;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
 
 /* init */

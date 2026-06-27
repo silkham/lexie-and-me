@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#56B6E8"/>
+  <!-- sun -->
+  <circle cx="256" cy="228" r="96" fill="#FFC24B"/>
+  <g stroke="#FFF1E6" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="112" x2="256" y2="84"/>
+    <line x1="256" y1="372" x2="256" y2="344"/>
+    <line x1="112" y1="228" x2="84" y2="228"/>
+    <line x1="400" y1="228" x2="428" y2="228"/>
+    <line x1="337" y1="147" x2="358" y2="126"/>
+    <line x1="175" y1="309" x2="154" y2="330"/>
+    <line x1="358" y1="330" x2="337" y2="309"/>
+    <line x1="154" y1="126" x2="175" y2="147"/>
+  </g>
+  <!-- leaf -->
+  <path d="M176 416 C176 366 336 366 336 416 C256 441 176 441 176 416Z" fill="#57C98A"/>
+  <line x1="256" y1="380" x2="256" y2="434" stroke="#FFF1E6" stroke-width="8" stroke-linecap="round"/>
+</svg>

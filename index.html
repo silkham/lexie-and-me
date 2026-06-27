@@ -8,8 +8,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#F6F2E9">
+<meta name="theme-color" content="#FFF8EF">
 <title>Lexie &amp; Me</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -432,7 +435,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.3 (build 9)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.3 (build 10)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1028,7 +1031,7 @@ function openCommit(k){const dateK=k||dkey(today);_evType='class';
    <input id="c-nm" placeholder="What is it? e.g. Hartbeeps, GP visit">
    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:14px 2px 8px">Type</div>
    <div id="c-types" style="display:flex;flex-wrap:wrap;gap:8px">${types.map(([t,l,c])=>`<span class="c-typechip" data-t="${t}" onclick="pickEvType('${t}')" style="font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;background:${t==='class'?c:'#F1EFE8'};color:${t==='class'?'#fff':'#6F6B7A'}">${l}</span>`).join('')}</div>
-   <div style="display:flex;gap:11px;margin-top:14px"><div style="flex:1"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div><div style="flex:1"><label>Time</label><input id="c-time" placeholder="10:00"></div></div>
+   <div style="display:flex;gap:11px;margin-top:14px"><div style="flex:1;min-width:0"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div><div style="flex:1;min-width:0"><label>Time</label><input id="c-time" type="time"></div></div>
    <label>Where <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Oxted Hall">
    <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#A98BEA"></i><div style="flex:1;font-size:15px;font-weight:700;color:#2B2A33">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff"></div><input type="checkbox" id="c-weekly" style="display:none"></div>
    <button class="btn" style="margin-top:18px" onclick="saveCommit()">Add event</button>`);}

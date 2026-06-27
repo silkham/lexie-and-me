@@ -1,0 +1,16 @@
+{
+  "name": "Lexie & Me",
+  "short_name": "Lexie",
+  "description": "Gentle, baby-led day planner for Lexie in Oxted.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8EF",
+  "theme_color": "#FFF8EF",
+  "icons": [
+    { "src": "icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
+}

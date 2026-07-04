@@ -1,4 +1,28 @@
+---
+project: Lexie & Me
+status: active
+last_updated: 2026-06-24
+next_milestone: Make it a true installable PWA (manifest + service worker)
+repo: https://github.com/silkham/lexie-and-me
+live_url: https://silkham.github.io/lexie-and-me/
+---
+
 # Lexie & Me
+
+<!-- The Status and Roadmap sections below are read by the Project Dashboard.
+     Keep them current: Status = where it is now, Roadmap = what's planned.
+     Changelog is pulled live from git commit history, so don't maintain one here. -->
+
+## Status
+Live and working: the whole planner — Today/Week/Plan/Meals/You, weather, activity &
+meal libraries, dashboard — plus two-phone cloud sync (Supabase `household_state`).
+The AI concierge was removed entirely on 2026-06-24. Not yet a true installable PWA:
+has apple-mobile-web-app meta tags but no `manifest.json` or service worker, so no
+offline or install.
+
+## Roadmap
+- [ ] Make it a true installable PWA: add `manifest.json` + service worker (offline/install)
+- [ ] Consider Supabase Auth to close the public-anon-key privacy gap on synced data
 
 A single-file PWA that helps a dad on parental leave plan gentle, baby-led days
 with his daughter **Lexie** in **Oxted, Surrey**. Warm "paper & ink" editorial

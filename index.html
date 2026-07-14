@@ -285,6 +285,22 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 </style>
 </head>
 <body>
+
+<!-- ===== auth gate — LifeOS integration needs a signed-in household ===== -->
+<div id="authGate" style="position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:var(--bg);padding:24px">
+  <form id="authForm" style="width:100%;max-width:340px;background:var(--tile);border:1px solid var(--line);border-radius:20px;padding:30px 26px;box-shadow:0 16px 44px rgba(43,42,51,.12)">
+    <h1 style="font-family:'Young Serif',serif;font-weight:400;margin:0 0 6px;font-size:27px;color:var(--ink)">Lexie &amp; Me</h1>
+    <p style="margin:0 0 22px;font-family:'Newsreader',serif;font-style:italic;font-size:16px;color:var(--ink2)">Sign in to sync your household.</p>
+    <input id="authEmail" type="email" autocomplete="email" placeholder="Email" required
+      style="width:100%;padding:13px 14px;margin-bottom:11px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);color:var(--ink);font-family:inherit;font-size:15px">
+    <input id="authPass" type="password" autocomplete="current-password" placeholder="Password" required
+      style="width:100%;padding:13px 14px;margin-bottom:16px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);color:var(--ink);font-family:inherit;font-size:15px">
+    <button type="submit"
+      style="width:100%;padding:14px;border:none;border-radius:12px;background:var(--accent);color:var(--bg);font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:16px;cursor:pointer">Sign in</button>
+    <div id="authErr" style="color:var(--terra);font-size:13px;margin-top:12px;min-height:16px"></div>
+  </form>
+</div>
+
 <div class="wrap">
 
 <!-- TODAY -->
@@ -406,7 +422,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.3 (build 12)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.4 (build 13)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1091,11 +1107,71 @@ function go(s){refreshToday();document.querySelectorAll('.screen').forEach(e=>e.
   if(s==='discover')showDiscover();if(s==='meals')renderMeals();if(s==='calendar')renderCalendar();if(s==='today')renderToday()}
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:calc(100px + var(--safe-b));left:50%;transform:translateX(-50%);background:var(--tile2);border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:30px;z-index:80;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)';document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
 
-/* init */
-(async ()=>{
-  await cloudLoad();   // adopt shared family state if it exists
+/* ================= LifeOS integration ================= *
+ * Lexie authenticates as the shared household so it can publish `nudge`
+ * signals into lifeos.signals (RLS needs an authenticated JWT — anon can't).
+ * The existing household_state sync keeps working under the authed session
+ * (its RLS keys on id only; authenticated has the same grants as anon).      */
+const LIFEOS_APP='lexie';
+const LIFEOS_DOW=['sun','mon','tue','wed','thu','fri','sat'];
+// Local (not UTC) yyyy-mm-dd — dkey()'s toISOString() shifts a day under BST.
+const lifeosLocalISO=(d)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+async function publishToLifeOS(){
+  try{
+    const { data:hids } = await sb.schema('lifeos').rpc('my_household_ids');
+    const hid = Array.isArray(hids)&&hids.length ? hids[0] : null;
+    if(!hid) return;                                  // not a household member → skip
+    const base=new Date(); base.setHours(0,0,0,0);
+    const rows=[];
+    for(let i=1;i<=7;i++){                             // planning radar: next 7 days
+      const d=new Date(base); d.setDate(base.getDate()+i);
+      const booked=commitmentsFor(d).length>0;        // same check the app shows
+      const dayName=d.toLocaleDateString('en-GB',{weekday:'long'});
+      rows.push({
+        household_id:hid, app:LIFEOS_APP, kind:'nudge',
+        key:'nothing-planned-'+LIFEOS_DOW[d.getDay()],// stable per-weekday slot → self-cleaning
+        title:'Nothing planned '+dayName,
+        detail:'No outing or class booked for Lexie',
+        cta_url:'https://silkham.github.io/lexie-and-me/#calendar',
+        cta_label:'Plan the day',
+        due:lifeosLocalISO(d),
+        state:'warn',
+        status: booked ? 'dismissed' : 'open'         // booked day → drops off the radar
+      });
+    }
+    await sb.schema('lifeos').from('signals').upsert(rows,{onConflict:'household_id,app,key'});
+  }catch(e){ /* best-effort — never block boot */ }
+}
+
+/* init — gated on a Supabase session */
+let _booted=false;
+async function boot(){
+  if(_booted) return; _booted=true;
+  document.getElementById('authGate').style.display='none';
+  await cloudLoad();                 // adopt shared family state if it exists
+  const h=(location.hash||'').slice(1);
   renderToday();
   getWeather();
+  if(['today','discover','meals','calendar'].includes(h)) go(h);   // honour deep-link
+  publishToLifeOS();                 // fire-and-forget into the LifeOS contract
+}
+function showAuthGate(){ document.getElementById('authGate').style.display='flex'; }
+
+document.getElementById('authForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const err=document.getElementById('authErr'); err.textContent='';
+  const { error } = await sb.auth.signInWithPassword({
+    email: document.getElementById('authEmail').value.trim(),
+    password: document.getElementById('authPass').value
+  });
+  if(error) err.textContent=error.message;   // onAuthStateChange handles success
+});
+
+sb.auth.onAuthStateChange((_evt, session)=>{ if(session) boot(); });
+(async ()=>{
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session) boot(); else showAuthGate();   // shared silkham.github.io session → often boots straight through
 })();
 </script>
 </body>

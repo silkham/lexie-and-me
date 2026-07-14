@@ -14,15 +14,16 @@ live_url: https://silkham.github.io/lexie-and-me/
      Changelog is pulled live from git commit history, so don't maintain one here. -->
 
 ## Status
-Live and working: the whole planner — Today/Week/Plan/Meals/You, weather, activity &
-meal libraries, dashboard — plus two-phone cloud sync (Supabase `household_state`).
-The AI concierge was removed entirely on 2026-06-24. Not yet a true installable PWA:
-has apple-mobile-web-app meta tags but no `manifest.json` or service worker, so no
-offline or install.
+Live and working: the whole planner — Today/Discover/Meals/Calendar, weather, activity &
+meal libraries — plus two-phone cloud sync (Supabase `household_state`) and an installable
+PWA (manifest + service worker). As of build 13 the app is **gated on a Supabase Auth
+session** (login screen) so it can publish into the LifeOS hub; the shared household
+account signs in once per device (session persists; sibling apps on `silkham.github.io`
+share it). The AI concierge was removed on 2026-06-24.
 
 ## Roadmap
-- [ ] Make it a true installable PWA: add `manifest.json` + service worker (offline/install)
-- [ ] Consider Supabase Auth to close the public-anon-key privacy gap on synced data
+- [ ] Tighten `household_state` RLS to require household membership (the app now authenticates,
+      but the table's RLS still allows any anon caller by `id` — the real privacy fix)
 
 A single-file PWA that helps a dad on parental leave plan gentle, baby-led days
 with his daughter **Lexie** in **Oxted, Surrey**. Warm "paper & ink" editorial
@@ -71,18 +72,24 @@ mirrored at a Cloudflare Worker `https://lexie-and-me.lachlanmclean1990-2a4.work
 that auto-deploys static assets from this repo (secondary; safe to delete).
 
 **Cloud sync (live):** reuses the Fitness Supabase project `dgbbyijhabjozqrkokrq`. URL +
-public anon key are baked into `index.html` (Block A). State syncs via the `household_state`
+public anon key are baked into `index.html`. State syncs via the `household_state`
 table (one JSON-blob row keyed by `HOUSEHOLD_ID`, RLS + realtime); see `supabase-schema.sql`.
-**Privacy caveat:** the anon key is public and RLS auto-returns the row to any anon caller,
-so synced data (Lexie's name/DOB/routine) is effectively world-readable to anyone who finds
-this public repo. A real fix = Supabase Auth (not done; the simple design was accepted).
+**Privacy caveat (still open):** `household_state`'s RLS predicates key on `id=` only, so
+any anon caller who knows the id can still read/write the row — even though the app itself
+now runs authenticated (build 13). Closing the gap = tightening that table's RLS to require
+household membership (roadmap item above); the grants and login are already in place.
 
-**Dropped:** the AI concierge was removed entirely (button, chat UI, `ask()`/`openAI()` etc.,
-the Cloudflare proxy file, and the chat CSS) on 2026-06-24 per user request.
+**LifeOS integration (build 13):** the app authenticates as the shared household so it can
+publish `nudge` signals into `lifeos.signals` on the SAME project. `publishToLifeOS()` runs
+fire-and-forget in `boot()`: resolves the household UUID via `sb.schema('lifeos')
+.rpc('my_household_ids')`, then upserts one "Nothing planned <day>" nudge per **day-of-week
+slot** for the next 7 days (`key='nothing-planned-<dow>'` → self-cleaning; booked days flip
+to `status='dismissed'`). `due` uses a **local** yyyy-mm-dd helper, NOT `dkey()` — `dkey`'s
+`toISOString()` shifts a day under BST. Accent violet on the hub; `state='warn'`. The
+`household_state` anon sync is untouched and still works under the authed JWT (its RLS is
+role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CLAUDE.md`.
 
-**Still half-finished:**
-- **Not a true installable PWA** — has apple-mobile-web-app meta tags but no
-  `manifest.json` or service worker, so no offline/install.
+**Dropped:** the AI concierge was removed entirely on 2026-06-24 per user request.
 
 ## Git
 - Remote: **`silkham/lexie-and-me`** (public), default branch `main`. Local linked 2026-06-24.

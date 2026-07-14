@@ -98,6 +98,9 @@ role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CL
 
 ## Conventions
 - Single-file app: edit `index.html` directly; keep everything inline, no build tooling.
-- No Node in this environment — to syntax/functional-test inline JS, use JavaScriptCore
-  (`jsc`), same approach as the sibling Fitness app.
+- No Node in this environment — to syntax/functional-test inline JS, use JavaScriptCore.
+  `jsc` is NOT on PATH: `/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc`.
+  Extract inline `<script>` blocks (Ruby, read with `encoding:"UTF-8"` — the file has £/·/emoji)
+  and syntax-check each via `new Function(readFile(path))` (compiles without executing, so
+  cross-block globals like `sb` don't matter). Logic-test a function by slicing it out + stubbing.
 - British English and UK context throughout (£, "nappies", Oxted/Surrey place names).

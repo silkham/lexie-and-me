@@ -1116,8 +1116,6 @@ function toast(t){const e=document.createElement('div');e.textContent=t;e.style.
  * (its RLS keys on id only; authenticated has the same grants as anon).      */
 const LIFEOS_APP='lexie';
 const LIFEOS_DOW=['sun','mon','tue','wed','thu','fri','sat'];
-// Local (not UTC) yyyy-mm-dd — dkey()'s toISOString() shifts a day under BST.
-const lifeosLocalISO=(d)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 
 async function publishToLifeOS(){
   try{
@@ -1137,7 +1135,7 @@ async function publishToLifeOS(){
         detail: c ? ([c.time,c.location].filter(Boolean).join(' · ') || (c.weekly?'every week':'booked')) : null,
         cta_url:'https://silkham.github.io/lexie-and-me/#calendar',
         cta_label:'Open day',
-        due:lifeosLocalISO(d),
+        due:dkey(d),
         state:'good',
         status: c ? 'open' : 'dismissed'               // no booking → LifeOS shows Plan / No activity
       });

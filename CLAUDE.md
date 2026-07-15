@@ -84,8 +84,8 @@ publish `nudge` signals into `lifeos.signals` on the SAME project. `publishToLif
 fire-and-forget in `boot()`: resolves the household UUID via `sb.schema('lifeos')
 .rpc('my_household_ids')`, then upserts one "Nothing planned <day>" nudge per **day-of-week
 slot** for the next 7 days (`key='nothing-planned-<dow>'` → self-cleaning; booked days flip
-to `status='dismissed'`). `due` uses a **local** yyyy-mm-dd helper, NOT `dkey()` — `dkey`'s
-`toISOString()` shifts a day under BST. Accent violet on the hub; `state='warn'`. The
+to `status='dismissed'`). `due` uses `dkey()` (now local — see below). Accent violet on the
+hub; `state='warn'`. The
 `household_state` anon sync is untouched and still works under the authed JWT (its RLS is
 role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CLAUDE.md`.
 
@@ -104,3 +104,8 @@ role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CL
   and syntax-check each via `new Function(readFile(path))` (compiles without executing, so
   cross-block globals like `sb` don't matter). Logic-test a function by slicing it out + stubbing.
 - British English and UK context throughout (£, "nappies", Oxted/Surrey place names).
+- **Dates: `dkey(d)` MUST stay local `yyyy-mm-dd`** (`getFullYear/getMonth/getDate`), never
+  `toISOString()`. Calendar cells are built at *local* midnight (`new Date(y,m,dn)`); under BST,
+  `toISOString()` (UTC) rolls them back a day, so clicking a date opened the previous one
+  (fixed build 15, commit 56dcb32). Every calendar/meal/pack/plan key flows through `dkey`, so
+  this one function is the single source of truth — don't reintroduce a UTC path.

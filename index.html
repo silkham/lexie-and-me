@@ -422,13 +422,15 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.4 (build 14)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.4 (build 15)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
 window.addEventListener('focus',()=>{if(refreshToday()){getWeather();renderToday()}});
 const fmt=(d)=>d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-const dkey=(d)=>d.toISOString().slice(0,10);
+// Local (not UTC) yyyy-mm-dd — toISOString() shifts a day under BST, so clicking a
+// calendar cell (built at local midnight) resolved to the previous date.
+const dkey=(d)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const DOW=['SU','MO','TU','WE','TH','FR','SA'];
 
 const seedActivities=[

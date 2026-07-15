@@ -422,7 +422,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.4 (build 15)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 16)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -539,6 +539,7 @@ function cloudSave(){
     try{
       await sb.from('household_state')
         .upsert({ id:HOUSEHOLD_ID, state:S, updated_at:new Date().toISOString() });
+      publishToLifeOS();                 // re-push the LifeOS week so a new booking/planned place shows without an app reload
     }catch(e){ /* offline — local copy already saved, will sync next change */ }
   },600);
 }
@@ -1126,18 +1127,18 @@ async function publishToLifeOS(){
     const rows=[];
     for(let i=0;i<7;i++){                              // rolling week: today + next 6
       const d=new Date(base); d.setDate(base.getDate()+i);
-      const cs=commitmentsFor(d);                      // a real booking = "planned" (same check the app shows)
-      const c=cs[0]||null;
+      const evs=eventsForDay(d);                        // commitments + planned place — the SAME list the app's calendar/Coming-up shows
+      const e=evs[0]||null;
       rows.push({
         household_id:hid, app:LIFEOS_APP, kind:'task',
         key:'day-'+LIFEOS_DOW[d.getDay()],             // stable per-weekday slot → self-cleaning
-        title: c ? (c.name||'Activity')+(cs.length>1?` +${cs.length-1} more`:'') : 'No activity',
-        detail: c ? ([c.time,c.location].filter(Boolean).join(' · ') || (c.weekly?'every week':'booked')) : null,
+        title: e ? e.name+(evs.length>1?` +${evs.length-1} more`:'') : 'No activity',
+        detail: e ? ([e.time,e.sub].filter(Boolean).join(' · ') || 'planned') : null,
         cta_url:'https://silkham.github.io/lexie-and-me/#calendar',
         cta_label:'Open day',
         due:dkey(d),
         state:'good',
-        status: c ? 'open' : 'dismissed'               // no booking → LifeOS shows Plan / No activity
+        status: e ? 'open' : 'dismissed'               // nothing that day → LifeOS shows Plan / No activity
       });
     }
     await sb.schema('lifeos').from('signals').upsert(rows,{onConflict:'household_id,app,key'});

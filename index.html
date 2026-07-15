@@ -422,7 +422,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.4 (build 13)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.4 (build 14)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1124,20 +1124,20 @@ async function publishToLifeOS(){
     if(!hid) return;                                  // not a household member → skip
     const base=new Date(); base.setHours(0,0,0,0);
     const rows=[];
-    for(let i=1;i<=7;i++){                             // planning radar: next 7 days
+    for(let i=0;i<7;i++){                              // rolling week: today + next 6
       const d=new Date(base); d.setDate(base.getDate()+i);
-      const booked=commitmentsFor(d).length>0;        // same check the app shows
-      const dayName=d.toLocaleDateString('en-GB',{weekday:'long'});
+      const cs=commitmentsFor(d);                      // a real booking = "planned" (same check the app shows)
+      const c=cs[0]||null;
       rows.push({
-        household_id:hid, app:LIFEOS_APP, kind:'nudge',
-        key:'nothing-planned-'+LIFEOS_DOW[d.getDay()],// stable per-weekday slot → self-cleaning
-        title:'Nothing planned '+dayName,
-        detail:'No outing or class booked for Lexie',
+        household_id:hid, app:LIFEOS_APP, kind:'task',
+        key:'day-'+LIFEOS_DOW[d.getDay()],             // stable per-weekday slot → self-cleaning
+        title: c ? (c.name||'Activity')+(cs.length>1?` +${cs.length-1} more`:'') : 'No activity',
+        detail: c ? ([c.time,c.location].filter(Boolean).join(' · ') || (c.weekly?'every week':'booked')) : null,
         cta_url:'https://silkham.github.io/lexie-and-me/#calendar',
-        cta_label:'Plan the day',
+        cta_label:'Open day',
         due:lifeosLocalISO(d),
-        state:'warn',
-        status: booked ? 'dismissed' : 'open'         // booked day → drops off the radar
+        state:'good',
+        status: c ? 'open' : 'dismissed'               // no booking → LifeOS shows Plan / No activity
       });
     }
     await sb.schema('lifeos').from('signals').upsert(rows,{onConflict:'household_id,app,key'});

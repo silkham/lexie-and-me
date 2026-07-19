@@ -423,7 +423,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 18)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 19)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -674,11 +674,9 @@ function planFor(d){
     const pool=seedActivities.filter(a=>eligible(a)&&pred(a)&&!recent.includes(a.id));
     return (pool[Math.floor(Math.random()*pool.length)]||seedActivities.filter(a=>eligible(a)&&pred(a))[0])?.id;
   };
-  // If there's a booked class, that IS the day's activity. Otherwise suggest one.
+  // A booked class IS the day's activity. Otherwise we no longer auto-suggest —
+  // Today shows "Nothing planned" until a class/place is added (user request).
   let act=null;
-  if(!com){
-    act=w.rain?pick(a=>a.type==='rain'||a.cat==='cafe'):pick(a=>a.type==='out');
-  }
   const known=!!(WX&&WX.daily&&WX.daily.time.indexOf(dkey(d))>=0);
   const plan={act,commit:com,auto:true,noWx:!known,weatherNote:w.rain?'Rain likely — a calmer day at home suits':'Dry enough for the one outing'};
   S.plans[k]=plan;save();
@@ -727,16 +725,10 @@ function renderToday(){
       desc=(p.commit.location?p.commit.location+' · ':'')+'booked'+(p.commit.weekly?' · every week':'');
       chips=[['ti-clock',p.commit.time]];
       document.getElementById('t-adv-tag').textContent='BOOKED TODAY';
-    }else if(p.act){
-      const a=actById(p.act);_todayAct=a.id;
-      title=a.nm;desc=a.ds.split('—')[0].trim();
-      const mem=a.member?a.member.toUpperCase()+' · free':a.cost;
-      chips=[['ti-car',(a.mins||0)+' min'],['ti-ticket',mem||'—'],[a.indoor?'ti-home':'ti-tree',a.indoor?'Indoor':'Outdoors']];
-      document.getElementById('t-adv-tag').textContent='TODAY\'S ADVENTURE';
     }else{
-      title='A gentle day at home';
-      desc='Treasure basket, a wander round the block, nothing forced';
-      chips=[['ti-home','Home day'],['ti-mood-happy','No pressure']];
+      title='Nothing planned';
+      desc='Tap to find something for today, or leave it be — no pressure';
+      chips=[['ti-map-pin','Explore places'],['ti-mood-happy','A gentle day']];
       document.getElementById('t-adv-tag').textContent='TODAY';
     }
   }
@@ -879,8 +871,8 @@ const typeColor=t=>({class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visi
 const typeIcon=t=>({class:'ti-music',appointment:'ti-stethoscope',outing:'ti-map-pin',visitor:'ti-users'}[t]||'ti-calendar');
 function eventsForDay(d){const out=[];const k=dkey(d);
   S.commitments.forEach((c,idx)=>{const m=c.weekly?(d>=new Date(c.date)&&new Date(c.date).getDay()===d.getDay()):c.date===k;
-    if(m)out.push({name:c.name,time:c.time,color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),del:"delCommitFromSheet('"+k+"',"+idx+")"})});
-  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),del:"unplanDay('"+k+"')"})}
+    if(m)out.push({name:c.name,time:c.time,color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),del:"delCommitFromSheet('"+k+"',"+idx+")",delQ:"delCommitFromSheet('"+k+"',"+idx+",false)"})});
+  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),del:"unplanDay('"+k+"')",delQ:"unplanDay('"+k+"',false)"})}
   return out;}
 function renderCalendar(){
   if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);
@@ -895,14 +887,14 @@ function renderCalendar(){
   renderComing();}
 function renderComing(){let items=[];for(let i=0;i<35;i++){const d=new Date(today);d.setDate(d.getDate()+i);eventsForDay(d).forEach(e=>items.push({d,e}))}items=items.slice(0,12);
   document.getElementById('c-coming').innerHTML=items.length?items.map(({d,e})=>{const when=dkey(d)===dkey(today)?'Today':d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    return `<div class="c-up"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}</div></div><i class="ti ${e.icon}" style="font-size:17px;color:${e.color}"></i></div>`}).join(''):'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
+    return `<div class="c-up" onclick="selCalDay('${dkey(d)}')" style="cursor:pointer"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}</div></div><i class="ti ti-x" onclick="event.stopPropagation();${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`}).join(''):'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
 function calNav(n){if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);_calMonth=new Date(_calMonth.getFullYear(),_calMonth.getMonth()+n,1);renderCalendar()}
 function selCalDay(k){const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">${lbl}</h2>
    ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}</div></div><i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
    <button class="btn" style="margin-top:16px" onclick="openCommit('${k}')">+ Add to this day</button>`);}
-function delCommitFromSheet(k,i){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();selCalDay(k)}
-function unplanDay(k){if(S.dayPlace)delete S.dayPlace[k];save();renderCalendar();if(k===dkey(today))renderToday();selCalDay(k)}
+function delCommitFromSheet(k,i,reopen){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();if(reopen!==false)selCalDay(k)}
+function unplanDay(k,reopen){if(S.dayPlace)delete S.dayPlace[k];save();renderCalendar();if(k===dkey(today))renderToday();if(reopen!==false)selCalDay(k)}
 function openCommit(k){const dateK=k||dkey(today);_evType='class';
   const types=[['class','Class','#A98BEA'],['appointment','Appointment','#56B6E8'],['outing','Outing','#57C98A'],['visitor','Visitor','#FFB23E']];
   openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">Add to calendar</h2>
@@ -915,10 +907,18 @@ function openCommit(k){const dateK=k||dkey(today);_evType='class';
    <button class="btn" style="margin-top:18px" onclick="saveCommit()">Add event</button>`);}
 function pickEvType(t){_evType=t;const c={class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visitor:'#FFB23E'};document.querySelectorAll('#c-types .c-typechip').forEach(x=>{const on=x.dataset.t===t;x.style.background=on?c[x.dataset.t]:'#F1EFE8';x.style.color=on?'#fff':'#6F6B7A'})}
 function syncWeekly(){const on=document.getElementById('c-weekly').checked;const b=document.getElementById('c-wbox');if(b){b.style.background=on?'#57C98A':'transparent';b.style.borderColor=on?'#57C98A':'var(--line)';b.textContent=on?'✓':''}}
-function saveCommit(){const date=val('c-date');if(!date){toast('Pick a date');return}
-  const c={name:val('c-nm')||'Event',date,time:val('c-time')||'',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
+function saveCommit(){const name=(val('c-nm')||'').trim();if(!name){toast('Give it a name');return}
+  const date=val('c-date');if(!date){toast('Pick a date');return}
+  const c={name,date,time:val('c-time')||'',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
   S.commitments.push(c);S.plans={};save();closeSheet();renderCalendar();renderToday();toast(c.weekly?'Weekly event added':'Event added')}
-function openProfile(){openSheet(`
+function reopenPlace(id){S.closedPlaces=(S.closedPlaces||[]).filter(x=>(x+'')!==(id+''));save();toast('Reopened ♥');
+  const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on'))renderDiscover();openProfile();}
+function openProfile(){
+  const closed=(S.closedPlaces||[]);
+  const closedHTML=closed.length?`
+  <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:24px 2px 8px">Closed places (hidden)</div>
+  ${closed.map(id=>{const p=findPlace(id);const nm=p&&p.name?cleanName(p.name):(id+'');return `<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #F0EADD"><i class="ti ti-map-pin-off" style="font-size:17px;color:#C9585A;flex:none"></i><div style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#2B2A33;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</div><span onclick="reopenPlace('${(id+'').replace(/'/g,"\\'")}')" style="font-size:12.5px;font-weight:700;color:#2E8E5A;cursor:pointer;flex:none">Reopen</span></div>`}).join('')}`:'';
+  openSheet(`
   <h2 style="font-size:22px">Lexie's profile</h2>
   <label>Name</label><input id="p-nm" value="${S.baby.name}">
   <label>Date of birth</label><input id="p-dob" type="date" value="${S.baby.dob}">
@@ -926,6 +926,7 @@ function openProfile(){openSheet(`
   <label>Feeding</label><input id="p-feeds" value="${S.baby.feeds}">
   <label>Loves (comma separated)</label><input id="p-likes" value="${S.baby.likes.join(', ')}">
   <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>
+  ${closedHTML}
   <div style="text-align:center;margin-top:18px;font-size:12px;font-weight:600;color:#B3AEBC">${APP_VERSION}</div>`)}
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
   S.plans={};save();closeSheet();renderToday();toast('Profile saved')}
@@ -1020,7 +1021,7 @@ async function showSuggestions(q){
   q=(q||'').trim();const box=document.getElementById('dsc-sug');if(!box)return;
   if(q.length<2){box.classList.remove('on');box.innerHTML='';_dsearchPt=null;_dsearchLabel='';renderDiscover();return}
   const ql=q.toLowerCase();
-  const pm=(PLACES||[]).filter(p=>cleanName(p.name).toLowerCase().includes(ql)).slice(0,4);
+  const pm=(PLACES||[]).filter(p=>!isClosed(p.id)&&cleanName(p.name).toLowerCase().includes(ql)).slice(0,4);
   let head='';
   if(pm.length)head='<div class="shead">Places</div>'+pm.map(p=>_sugRow(`pickPlace('${(p.id+'').replace(/'/g,"\\'")}')`,catColor(p.category),catIcon(p.category),cleanName(p.name),catLabel(p.category)+(p.area?' · '+p.area:''))).join('');
   box.innerHTML=head+'<div class="shead">Locations</div><div class="srow"><div class="ss" style="padding-left:2px">Searching…</div></div>';

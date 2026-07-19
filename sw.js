@@ -1,6 +1,6 @@
 /* Lexie & Me — service worker (offline + installable PWA)
    Bump VERSION on every deploy so old caches are wiped on activate. */
-const VERSION = 'build-16';
+const VERSION = 'build-17';
 const CORE    = 'lexieme-core-'    + VERSION;
 const RUNTIME = 'lexieme-runtime-' + VERSION;
 

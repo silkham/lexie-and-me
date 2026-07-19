@@ -422,7 +422,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 16)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 17)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -543,12 +543,14 @@ function cloudSave(){
     }catch(e){ /* offline — local copy already saved, will sync next change */ }
   },600);
 }
+let _cloudEverLoaded=false;   // true once we've adopted authoritative shared state
 async function cloudLoad(){
   try{
     const { data, error } = await sb.from('household_state')
       .select('state').eq('id',HOUSEHOLD_ID).single();
     if(!error && data && data.state && Object.keys(data.state).length){
       S = data.state;
+      _cloudEverLoaded=true;
       // re-run the same migration guards as on local load, so old shapes are safe
       if(Array.isArray(S.meals)||!S.meals||!S.meals.bf){S.meals={bf:seedBreakfast.slice(0,3),ln:seedLunch.slice(0,3)};S.plans={}}
       if(!S.dayMeals)S.dayMeals={};
@@ -572,6 +574,7 @@ sb.channel('household')
       payload=>{
         if(payload.new && payload.new.state){
           S = payload.new.state;
+          _cloudEverLoaded=true;
           if(!S.dayMeals)S.dayMeals={};
           localStorage.setItem(LS, JSON.stringify(S));
           const cur=document.querySelector('.screen.on');
@@ -579,13 +582,18 @@ sb.channel('household')
         }
       })
   .subscribe();
-// migrate older saved state
-if(Array.isArray(S.meals)||!S.meals||!S.meals.bf){S.meals={bf:seedBreakfast.slice(0,3),ln:seedLunch.slice(0,3)};S.plans={};save()}
-if(S.plans){for(const k in S.plans){if('am'in S.plans[k]||'pm'in S.plans[k]){S.plans={};break}}save()}
+// migrate older saved state.
+// NOTE: use _origSave (localStorage only) here, NOT save() — these run at module
+// load, BEFORE boot()→cloudLoad() has adopted the shared family state. save()
+// schedules a debounced cloudSave that, on a fresh device (empty seed S), would
+// upload the EMPTY state and clobber the real household_state cloud-wide (and then
+// wipe LifeOS). cloudLoad re-runs these same guards on the adopted state anyway.
+if(Array.isArray(S.meals)||!S.meals||!S.meals.bf){S.meals={bf:seedBreakfast.slice(0,3),ln:seedLunch.slice(0,3)};S.plans={};_origSave()}
+if(S.plans){for(const k in S.plans){if('am'in S.plans[k]||'pm'in S.plans[k]){S.plans={};break}}_origSave()}
 // old commitments used weekday/nap instead of a real date — clear them
 if(!S.dayMeals)S.dayMeals={};
 if(S.commitments&&S.commitments.some(c=>!c.date)){S.commitments=S.commitments.filter(c=>c.date);S.plans={}}
-save();
+_origSave();
 
 /* age in months */
 function ageM(){const d=new Date(S.baby.dob);return (today.getFullYear()-d.getFullYear())*12+today.getMonth()-d.getMonth()}
@@ -1141,6 +1149,12 @@ async function publishToLifeOS(){
         status: e ? 'open' : 'dismissed'               // nothing that day → LifeOS shows Plan / No activity
       });
     }
+    // Guard: never wipe the hub with a phantom empty week. If we've never adopted
+    // authoritative shared state (offline / cloudLoad returned nothing) AND the week
+    // looks empty, this is almost certainly "not loaded yet", not "genuinely nothing
+    // planned" — skip rather than dismiss every day the other device published.
+    const anyPlanned = rows.some(r=>r.status==='open');
+    if(!anyPlanned && !_cloudEverLoaded) return;
     await sb.schema('lifeos').from('signals').upsert(rows,{onConflict:'household_id,app,key'});
   }catch(e){ /* best-effort — never block boot */ }
 }

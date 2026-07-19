@@ -96,6 +96,25 @@ role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CL
 - Git author: `silkham <lachlanmclean1990@gmail.com>`.
 - Commits land directly on `main` (GitHub Pages serves `main`/root; that's the deploy path).
 
+## Memberships (Discover "Free for you")
+Three household memberships flag places as free entry: **NT**, **EH**, and **Merlin** (Gold
+pass, added build 18). The badge + "Free for you" filter key off the `places.membership`
+column generically, so flagging a row (`membership='nt'|'eh'|'merlin'`) is all it takes —
+no code change needed for the badge. Difference: NT/EH rows also set `category` = the
+membership (their filter chip matches by category), but **Merlin spans real categories**
+(theme parks, aquariums, museums, castles), so its rows keep their true `category` and the
+**Merlin filter chip matches by `membership==='merlin'`** (special-cased in `discoverFiltered`,
+like `free`/`fav`). 21 Merlin attractions are flagged in the `places` table. In the planner,
+`seedActivities` items mirror this with a `member:'merlin'` field + `cost:'Merlin free'`.
+
+**Closed places (build 18):** no live open/closed API — a place is hidden by manually tapping
+"Report permanently closed" in its detail sheet. Closed IDs live in `S.closedPlaces` (synced
+household state, so both phones agree; migration-guarded in `load()` + `cloudLoad()`).
+`discoverFiltered()` drops them from the map/list, but search (`showSuggestions`, which reads
+`PLACES` directly) still finds them so `toggleClosed()` can reopen one. Genuinely-dead venues
+that shouldn't be in the dataset at all (e.g. Bear Grylls Adventure NEC, closed Dec 2024) are
+deleted from the `places` table instead.
+
 ## Conventions
 - Single-file app: edit `index.html` directly; keep everything inline, no build tooling.
 - No Node in this environment — to syntax/functional-test inline JS, use JavaScriptCore.

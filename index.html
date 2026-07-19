@@ -368,6 +368,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
     <span class="fchip" data-f="free" onclick="dscFilter('free')">Free for you</span>
     <span class="fchip" data-f="nt" onclick="dscFilter('nt')">NT</span>
     <span class="fchip" data-f="eh" onclick="dscFilter('eh')">EH</span>
+    <span class="fchip" data-f="merlin" onclick="dscFilter('merlin')">Merlin</span>
     <span class="fchip" data-f="zoo-aquarium" onclick="dscFilter('zoo-aquarium')">Zoos</span>
     <span class="fchip" data-f="historic-house" onclick="dscFilter('historic-house')">Castles</span>
     <span class="fchip" data-f="museum" onclick="dscFilter('museum')">Museums</span>
@@ -422,7 +423,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 17)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 18)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -464,6 +465,12 @@ const seedActivities=[
  {id:'kenwood',nm:'Kenwood House',emoji:'🖼',cat:'eh',type:'london',ds:'Free neoclassical house on Hampstead Heath — art, lawns, café. A beautiful low-effort London day.',loc:'Hampstead',mins:60,cost:'Free',nap:'flex',age:[0,99],indoor:false,member:'eh'},
  {id:'bayham',nm:'Bayham Old Abbey',emoji:'⛪',cat:'eh',type:'out',ds:'Romantic free-to-roam abbey ruins on the Kent/Sussex border.',loc:'Lamberhurst',mins:45,cost:'EH free',nap:'flex',age:[0,99],indoor:false,member:'eh'},
 
+ // ——— MERLIN (Gold pass = free entry) ———
+ {id:'chessington',nm:'Chessington World of Adventures',emoji:'🦁',cat:'animals',type:'out',ds:'Zoo, Sea Life aquarium and gentle rides — a proper day out on your Merlin pass.',loc:'Chessington',mins:30,cost:'Merlin free',nap:'flex',age:[0,99],indoor:false,member:'merlin'},
+ {id:'legoland-windsor',nm:'Legoland Windsor',emoji:'🧱',cat:'attraction',type:'out',ds:'Duplo Valley and toddler-scale rides for the littlest — free on your Merlin pass.',loc:'Windsor',mins:70,cost:'Merlin free',nap:'flex',age:[0,99],indoor:false,member:'merlin'},
+ {id:'thorpe-park',nm:'Thorpe Park',emoji:'🎢',cat:'attraction',type:'out',ds:'Thrill park — really for older kids, but it\'s on your Merlin pass.',loc:'Chertsey',mins:40,cost:'Merlin free',nap:'flex',age:[0,99],indoor:false,member:'merlin'},
+ {id:'alton-towers',nm:'Alton Towers Resort',emoji:'🎡',cat:'attraction',type:'out',ds:'The big one — a long drive, so a proper planned day on your Merlin pass.',loc:'Staffordshire',mins:180,cost:'Merlin free',nap:'flex',age:[0,99],indoor:false,member:'merlin'},
+
  // ——— PARKS, GARDENS & WALKS ———
  {id:'titsey',nm:'Titsey Place walk',emoji:'🌳',cat:'walk',type:'out',ds:'Woodland & estate walk on the doorstep — pram-friendly loop.',loc:'Limpsfield',mins:6,cost:'Free',nap:'pram',age:[0,99],indoor:false},
  {id:'master-park',nm:'Master Park',emoji:'🌲',cat:'park',type:'out',ds:'Oxted\'s own park — bench, coffee, fresh air, ten minutes\' walk.',loc:'Oxted',mins:3,cost:'Free',nap:'pram',age:[0,99],indoor:false},
@@ -482,7 +489,7 @@ const seedActivities=[
  // ——— LONDON ADVENTURES ———
  {id:'sci-museum',nm:'Science Museum — The Garden',emoji:'🔬',cat:'london',type:'london',ds:'Step-free, buggy-friendly, free. Under-5 sensory play zone.',loc:'South Kensington',mins:70,cost:'Free',nap:'flex',age:[0,99],indoor:true},
  {id:'transport-museum',nm:'London Transport Museum',emoji:'🚌',cat:'london',type:'london',ds:'Climb-aboard buses in buggy-friendly Covent Garden, All Aboard play zone.',loc:'Covent Garden',mins:65,cost:'£24/u18 free',nap:'flex',age:[0,99],indoor:true},
- {id:'sealife',nm:'SEA LIFE London',emoji:'🐠',cat:'london',type:'london',ds:'Dark, calm, mesmerising tanks — under-3s free, buggies welcome.',loc:'South Bank',mins:60,cost:'£28/u3 free',nap:'flex',age:[0,99],indoor:true},
+ {id:'sealife',nm:'SEA LIFE London',emoji:'🐠',cat:'london',type:'london',ds:'Dark, calm, mesmerising tanks — buggies welcome, free on your Merlin pass.',loc:'South Bank',mins:60,cost:'Merlin free',nap:'flex',age:[0,99],indoor:true,member:'merlin'},
  {id:'hyde-park',nm:'Hyde Park & Diana playground',emoji:'🦢',cat:'london',type:'london',ds:'Pirate-ship playground, lake, space to roam. Train then a gentle wander.',loc:'Hyde Park',mins:65,cost:'Free',nap:'pram',age:[0,99],indoor:false},
  {id:'nhm',nm:'Natural History Museum',emoji:'🦕',cat:'london',type:'london',ds:'Free and iconic — use the buggy-friendly Exhibition Road side entrance.',loc:'South Kensington',mins:70,cost:'Free',nap:'flex',age:[0,99],indoor:true},
  {id:'young-va',nm:'Young V&A',emoji:'🧩',cat:'london',type:'london',ds:'Free Bethnal Green museum with a Mini Museum sensory space for under-2s.',loc:'Bethnal Green',mins:65,cost:'Free',nap:'flex',age:[0,99],indoor:true},
@@ -523,6 +530,7 @@ function load(){
     pack:{},
     favourites:[],
     dayPlace:{},
+    closedPlaces:[],
     bag:['Nappies & wipes','Spare outfit','Two milk feeds / snacks','Water','Muslin']
   };
 }
@@ -530,6 +538,7 @@ let S=load();
 function save(){localStorage.setItem(LS,JSON.stringify(S))}
 if(!S.favourites)S.favourites=[];
 if(!S.dayPlace)S.dayPlace={};
+if(!S.closedPlaces)S.closedPlaces=[];
 if(!S.bag||!S.bag.length)S.bag=['Nappies & wipes','Spare outfit','Two milk feeds / snacks','Water','Muslin'];
 /* ===== Supabase cloud sync helpers ===== */
 let _syncTimer=null;
@@ -558,6 +567,7 @@ async function cloudLoad(){
       if(!S.plans)S.plans={};
       if(!S.pack)S.pack={};
       if(!S.history)S.history=[];
+      if(!S.closedPlaces)S.closedPlaces=[];
       localStorage.setItem(LS, JSON.stringify(S));
       return true;
     }
@@ -978,9 +988,10 @@ function initDiscoverMap(){
   _dmap.on('moveend',()=>{clearTimeout(_dmoveTimer);_dmoveTimer=setTimeout(renderDiscoverList,120)});
 }
 function discoverFiltered(){
-  let ps=PLACES.filter(p=>p.lat!=null);
+  let ps=PLACES.filter(p=>p.lat!=null&&!isClosed(p.id));
   if(_dfilter==='fav')ps=ps.filter(p=>isFav(p.id));
   else if(_dfilter==='free')ps=ps.filter(p=>p.membership);
+  else if(_dfilter==='merlin')ps=ps.filter(p=>p.membership==='merlin'); // membership, not category (Merlin spans theme parks/aquariums/etc.)
   else if(_dfilter!=='all')ps=ps.filter(p=>p.category===_dfilter);
   return ps;
 }
@@ -1030,6 +1041,11 @@ function dscNearMe(){if(!navigator.geolocation){toast('Location not available');
 function snapOf(p){return {id:p.id,name:p.name,category:p.category,area:p.area,lat:p.lat,lng:p.lng,cost:p.cost,membership:p.membership,indoor:p.indoor,rain_ok:p.rain_ok,sun_ok:p.sun_ok,website:p.website,opening_hours:p.opening_hours,notes:p.notes}}
 function findPlace(id){id=id+'';let p=(PLACES||[]).find(x=>(x.id+'')===id);if(p)return p;for(const k in (S.dayPlace||{})){if(S.dayPlace[k]&&(S.dayPlace[k].id+'')===id)return S.dayPlace[k]}return (S.favourites||[]).find(x=>(x.id+'')===id)||null}
 function isFav(id){return (S.favourites||[]).some(f=>(f.id+'')===(id+''))}
+function isClosed(id){return (S.closedPlaces||[]).some(x=>(x+'')===(id+''))}
+function toggleClosed(id){S.closedPlaces=S.closedPlaces||[];const was=isClosed(id);
+  if(was)S.closedPlaces=S.closedPlaces.filter(x=>(x+'')!==(id+''));else S.closedPlaces.push(id+'');
+  save();closeSheet();toast(was?'Marked open again ♥':'Marked closed — hidden from Discover');
+  const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on'))renderDiscover();}
 function toggleFav(id){const p=findPlace(id);if(!p)return;S.favourites=S.favourites||[];const was=isFav(id);if(was)S.favourites=S.favourites.filter(f=>(f.id+'')!==(id+''));else S.favourites.push(snapOf(p));save();
   const b=document.getElementById('pd-fav');if(b)b.style.background=isFav(id)?'#FF7A45':'rgba(43,42,51,.45)';
   toast(was?'Removed from saved':'Saved ♥');
@@ -1097,7 +1113,10 @@ function openPlaceDetail(id){
    <div style="display:flex;gap:10px;margin-top:10px">
      <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#56B6E8;vertical-align:-2px"></i> Directions</div>
      ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
-   </div>`);
+   </div>
+   ${isClosed(p.id)
+     ? `<div style="margin-top:14px;text-align:center"><div style="font-size:13px;font-weight:700;color:#C2410C;background:#FBE3D5;padding:11px;border-radius:12px;margin-bottom:9px"><i class="ti ti-circle-x" style="vertical-align:-2px"></i> Marked closed — hidden from Discover</div><div onclick="toggleClosed('${idEsc}')" style="font-size:13.5px;font-weight:700;color:#2E8E5A;cursor:pointer">Mark as open again</div></div>`
+     : `<div onclick="toggleClosed('${idEsc}')" style="margin-top:16px;text-align:center;font-size:12.5px;font-weight:700;color:#B3AEBC;cursor:pointer"><i class="ti ti-flag" style="vertical-align:-2px"></i> Report permanently closed</div>`}`);
   if(hasWiki)placeMedia(p).then(m=>{
     if(m.image){const h=document.getElementById('pd-hero');const hi=document.getElementById('pd-heroimg');if(h&&hi){
       const w=h.offsetWidth||360;

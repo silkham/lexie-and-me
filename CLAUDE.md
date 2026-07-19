@@ -115,6 +115,13 @@ household state, so both phones agree; migration-guarded in `load()` + `cloudLoa
 that shouldn't be in the dataset at all (e.g. Bear Grylls Adventure NEC, closed Dec 2024) are
 deleted from the `places` table instead.
 
+**Editing the `places` dataset:** its RLS is open (same caveat as `household_state`), so the
+baked **anon key can PATCH/POST/DELETE rows via the PostgREST API** — no service role needed.
+That's how memberships get flagged / rows fixed (`curl -X PATCH .../rest/v1/places?id=in.(...)`
+with `apikey`+`Authorization: Bearer <anon>`). `id`s are OSM-sourced (`osm-way-…`); rows we add
+by hand use a readable id (`merlin-london-eye`). 4,710-ish rows; Discover only shows rows with
+non-null `lat`.
+
 ## Conventions
 - Single-file app: edit `index.html` directly; keep everything inline, no build tooling.
 - No Node in this environment — to syntax/functional-test inline JS, use JavaScriptCore.

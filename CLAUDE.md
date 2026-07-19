@@ -22,8 +22,12 @@ account signs in once per device (session persists; sibling apps on `silkham.git
 share it). The AI concierge was removed on 2026-06-24.
 
 ## Roadmap
-- [ ] Tighten `household_state` RLS to require household membership (the app now authenticates,
-      but the table's RLS still allows any anon caller by `id` — the real privacy fix)
+- [x] Tighten `household_state` RLS to require household membership (done build 19, 2026-07-19).
+      Added a `household_id uuid` column (backfilled to the family household
+      `13b5e642-3f21-403c-8336-56976f177269`) and replaced the id-only public policies with a
+      single `for all to authenticated using (household_id in (select lifeos.my_household_ids()))`
+      policy — mirrors `lifeos.signals`. Anon is now fully denied; only the logged-in household
+      account reads/writes. No app code change (the app still queries by `id`).
 
 A single-file PWA that helps a dad on parental leave plan gentle, baby-led days
 with his daughter **Lexie** in **Oxted, Surrey**. Warm "paper & ink" editorial
@@ -74,10 +78,11 @@ that auto-deploys static assets from this repo (secondary; safe to delete).
 **Cloud sync (live):** reuses the Fitness Supabase project `dgbbyijhabjozqrkokrq`. URL +
 public anon key are baked into `index.html`. State syncs via the `household_state`
 table (one JSON-blob row keyed by `HOUSEHOLD_ID`, RLS + realtime); see `supabase-schema.sql`.
-**Privacy caveat (still open):** `household_state`'s RLS predicates key on `id=` only, so
-any anon caller who knows the id can still read/write the row — even though the app itself
-now runs authenticated (build 13). Closing the gap = tightening that table's RLS to require
-household membership (roadmap item above); the grants and login are already in place.
+**Privacy (closed, build 19):** `household_state`'s RLS now requires household membership —
+`for all to authenticated using (household_id in (select lifeos.my_household_ids()))`. The
+anon key can no longer read/write it (no policy for `anon` → denied); only the logged-in
+shared household account can. The row carries a `household_id` column keyed to the family
+household. The app is unchanged — it still queries by `id` under its authed JWT.
 
 **LifeOS integration (build 13):** the app authenticates as the shared household so it can
 publish `nudge` signals into `lifeos.signals` on the SAME project. `publishToLifeOS()` runs
@@ -86,8 +91,8 @@ fire-and-forget in `boot()`: resolves the household UUID via `sb.schema('lifeos'
 slot** for the next 7 days (`key='nothing-planned-<dow>'` → self-cleaning; booked days flip
 to `status='dismissed'`). `due` uses `dkey()` (now local — see below). Accent violet on the
 hub; `state='warn'`. The
-`household_state` anon sync is untouched and still works under the authed JWT (its RLS is
-role-agnostic; `authenticated` has the same grants as `anon`). See `../LifeOS/CLAUDE.md`.
+`household_state` sync runs under the same authed JWT — its RLS is now membership-scoped
+(build 19, see Privacy above), so the login is what lets it read/write. See `../LifeOS/CLAUDE.md`.
 
 **Dropped:** the AI concierge was removed entirely on 2026-06-24 per user request.
 
@@ -110,12 +115,15 @@ like `free`/`fav`). 21 Merlin attractions are flagged in the `places` table. In 
 **Closed places (build 18):** no live open/closed API — a place is hidden by manually tapping
 "Report permanently closed" in its detail sheet. Closed IDs live in `S.closedPlaces` (synced
 household state, so both phones agree; migration-guarded in `load()` + `cloudLoad()`).
-`discoverFiltered()` drops them from the map/list, but search (`showSuggestions`, which reads
-`PLACES` directly) still finds them so `toggleClosed()` can reopen one. Genuinely-dead venues
+`discoverFiltered()` drops them from the map/list, and (build 19) `showSuggestions` now
+filters them out of search too. To reopen one, use the **"Closed places → Reopen"** list at
+the bottom of the profile sheet (`openProfile` → `reopenPlace(id)`); a place detail sheet
+also still offers "Report permanently closed" / "Mark as open again". Genuinely-dead venues
 that shouldn't be in the dataset at all (e.g. Bear Grylls Adventure NEC, closed Dec 2024) are
 deleted from the `places` table instead.
 
-**Editing the `places` dataset:** its RLS is open (same caveat as `household_state`), so the
+**Editing the `places` dataset:** its RLS is still open (unlike `household_state`, which was
+locked down in build 19 — the `places` table remains anon-writable by design), so the
 baked **anon key can PATCH/POST/DELETE rows via the PostgREST API** — no service role needed.
 That's how memberships get flagged / rows fixed (`curl -X PATCH .../rest/v1/places?id=in.(...)`
 with `apikey`+`Authorization: Bearer <anon>`). `id`s are OSM-sourced (`osm-way-…`); rows we add

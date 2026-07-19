@@ -1141,8 +1141,9 @@ function toast(t){const e=document.createElement('div');e.textContent=t;e.style.
 /* ================= LifeOS integration ================= *
  * Lexie authenticates as the shared household so it can publish `nudge`
  * signals into lifeos.signals (RLS needs an authenticated JWT — anon can't).
- * The existing household_state sync keeps working under the authed session
- * (its RLS keys on id only; authenticated has the same grants as anon).      */
+ * The household_state sync keeps working under the authed session — its RLS is
+ * now membership-scoped (build 19): for-all to authenticated, gated on
+ * household_id in (select lifeos.my_household_ids()). Anon is denied.          */
 const LIFEOS_APP='lexie';
 const LIFEOS_DOW=['sun','mon','tue','wed','thu','fri','sat'];
 

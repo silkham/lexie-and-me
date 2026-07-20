@@ -21,6 +21,14 @@ session** (login screen) so it can publish into the LifeOS hub; the shared house
 account signs in once per device (session persists; sibling apps on `silkham.github.io`
 share it). The AI concierge was removed on 2026-06-24.
 
+**Reframe (build 20, 2026-07-20):** the app is now framed as a **household day-planner built
+around Lexie**, not a baby-only planner. Calendar events (`S.commitments`, types
+class/appointment/outing/visitor) are the "things that shape the day" primitive — e.g. a
+windscreen appointment where Lexie is along for 3–4h IS that day's activity. Events now carry
+**start + end** (`time` + `end`); times render as ranges. `napClash(start,end)` does a real
+window-overlap and is surfaced as a red "⚠ Clashes with a nap" callout (Today chip + calendar/
+Coming-up marker). Christine as a first-class participant is deferred until the shape settles.
+
 ## Roadmap
 - [x] Tighten `household_state` RLS to require household membership (done build 19, 2026-07-19).
       Added a `household_id uuid` column (backfilled to the family household
@@ -138,6 +146,14 @@ non-null `lat`.
   and syntax-check each via `new Function(readFile(path))` (compiles without executing, so
   cross-block globals like `sb` don't matter). Logic-test a function by slicing it out + stubbing.
 - British English and UK context throughout (£, "nappies", Oxted/Surrey place names).
+- **Design system — "paper & ink", single accent, grown-up (unified build 20).** Fonts are
+  **Young Serif** (headings), **Newsreader** italic (editorial sub-text), **Instrument Sans**
+  (body) — do NOT reintroduce Fredoka/Nunito (the old "kiddie" tab layer). One accent: **pine
+  `--accent #31503F`**. Category/type/meal colours use the muted tokens **`--sage #7E9474`,
+  `--terra #A65A40`, `--sky #6E8796`** (event types: class→#4A6B57, appointment→sky,
+  outing→sage, visitor→terra); ink `#23281F`, muted grey `#9BA08F`, hairlines/tiles off the
+  cream `--tile`/`--line` vars. No bright candy hexes (#FF7A45/#56B6E8/#FFC24B/#A98BEA etc.) —
+  they were all remapped; keep new UI on the vars/tokens.
 - **Dates: `dkey(d)` MUST stay local `yyyy-mm-dd`** (`getFullYear/getMonth/getDate`), never
   `toISOString()`. Calendar cells are built at *local* midnight (`new Date(y,m,dn)`); under BST,
   `toISOString()` (UTC) rolls them back a day, so clicking a date opened the previous one

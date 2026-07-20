@@ -15,9 +15,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Newsreader:ital,opsz@1,6..72&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -169,9 +167,9 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 .check.done .lbl{text-decoration:line-through;color:var(--ink3)}
 
 /* ——— TODAY v1.0 — playful redesign (scoped to #today) ——— */
-#today{--co:#FF7A45;--cod:#E85D2C;--lf:#57C98A;--lfd:#2E8E5A;--tk:#2B2A33;--tk2:#6F6B7A;--tk3:#B3AEBC;
-  font-family:'Nunito',system-ui,sans-serif;padding:0 0 40px}
-#today .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#today{--co:#31503F;--cod:#31503F;--lf:#7E9474;--lfd:#2E8E5A;--tk:#23281F;--tk2:#6F6B7A;--tk3:#9BA08F;
+  font-family:'Instrument Sans',system-ui,sans-serif;padding:0 0 40px}
+#today .fr{font-family:'Young Serif',serif;font-weight:500;letter-spacing:-.01em}
 #today.on>*{animation:rise .5s cubic-bezier(.25,.8,.3,1) both}
 #today.on>*:nth-child(2){animation-delay:.05s}
 #today.on>*:nth-child(3){animation-delay:.1s}
@@ -181,7 +179,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 #today .t-eyebrow{font-size:11px;letter-spacing:.16em;color:var(--cod);font-weight:700}
 #today .t-greet{font-size:31px;color:var(--tk);margin:8px 0 0;line-height:1.02}
 #today .t-sub{font-size:15.5px;color:var(--tk2);margin:6px 22px 0;font-weight:600;line-height:1.4}
-#today .prof{width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:var(--cod);display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;box-shadow:0 2px 6px rgba(43,42,51,.15);flex:none}
+#today .prof{width:40px;height:40px;border-radius:50%;background:#EDE8DA;color:var(--cod);display:flex;align-items:center;justify-content:center;font-family:'Young Serif';font-weight:600;font-size:17px;border:none;cursor:pointer;box-shadow:0 2px 6px rgba(43,42,51,.15);flex:none}
 #today .adv{margin:16px 18px 0;background:#fff;border-radius:30px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(43,42,51,.05),0 24px 44px -30px rgba(43,42,51,.45)}
 #today .adv-ill{position:relative;line-height:0}
 #today .adv-tag{position:absolute;top:13px;left:16px;font-size:11px;letter-spacing:.14em;font-weight:700;color:#fff;background:rgba(43,42,51,.32);padding:6px 11px;border-radius:999px}
@@ -199,84 +197,84 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 #today .t-meals{margin:15px 18px 0;background:#fff;border-radius:22px;padding:15px 18px;box-shadow:0 1px 2px rgba(43,42,51,.05)}
 #today .mrow{display:flex;align-items:center;gap:11px;padding:9px 0;cursor:pointer}
 #today .mdot{width:9px;height:9px;border-radius:50%;flex:none}
-.nav button.on{color:#FF7A45}
+.nav button.on{color:#31503F}
 /* ——— DISCOVER ——— */
-#discover{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
-#discover .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#discover{font-family:'Instrument Sans',system-ui,sans-serif;padding:0 0 30px}
+#discover .fr{font-family:'Young Serif',serif;font-weight:500;letter-spacing:-.01em}
 #discover .dsc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:calc(var(--safe-t) + 16px) 22px 0}
-#discover .dsc-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
-#discover .dsc-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
-#discover .prof{width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none}
+#discover .dsc-eyebrow{font-size:11px;letter-spacing:.16em;color:#31503F;font-weight:700}
+#discover .dsc-title{font-size:29px;color:#23281F;margin:7px 0 0}
+#discover .prof{width:40px;height:40px;border-radius:50%;background:#EDE8DA;color:#31503F;display:flex;align-items:center;justify-content:center;font-family:'Young Serif';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none}
 #discover .dsc-searchwrap{position:relative;margin:13px 18px 0;z-index:1200}
 #discover .dsc-search{display:flex;align-items:center;gap:9px;background:#fff;border-radius:16px;padding:10px 13px;box-shadow:0 2px 10px -4px rgba(43,42,51,.18)}
 #discover .dsc-sug{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border-radius:16px;box-shadow:0 14px 34px -10px rgba(43,42,51,.34);overflow-y:auto;max-height:330px;display:none}
 #discover .dsc-sug.on{display:block}
-#discover .dsc-sug .shead{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B3AEBC;padding:10px 14px 4px}
+#discover .dsc-sug .shead{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9BA08F;padding:10px 14px 4px}
 #discover .dsc-sug .srow{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;border-top:1px solid #F4F0E6}
 #discover .dsc-sug .srow:active{background:#F6F2E9}
 #discover .dsc-sug .sic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none}
 #discover .dsc-sug .sic i{font-size:16px}
-#discover .dsc-sug .st{font-size:14px;font-weight:700;color:#2B2A33;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#discover .dsc-sug .st{font-size:14px;font-weight:700;color:#23281F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #discover .dsc-sug .ss{font-size:12px;font-weight:600;color:#9BA08F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#discover .dsc-search input{flex:1;border:none;background:none;font-family:'Nunito';font-size:14.5px;font-weight:600;color:#2B2A33;margin:0;padding:0}
+#discover .dsc-search input{flex:1;border:none;background:none;font-family:'Instrument Sans';font-size:14.5px;font-weight:600;color:#23281F;margin:0;padding:0}
 #discover .dsc-search input:focus{outline:none}
-#discover .dsc-near{border:none;background:#FFF1E9;color:#FF7A45;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+#discover .dsc-near{border:none;background:#FFF1E9;color:#31503F;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
 #discover .dsc-map{height:300px;margin:12px 18px 0;border-radius:22px;overflow:hidden;box-shadow:0 1px 2px rgba(43,42,51,.06);z-index:0}
-#discover .dsc-countrow{padding:12px 24px 0;font-size:12px;font-weight:700;color:#B3AEBC}
+#discover .dsc-countrow{padding:12px 24px 0;font-size:12px;font-weight:700;color:#9BA08F}
 #discover .dsc-filters{display:flex;gap:8px;overflow-x:auto;padding:9px 18px 2px;scrollbar-width:none}
 #discover .dsc-filters::-webkit-scrollbar{display:none}
 #discover .fchip{flex:none;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:#F1EDE3;color:#6F6B7A;cursor:pointer;white-space:nowrap}
-#discover .fchip.on{background:#FF7A45;color:#fff}
+#discover .fchip.on{background:#31503F;color:#fff}
 #discover .dsc-list{padding:12px 18px 0}
 #discover .dsc-card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:11px 13px;margin-bottom:9px;box-shadow:0 1px 2px rgba(43,42,51,.05);cursor:pointer}
 #discover .dsc-ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none}
 #discover .dsc-ic i{font-size:18px}
-#discover .dsc-nm{font-size:14.5px;font-weight:700;color:#2B2A33;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#discover .dsc-nm{font-size:14.5px;font-weight:700;color:#23281F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #discover .dsc-meta{font-size:12.5px;font-weight:600;color:#9BA08F;margin-top:1px}
 .dchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;background:#FCE7DB;color:#C44E22;line-height:1}
 .dchip i{font-size:14px}
-.leaflet-container{font-family:'Nunito',sans-serif;background:#EDE8DC}
+.leaflet-container{font-family:'Instrument Sans',sans-serif;background:#EDE8DC}
 .marker-cluster{background:rgba(255,122,69,.25)!important}
-.marker-cluster div{background:#FF7A45!important;color:#fff!important;font-family:'Nunito',sans-serif!important;font-weight:700!important;font-size:12px!important}
+.marker-cluster div{background:#31503F!important;color:#fff!important;font-family:'Instrument Sans',sans-serif!important;font-weight:700!important;font-size:12px!important}
 .marker-cluster span{line-height:30px!important}
 .leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.65)!important}
-.leaflet-bar a{border-radius:8px!important;color:#2B2A33!important}
+.leaflet-bar a{border-radius:8px!important;color:#23281F!important}
 
 /* ——— CALENDAR ——— */
-#calendar{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
-#calendar .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#calendar{font-family:'Instrument Sans',system-ui,sans-serif;padding:0 0 30px}
+#calendar .fr{font-family:'Young Serif',serif;font-weight:500;letter-spacing:-.01em}
 #calendar .c-head{padding:calc(var(--safe-t) + 16px) 22px 0}
-#calendar .c-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
-#calendar .c-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
+#calendar .c-eyebrow{font-size:11px;letter-spacing:.16em;color:#31503F;font-weight:700}
+#calendar .c-title{font-size:29px;color:#23281F;margin:7px 0 0}
 #calendar .c-monthnav{display:flex;justify-content:flex-end;gap:8px;padding:6px 18px 0}
-#calendar .c-monthnav button{width:34px;height:34px;border-radius:11px;border:none;background:#fff;box-shadow:0 1px 3px rgba(43,42,51,.1);color:#2B2A33;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#calendar .c-monthnav button{width:34px;height:34px;border-radius:11px;border:none;background:#fff;box-shadow:0 1px 3px rgba(43,42,51,.1);color:#23281F;cursor:pointer;display:flex;align-items:center;justify-content:center}
 #calendar .c-monthnav i{font-size:18px}
 #calendar .c-gridhead{display:grid;grid-template-columns:repeat(7,1fr);padding:12px 18px 2px}
-#calendar .c-gridhead span{text-align:center;font-size:11px;font-weight:700;color:#B3AEBC}
+#calendar .c-gridhead span{text-align:center;font-size:11px;font-weight:700;color:#9BA08F}
 #calendar .c-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 18px}
-#calendar .c-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#2B2A33;border-radius:50%;cursor:pointer}
-#calendar .c-cell.today{background:#FF7A45;color:#fff}
+#calendar .c-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#23281F;border-radius:50%;cursor:pointer}
+#calendar .c-cell.today{background:#31503F;color:#fff}
 #calendar .c-dot{width:5px;height:5px;border-radius:50%;margin-top:3px}
 #calendar .c-coming-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9BA08F;font-weight:700;padding:20px 24px 4px}
 #calendar .c-up{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid #F0EADD}
 #calendar .c-updot{width:11px;height:11px;border-radius:50%;flex:none}
 
 /* ——— MEALS week planner ——— */
-#meals{font-family:'Nunito',system-ui,sans-serif;padding:0 0 30px}
-#meals .fr{font-family:'Fredoka',sans-serif;font-weight:500;letter-spacing:-.01em}
+#meals{font-family:'Instrument Sans',system-ui,sans-serif;padding:0 0 30px}
+#meals .fr{font-family:'Young Serif',serif;font-weight:500;letter-spacing:-.01em}
 #meals .m-head{padding:calc(var(--safe-t) + 16px) 22px 0}
-#meals .m-eyebrow{font-size:11px;letter-spacing:.16em;color:#E85D2C;font-weight:700}
-#meals .m-title{font-size:29px;color:#2B2A33;margin:7px 0 0}
+#meals .m-eyebrow{font-size:11px;letter-spacing:.16em;color:#31503F;font-weight:700}
+#meals .m-title{font-size:29px;color:#23281F;margin:7px 0 0}
 #meals .m-sub{font-size:12.5px;font-weight:600;color:#6F6B7A;margin-top:6px}
 #meals .dcard{background:#fff;border-radius:20px;padding:13px 16px;margin:11px 18px 0;box-shadow:0 1px 2px rgba(43,42,51,.05)}
-#meals .dcard.today{outline:2px solid #FF7A45}
+#meals .dcard.today{outline:2px solid #31503F}
 #meals .dhead{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
-#meals .dhead b{font-family:'Fredoka';font-size:17px;color:#2B2A33}
+#meals .dhead b{font-family:'Young Serif';font-size:17px;color:#23281F}
 #meals .mslot{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-top:1px solid #F4F0E6}
 #meals .mslot:first-of-type{border-top:none}
 #meals .mslot .mdotm{width:8px;height:8px;border-radius:50%;flex:none}
 #meals .mslot .ml{font-size:11px;font-weight:800;color:#C7C2B8;width:14px}
-#meals .mslot .mv{flex:1;font-size:14px;font-weight:700;color:#2B2A33}
+#meals .mslot .mv{flex:1;font-size:14px;font-weight:700;color:#23281F}
 #meals .mslot .mv.empty{color:#C7C2B8;font-weight:600}
 
 @media (prefers-reduced-motion:reduce){
@@ -317,14 +315,10 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div class="adv" onclick="openAdventure()">
     <div class="adv-ill" id="t-adv-ill">
       <div id="t-adv-illimg"><svg viewBox="0 0 392 150" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs><linearGradient id="tsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE6FB"/><stop offset="1" stop-color="#EAF7FF"/></linearGradient></defs>
-        <rect width="392" height="150" fill="url(#tsky)"/>
-        <g stroke="#FFD16B" stroke-width="4" stroke-linecap="round"><line x1="320" y1="16" x2="320" y2="5"/><line x1="296" y1="24" x2="288" y2="15"/><line x1="344" y1="24" x2="352" y2="15"/></g>
-        <circle cx="320" cy="44" r="20" fill="#FFC24B"/>
-        <g fill="#FFFFFF"><ellipse cx="72" cy="40" rx="24" ry="14"/><ellipse cx="96" cy="46" rx="18" ry="11"/></g>
-        <path d="M0 104 Q110 80 220 100 T392 92 L392 150 L0 150 Z" fill="#86D8AA"/>
-        <path d="M0 124 Q120 102 250 118 T392 114 L392 150 L0 150 Z" fill="#54C088"/>
-        <g><rect x="250" y="92" width="14" height="26" fill="#FBE7C8"/><polygon points="250,92 257,82 264,92" fill="#FF8A5B"/><rect x="281" y="92" width="14" height="26" fill="#FBE7C8"/><polygon points="281,92 288,82 295,92" fill="#FF8A5B"/><rect x="264" y="86" width="17" height="32" fill="#FFF1DC"/><polygon points="264,86 272.5,73 281,86" fill="#E85D2C"/></g>
+        <rect width="392" height="150" fill="#ECE5D4"/>
+        <circle cx="322" cy="54" r="21" fill="#C9A24B" opacity="0.45"/>
+        <path d="M0 106 Q110 82 220 102 T392 94 L392 150 L0 150 Z" fill="#AEBFA4"/>
+        <path d="M0 126 Q120 104 250 120 T392 116 L392 150 L0 150 Z" fill="#7E9474"/>
       </svg></div>
       <span class="adv-tag" id="t-adv-tag">TODAY'S ADVENTURE</span>
     </div>
@@ -336,12 +330,12 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   </div>
 
   <div class="t-tiles">
-    <div class="tile2" style="background:#DCF0FB"><i class="ti ti-sun" id="t-wx-icon" style="color:#2A7FB0"></i><div class="tl" style="color:#3E8FBD">Weather</div><div class="fr" style="font-size:18px;color:#1C6791" id="t-wx-main">—</div><div style="font-size:12.5px;font-weight:600;color:#3E8FBD" id="t-wx-sub">—</div></div>
-    <div class="tile2" style="background:#DBF4E6;cursor:pointer" onclick="openPack()"><i class="ti ti-backpack" style="color:#2E8E5A"></i><div class="tl" style="color:#37925E">Pack bag</div><div class="fr" style="font-size:18px;color:#247A49" id="t-pack-count">—</div><div class="packbar2"><span id="t-pack-bar"></span></div></div>
+    <div class="tile2" style="background:#E7ECEE"><i class="ti ti-sun" id="t-wx-icon" style="color:#5F7784"></i><div class="tl" style="color:#5F7784">Weather</div><div class="fr" style="font-size:18px;color:#3A5561" id="t-wx-main">—</div><div style="font-size:12.5px;font-weight:600;color:#6E8796" id="t-wx-sub">—</div></div>
+    <div class="tile2" style="background:#E8EBE1;cursor:pointer" onclick="openPack()"><i class="ti ti-backpack" style="color:#4A6B57"></i><div class="tl" style="color:#4A6B57">Pack bag</div><div class="fr" style="font-size:18px;color:#31503F" id="t-pack-count">—</div><div class="packbar2"><span id="t-pack-bar"></span></div></div>
   </div>
 
   <div class="t-meals">
-    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B3AEBC">Today's meals</div><span style="font-size:12px;font-weight:700;color:#FF7A45;cursor:pointer" onclick="go('meals')">Kitchen</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9BA08F">Today's meals</div><span style="font-size:12px;font-weight:700;color:#31503F;cursor:pointer" onclick="go('meals')">Kitchen</span></div>
     <div id="t-meals-list"></div>
   </div>
 </section>
@@ -354,7 +348,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   </div>
   <div class="dsc-searchwrap">
     <div class="dsc-search">
-      <i class="ti ti-search" style="font-size:18px;color:#B3AEBC"></i>
+      <i class="ti ti-search" style="font-size:18px;color:#9BA08F"></i>
       <input id="dsc-q" placeholder="Search a town, postcode or place…" oninput="dscSearch(this.value)" autocomplete="off">
       <button class="dsc-near" onclick="dscNearMe()" aria-label="Near me"><i class="ti ti-current-location" style="font-size:18px"></i></button>
     </div>
@@ -382,7 +376,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div class="m-head">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div><div class="m-eyebrow">MEALS · THIS WEEK</div><h1 class="fr m-title">Plan the week</h1></div>
-      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
+      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#EDE8DA;color:#31503F;display:flex;align-items:center;justify-content:center;font-family:'Young Serif';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
     </div>
     <div class="m-sub"><i class="ti ti-refresh" style="font-size:13px;vertical-align:-2px"></i> Shared with Christine · same plan for the family</div>
   </div>
@@ -395,7 +389,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div class="c-head">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div><div class="c-eyebrow">CALENDAR</div><h1 class="fr c-title" id="c-month">—</h1></div>
-      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
+      <button onclick="openSettings()" aria-label="Settings" style="width:40px;height:40px;border-radius:50%;background:#EDE8DA;color:#31503F;display:flex;align-items:center;justify-content:center;font-family:'Young Serif';font-weight:600;font-size:17px;border:none;cursor:pointer;flex:none;box-shadow:0 2px 6px rgba(43,42,51,.15)">L</button>
     </div>
   </div>
   <div class="c-monthnav"><button onclick="calNav(-1)" aria-label="Previous month"><i class="ti ti-chevron-left"></i></button><button onclick="calNav(1)" aria-label="Next month"><i class="ti ti-chevron-right"></i></button></div>
@@ -403,7 +397,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
   <div id="c-grid" class="c-grid"></div>
   <div class="c-coming-label">Coming up</div>
   <div id="c-coming" style="padding:0 22px"></div>
-  <button onclick="openCommit()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF7A45;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer;margin:18px 18px 0"><i class="ti ti-plus"></i> Add to calendar</button>
+  <button onclick="openCommit()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#31503F;color:#fff;font-family:'Young Serif',serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer;margin:18px 18px 0"><i class="ti ti-plus"></i> Add to calendar</button>
 </section>
 
 <!-- nav -->
@@ -423,7 +417,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 19)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 20)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -655,10 +649,11 @@ function napWindows(){ // parse "am ~9:30, pm ~13:30" → [9.5,13.5]; fall back 
   while((m=re.exec(S.baby.naps||''))){out.push(+m[1]+(+m[2])/60)}
   return out.length?out:[9.5,13.5];
 }
-function napClash(time){
-  const m=(time||'').match(/(\d+)[:.]?(\d+)?/);if(!m)return false;
-  const t=+m[1]+(+(m[2]||0))/60;
-  return napWindows().some(w=>t>=w-0.75&&t<=w+1); // within ~45min before to 1h into a nap
+function toH(t){const m=(t||'').match(/(\d{1,2})[:.]?(\d{2})?/);if(!m)return null;return +m[1]+(+(m[2]||0))/60}
+function napClash(start,end){ // does the event window [start,end] overlap a nap?
+  const s=toH(start);if(s==null)return false;
+  let e=toH(end);if(e==null||e<=s)e=s+0.5;            // no/invalid end → assume ~30min
+  return napWindows().some(w=>s<w+1 && e>w-0.25);     // nap ~1h from w, 15min pre-buffer
 }
 function actById(id){return seedActivities.find(a=>a.id===id)}
 function eligible(a){const m=ageM();return m>=a.age[0]&&m<=a.age[1]}
@@ -701,7 +696,7 @@ function renderToday(){
   const d=today;const w=wxFor(d);const p=planFor(d);
   document.getElementById('t-date').textContent=fmt(d).toUpperCase();
   const h=d.getHours();
-  document.getElementById('t-greet').textContent=h<12?'Morning! Let\'s play':h<17?'Afternoon adventures':'Evening, winding down';
+  document.getElementById('t-greet').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   const wxNice=w.rain?'A rainy one — cosy plans suit':(w.temp>=20?'Warm and bright today':'Dry enough to get out');
   document.getElementById('t-sub').textContent=wxNice+'.';
 
@@ -723,7 +718,9 @@ function renderToday(){
     if(p.commit){
       title=p.commit.name;
       desc=(p.commit.location?p.commit.location+' · ':'')+'booked'+(p.commit.weekly?' · every week':'');
-      chips=[['ti-clock',p.commit.time]];
+      chips=[];const tl=evTimeLabel(p.commit);if(tl)chips.push(['ti-clock',tl]);
+      if(napClash(p.commit.time,p.commit.end))chips.push(['ti-alert-triangle','Clashes with a nap','clash']);
+      if(!chips.length)chips.push(['ti-calendar','Booked']);
       document.getElementById('t-adv-tag').textContent='BOOKED TODAY';
     }else{
       title='Nothing planned';
@@ -734,7 +731,7 @@ function renderToday(){
   }
   document.getElementById('t-adv-ttl').textContent=title;
   document.getElementById('t-adv-ds').textContent=desc;
-  document.getElementById('t-adv-chips').innerHTML=chips.map(c=>`<span class="chip"><i class="ti ${c[0]}"></i>${c[1]}</span>`).join('');
+  document.getElementById('t-adv-chips').innerHTML=chips.map(c=>`<span class="chip"${c[2]==='clash'?' style="background:#FBE7E7;color:#C9585A"':''}><i class="ti ${c[0]}"></i>${c[1]}</span>`).join('');
 
   // weather tile
   const wxi=w.rain?'ti-cloud-rain':(w.temp!=null&&w.temp>=18&&!/cloud|mist/i.test(w.t)?'ti-sun':'ti-cloud');
@@ -750,15 +747,15 @@ function renderToday(){
 
   // today's meals
   const k=dkey(today);
-  const meals=[['#FFC24B','Breakfast',dayMeal(today,'bf'),"openMealEditor('"+k+"','bf')"],
-               ['#56B6E8','Lunch',dayMeal(today,'ln'),"openMealEditor('"+k+"','ln')"],
-               ['#FF7A45','Dinner',dayMeal(today,'dn')||'Plan dinner',"openMealEditor('"+k+"','dn')"]];
-  document.getElementById('t-meals-list').innerHTML=meals.map((m,i)=>`<div class="mrow" style="${i<2?'border-bottom:1px solid #F2EEE3':''}" onclick="${m[3]}"><span class="mdot" style="background:${m[0]}"></span><div style="flex:1;font-size:14.5px;font-weight:700;color:#2B2A33">${m[2]}</div><span style="font-size:12px;font-weight:600;color:#B3AEBC">${m[1]}</span></div>`).join('');
+  const meals=[['#A65A40','Breakfast',dayMeal(today,'bf'),"openMealEditor('"+k+"','bf')"],
+               ['#6E8796','Lunch',dayMeal(today,'ln'),"openMealEditor('"+k+"','ln')"],
+               ['#31503F','Dinner',dayMeal(today,'dn')||'Plan dinner',"openMealEditor('"+k+"','dn')"]];
+  document.getElementById('t-meals-list').innerHTML=meals.map((m,i)=>`<div class="mrow" style="${i<2?'border-bottom:1px solid #F2EEE3':''}" onclick="${m[3]}"><span class="mdot" style="background:${m[0]}"></span><div style="flex:1;font-size:14.5px;font-weight:700;color:#23281F">${m[2]}</div><span style="font-size:12px;font-weight:600;color:#9BA08F">${m[1]}</span></div>`).join('');
 }
 function openAdventure(){ if(_todayAct){if((_todayAct+'').indexOf('place:')===0){openPlaceDetail(_todayAct.slice(6))}else{swapSlot(_todayAct)}}else{go('discover')} }
 function packSheetRows(d,pk){return pk.map(it=>{const done=S.pack[dkey(d)+'|'+it];
   return `<div class="check ${done?'done':''}" onclick="togglePackSheet('${it.replace(/'/g,"\\'")}')"><div class="box">${done?'✓':''}</div><div class="lbl">${it}</div></div>`}).join('')}
-function openPack(){const d=today;openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-size:22px;color:#2B2A33;margin:2px 0 4px">What to pack</h2>
+function openPack(){const d=today;openSheet(`<h2 style="font-family:'Young Serif',serif;font-size:22px;color:#23281F;margin:2px 0 4px">What to pack</h2>
   <p style="font-size:14px;color:#9BA08F;font-weight:600;margin-bottom:10px">Weather adds rain covers or SPF automatically.</p>
   <div id="pack-sheet">${packSheetRows(d,packList(d))}</div>`)}
 function togglePackSheet(it){const kk=dkey(today)+'|'+it;S.pack[kk]=!S.pack[kk];save();
@@ -794,12 +791,12 @@ function clearDayMeal(k,sec){if(S.dayMeals[k]){delete S.dayMeals[k][sec];if(!Obj
 /* ---------- MEALS ---------- */
 function renderMeals(){
   const start=new Date(today);start.setDate(start.getDate()-((start.getDay()+6)%7));
-  const slots=[['bf','Breakfast','#FFC24B'],['ln','Lunch','#56B6E8'],['dn','Dinner','#FF7A45']];
+  const slots=[['bf','Breakfast','#A65A40'],['ln','Lunch','#6E8796'],['dn','Dinner','#31503F']];
   let html='';
   for(let i=0;i<7;i++){
     const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d);const isT=k===dkey(today);
     html+=`<div class="dcard ${isT?'today':''}">
-      <div class="dhead"><b>${d.toLocaleDateString('en-GB',{weekday:'long'})}</b><span style="font-size:12px;font-weight:700;color:${isT?'#FF7A45':'#B3AEBC'}">${isT?'today':d.getDate()+' '+d.toLocaleDateString('en-GB',{month:'short'})}</span></div>
+      <div class="dhead"><b>${d.toLocaleDateString('en-GB',{weekday:'long'})}</b><span style="font-size:12px;font-weight:700;color:${isT?'#31503F':'#9BA08F'}">${isT?'today':d.getDate()+' '+d.toLocaleDateString('en-GB',{month:'short'})}</span></div>
       ${slots.map(([sec,lbl,col])=>{const v=dayMeal(d,sec);const empty=!v;return `<div class="mslot" onclick="openMealEditor('${k}','${sec}')"><span class="mdotm" style="background:${col}"></span><span class="ml">${lbl[0]}</span><span class="mv ${empty?'empty':''}">${empty?'Plan '+lbl.toLowerCase():v}</span><i class="ti ti-chevron-right" style="font-size:16px;color:#D9D4C8"></i></div>`}).join('')}
     </div>`;
   }
@@ -809,9 +806,9 @@ function openMealEditor(k,sec){
   const labels={bf:'Breakfast',ln:'Lunch',dn:'Dinner'};
   const cur=(S.dayMeals[k]&&S.dayMeals[k][sec])||'';
   const lib=sec==='dn'?[]:(S.meals[sec]||[]);
-  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 6px">${labels[sec]} · ${new Date(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'})}</h2>
+  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 6px">${labels[sec]} · ${new Date(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'})}</h2>
     <input id="me-in" placeholder="What's for ${labels[sec].toLowerCase()}?" value="${(cur||'').replace(/"/g,'&quot;')}">
-    ${lib.length?`<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:16px 2px 8px">From your ideas</div><div style="display:flex;flex-wrap:wrap;gap:7px">${lib.map(mm=>`<span onclick="document.getElementById('me-in').value='${(mm.nm+'').replace(/'/g,"\\'")}'" style="font-size:13px;font-weight:700;color:#C44E22;background:#FCE7DB;padding:8px 12px;border-radius:999px;cursor:pointer">${mm.nm}</span>`).join('')}</div>`:''}
+    ${lib.length?`<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:16px 2px 8px">From your ideas</div><div style="display:flex;flex-wrap:wrap;gap:7px">${lib.map(mm=>`<span onclick="document.getElementById('me-in').value='${(mm.nm+'').replace(/'/g,"\\'")}'" style="font-size:13px;font-weight:700;color:#C44E22;background:#FCE7DB;padding:8px 12px;border-radius:999px;cursor:pointer">${mm.nm}</span>`).join('')}</div>`:''}
     <button class="btn" style="margin-top:18px" onclick="saveMealSlot('${k}','${sec}')">Save</button>
     ${cur?`<button class="btn ghost" style="margin-top:9px" onclick="clearDayMeal('${k}','${sec}')">Clear</button>`:''}`);
 }
@@ -867,12 +864,13 @@ function saveMeal(sec,i){const nm=val('mf-nm').trim();if(!nm){toast('Give it a n
 /* commitments form */
 /* ---------- CALENDAR ---------- */
 let _calMonth=null,_evType='class';
-const typeColor=t=>({class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visitor:'#FFB23E'}[t]||'#FF7A45');
+const typeColor=t=>({class:'#4A6B57',appointment:'#6E8796',outing:'#7E9474',visitor:'#A65A40'}[t]||'#31503F');
 const typeIcon=t=>({class:'ti-music',appointment:'ti-stethoscope',outing:'ti-map-pin',visitor:'ti-users'}[t]||'ti-calendar');
+function evTimeLabel(c){if(!c.time)return '';return c.end?c.time+'–'+c.end:c.time}
 function eventsForDay(d){const out=[];const k=dkey(d);
   S.commitments.forEach((c,idx)=>{const m=c.weekly?(d>=new Date(c.date)&&new Date(c.date).getDay()===d.getDay()):c.date===k;
-    if(m)out.push({name:c.name,time:c.time,color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),del:"delCommitFromSheet('"+k+"',"+idx+")",delQ:"delCommitFromSheet('"+k+"',"+idx+",false)"})});
-  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),del:"unplanDay('"+k+"')",delQ:"unplanDay('"+k+"',false)"})}
+    if(m)out.push({name:c.name,time:evTimeLabel(c),color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),clash:napClash(c.time,c.end),del:"delCommitFromSheet('"+k+"',"+idx+")",delQ:"delCommitFromSheet('"+k+"',"+idx+",false)"})});
+  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),clash:false,del:"unplanDay('"+k+"')",delQ:"unplanDay('"+k+"',false)"})}
   return out;}
 function renderCalendar(){
   if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);
@@ -887,37 +885,40 @@ function renderCalendar(){
   renderComing();}
 function renderComing(){let items=[];for(let i=0;i<35;i++){const d=new Date(today);d.setDate(d.getDate()+i);eventsForDay(d).forEach(e=>items.push({d,e}))}items=items.slice(0,12);
   document.getElementById('c-coming').innerHTML=items.length?items.map(({d,e})=>{const when=dkey(d)===dkey(today)?'Today':d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    return `<div class="c-up" onclick="selCalDay('${dkey(d)}')" style="cursor:pointer"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}</div></div><i class="ti ti-x" onclick="event.stopPropagation();${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`}).join(''):'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
+    return `<div class="c-up" onclick="selCalDay('${dkey(d)}')" style="cursor:pointer"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}${e.clash?' · <span style="color:#C9585A">⚠ nap clash</span>':''}</div></div><i class="ti ti-x" onclick="event.stopPropagation();${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`}).join(''):'<div style="text-align:center;color:#9BA08F;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
 function calNav(n){if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);_calMonth=new Date(_calMonth.getFullYear(),_calMonth.getMonth()+n,1);renderCalendar()}
 function selCalDay(k){const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">${lbl}</h2>
-   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#2B2A33">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}</div></div><i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
+  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">${lbl}</h2>
+   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div><i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
    <button class="btn" style="margin-top:16px" onclick="openCommit('${k}')">+ Add to this day</button>`);}
 function delCommitFromSheet(k,i,reopen){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();if(reopen!==false)selCalDay(k)}
 function unplanDay(k,reopen){if(S.dayPlace)delete S.dayPlace[k];save();renderCalendar();if(k===dkey(today))renderToday();if(reopen!==false)selCalDay(k)}
 function openCommit(k){const dateK=k||dkey(today);_evType='class';
-  const types=[['class','Class','#A98BEA'],['appointment','Appointment','#56B6E8'],['outing','Outing','#57C98A'],['visitor','Visitor','#FFB23E']];
-  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 8px">Add to calendar</h2>
+  const types=[['class','Class','#4A6B57'],['appointment','Appointment','#6E8796'],['outing','Outing','#7E9474'],['visitor','Visitor','#A65A40']];
+  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">Add to calendar</h2>
    <input id="c-nm" placeholder="What is it? e.g. Hartbeeps, GP visit">
-   <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:14px 2px 8px">Type</div>
+   <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:14px 2px 8px">Type</div>
    <div id="c-types" style="display:flex;flex-wrap:wrap;gap:8px">${types.map(([t,l,c])=>`<span class="c-typechip" data-t="${t}" onclick="pickEvType('${t}')" style="font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;background:${t==='class'?c:'#F1EFE8'};color:${t==='class'?'#fff':'#6F6B7A'}">${l}</span>`).join('')}</div>
-   <div style="display:flex;gap:11px;margin-top:14px"><div style="flex:1;min-width:0"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div><div style="flex:1;min-width:0"><label>Time</label><input id="c-time" type="time"></div></div>
+   <div style="margin-top:14px"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div>
+   <div style="display:flex;gap:11px;margin-top:12px"><div style="flex:1;min-width:0"><label>Starts</label><input id="c-time" type="time"></div><div style="flex:1;min-width:0"><label>Ends <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-end" type="time"></div></div>
    <label>Where <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Oxted Hall">
-   <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#A98BEA"></i><div style="flex:1;font-size:15px;font-weight:700;color:#2B2A33">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff"></div><input type="checkbox" id="c-weekly" style="display:none"></div>
+   <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#4A6B57"></i><div style="flex:1;font-size:15px;font-weight:700;color:#23281F">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff"></div><input type="checkbox" id="c-weekly" style="display:none"></div>
    <button class="btn" style="margin-top:18px" onclick="saveCommit()">Add event</button>`);}
-function pickEvType(t){_evType=t;const c={class:'#A98BEA',appointment:'#56B6E8',outing:'#57C98A',visitor:'#FFB23E'};document.querySelectorAll('#c-types .c-typechip').forEach(x=>{const on=x.dataset.t===t;x.style.background=on?c[x.dataset.t]:'#F1EFE8';x.style.color=on?'#fff':'#6F6B7A'})}
-function syncWeekly(){const on=document.getElementById('c-weekly').checked;const b=document.getElementById('c-wbox');if(b){b.style.background=on?'#57C98A':'transparent';b.style.borderColor=on?'#57C98A':'var(--line)';b.textContent=on?'✓':''}}
+function pickEvType(t){_evType=t;const c={class:'#4A6B57',appointment:'#6E8796',outing:'#7E9474',visitor:'#A65A40'};document.querySelectorAll('#c-types .c-typechip').forEach(x=>{const on=x.dataset.t===t;x.style.background=on?c[x.dataset.t]:'#F1EFE8';x.style.color=on?'#fff':'#6F6B7A'})}
+function syncWeekly(){const on=document.getElementById('c-weekly').checked;const b=document.getElementById('c-wbox');if(b){b.style.background=on?'#7E9474':'transparent';b.style.borderColor=on?'#7E9474':'var(--line)';b.textContent=on?'✓':''}}
 function saveCommit(){const name=(val('c-nm')||'').trim();if(!name){toast('Give it a name');return}
   const date=val('c-date');if(!date){toast('Pick a date');return}
-  const c={name,date,time:val('c-time')||'',location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
+  const start=val('c-time')||'',end=val('c-end')||'';
+  if(start&&end&&end<=start){toast('End time is before the start');return}
+  const c={name,date,time:start,end:end,location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
   S.commitments.push(c);S.plans={};save();closeSheet();renderCalendar();renderToday();toast(c.weekly?'Weekly event added':'Event added')}
 function reopenPlace(id){S.closedPlaces=(S.closedPlaces||[]).filter(x=>(x+'')!==(id+''));save();toast('Reopened ♥');
   const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on'))renderDiscover();openProfile();}
 function openProfile(){
   const closed=(S.closedPlaces||[]);
   const closedHTML=closed.length?`
-  <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#B3AEBC;font-weight:700;margin:24px 2px 8px">Closed places (hidden)</div>
-  ${closed.map(id=>{const p=findPlace(id);const nm=p&&p.name?cleanName(p.name):(id+'');return `<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #F0EADD"><i class="ti ti-map-pin-off" style="font-size:17px;color:#C9585A;flex:none"></i><div style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#2B2A33;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</div><span onclick="reopenPlace('${(id+'').replace(/'/g,"\\'")}')" style="font-size:12.5px;font-weight:700;color:#2E8E5A;cursor:pointer;flex:none">Reopen</span></div>`}).join('')}`:'';
+  <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:24px 2px 8px">Closed places (hidden)</div>
+  ${closed.map(id=>{const p=findPlace(id);const nm=p&&p.name?cleanName(p.name):(id+'');return `<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid #F0EADD"><i class="ti ti-map-pin-off" style="font-size:17px;color:#C9585A;flex:none"></i><div style="flex:1;min-width:0;font-size:14.5px;font-weight:700;color:#23281F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm}</div><span onclick="reopenPlace('${(id+'').replace(/'/g,"\\'")}')" style="font-size:12.5px;font-weight:700;color:#2E8E5A;cursor:pointer;flex:none">Reopen</span></div>`}).join('')}`:'';
   openSheet(`
   <h2 style="font-size:22px">Lexie's profile</h2>
   <label>Name</label><input id="p-nm" value="${S.baby.name}">
@@ -927,35 +928,35 @@ function openProfile(){
   <label>Loves (comma separated)</label><input id="p-likes" value="${S.baby.likes.join(', ')}">
   <button class="btn" style="margin-top:18px" onclick="saveProfile()">Save</button>
   ${closedHTML}
-  <div style="text-align:center;margin-top:18px;font-size:12px;font-weight:600;color:#B3AEBC">${APP_VERSION}</div>`)}
+  <div style="text-align:center;margin-top:18px;font-size:12px;font-weight:600;color:#9BA08F">${APP_VERSION}</div>`)}
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
   S.plans={};save();closeSheet();renderToday();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';
 function bagPills(){return (S.bag||[]).map(it=>`<span onclick="removeBag('${(it+'').replace(/'/g,"\\'")}')" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#2E8E5A;background:#DBF4E6;padding:8px 13px;border-radius:999px;margin:0 7px 8px 0;cursor:pointer">${it} <i class="ti ti-x" style="font-size:13px;opacity:.65"></i></span>`).join('')
-  +`<span onclick="addBagItem()" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#B3AEBC;background:#F1EFE8;padding:8px 13px;border-radius:999px;cursor:pointer"><i class="ti ti-plus" style="font-size:13px"></i>Add</span>`}
+  +`<span onclick="addBagItem()" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#9BA08F;background:#F1EFE8;padding:8px 13px;border-radius:999px;cursor:pointer"><i class="ti ti-plus" style="font-size:13px"></i>Add</span>`}
 function addBagItem(){const v=prompt('Add to your bag:');if(v&&v.trim()){S.bag=S.bag||[];S.bag.push(v.trim());save();const el=document.getElementById('bag-pills');if(el)el.innerHTML=bagPills();renderToday()}}
 function removeBag(it){S.bag=(S.bag||[]).filter(x=>x!==it);save();const el=document.getElementById('bag-pills');if(el)el.innerHTML=bagPills();renderToday()}
 function openSettings(){const m=ageM();openSheet(`
-   <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:24px;color:#2B2A33;margin:2px 0 0">You &amp; Lexie</h2>
+   <h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:24px;color:#23281F;margin:2px 0 0">You &amp; Lexie</h2>
    <div style="display:flex;align-items:center;gap:14px;background:#fff;border-radius:20px;padding:15px;margin-top:12px;box-shadow:0 1px 2px rgba(43,42,51,.05)">
-     <div style="width:52px;height:52px;border-radius:50%;background:#FFD9C7;color:#E85D2C;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:23px">L</div>
-     <div style="flex:1;min-width:0"><div style="font-family:'Fredoka';font-weight:500;font-size:19px;color:#2B2A33">${S.baby.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${m} months · loves ${S.baby.likes.join(', ')}</div></div>
-     <i class="ti ti-edit" onclick="openProfile()" style="font-size:20px;color:#B3AEBC;cursor:pointer"></i>
+     <div style="width:52px;height:52px;border-radius:50%;background:#EDE8DA;color:#31503F;display:flex;align-items:center;justify-content:center;font-family:'Young Serif';font-weight:600;font-size:23px">L</div>
+     <div style="flex:1;min-width:0"><div style="font-family:'Young Serif';font-weight:500;font-size:19px;color:#23281F">${S.baby.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${m} months · loves ${S.baby.likes.join(', ')}</div></div>
+     <i class="ti ti-edit" onclick="openProfile()" style="font-size:20px;color:#9BA08F;cursor:pointer"></i>
    </div>
    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:22px 2px 10px">What's in your bag</div>
    <div id="bag-pills">${bagPills()}</div>
-   <div style="font-size:12px;font-weight:600;color:#B3AEBC;margin-top:4px">Weather adds rain covers or sun cream automatically.</div>
+   <div style="font-size:12px;font-weight:600;color:#9BA08F;margin-top:4px">Weather adds rain covers or sun cream automatically.</div>
    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:22px 2px 6px">Settings</div>
-   <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F0EADD"><i class="ti ti-map-pin" style="font-size:18px;color:#FF7A45;width:24px;text-align:center"></i><div style="flex:1;font-size:15px;font-weight:700;color:#2B2A33">Home area</div><div style="font-size:14px;font-weight:600;color:#9BA08F">Oxted</div></div>
-   <div style="display:flex;align-items:center;gap:12px;padding:13px 0"><i class="ti ti-users" style="font-size:18px;color:#56B6E8;width:24px;text-align:center"></i><div style="flex:1;font-size:15px;font-weight:700;color:#2B2A33">Shared with</div><div style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#2E8E5A"><i class="ti ti-check" style="font-size:14px"></i>Christine</div></div>
-   <div style="text-align:center;margin-top:22px;font-size:12px;font-weight:600;color:#B3AEBC">${APP_VERSION}</div>`)}
+   <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F0EADD"><i class="ti ti-map-pin" style="font-size:18px;color:#31503F;width:24px;text-align:center"></i><div style="flex:1;font-size:15px;font-weight:700;color:#23281F">Home area</div><div style="font-size:14px;font-weight:600;color:#9BA08F">Oxted</div></div>
+   <div style="display:flex;align-items:center;gap:12px;padding:13px 0"><i class="ti ti-users" style="font-size:18px;color:#6E8796;width:24px;text-align:center"></i><div style="flex:1;font-size:15px;font-weight:700;color:#23281F">Shared with</div><div style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#2E8E5A"><i class="ti ti-check" style="font-size:14px"></i>Christine</div></div>
+   <div style="text-align:center;margin-top:22px;font-size:12px;font-weight:600;color:#9BA08F">${APP_VERSION}</div>`)}
 
 /* ---------- DISCOVER (places catalogue) ---------- */
 let PLACES=null,_dmap=null,_dcluster=null,_dfilter='all',_dquery='',_dgeo=null,_dsearchPt=null,_dsearchLabel='',_dsearchTimer=null,_dmoveTimer=null;
 const _dhome=[51.257,-0.005];
-const CAT_COLOR={nt:'#54C088',eh:'#FFB23E','historic-house':'#A98BEA','zoo-aquarium':'#56B6E8',farm:'#FF8A5B',museum:'#9B7BE0','country-park':'#3FB57D',garden:'#57C98A',attraction:'#FF7A45',play:'#F47FB1'};
+const CAT_COLOR={nt:'#54C088',eh:'#A65A40','historic-house':'#4A6B57','zoo-aquarium':'#6E8796',farm:'#FF8A5B',museum:'#9B7BE0','country-park':'#3FB57D',garden:'#7E9474',attraction:'#31503F',play:'#F47FB1'};
 const CAT_ICON={nt:'ti-tree',eh:'ti-building-castle','historic-house':'ti-building-monument','zoo-aquarium':'ti-fish',farm:'ti-horse',museum:'ti-building-bank','country-park':'ti-map-pin',garden:'ti-plant-2',attraction:'ti-ferris-wheel',play:'ti-mood-kid'};
-const catColor=c=>CAT_COLOR[c]||'#FF7A45';
+const catColor=c=>CAT_COLOR[c]||'#31503F';
 const catIcon=c=>CAT_ICON[c]||'ti-map-pin';
 const catLabel=c=>({nt:'National Trust',eh:'English Heritage','historic-house':'Historic house & castle','zoo-aquarium':'Zoo & aquarium',farm:'Farm park',museum:'Museum','country-park':'Country park',garden:'Garden',attraction:'Theme park & attraction',play:'Play'})[c]||'Place';
 async function loadPlaces(){
@@ -1012,7 +1013,7 @@ function renderDiscoverList(){
   else{center=_dsearchPt||_dgeo||_dhome;inView=ps;}
   const cnt=document.getElementById('dsc-count');if(cnt)cnt.textContent=_dmap?(inView.length.toLocaleString()+' place'+(inView.length===1?'':'s')+' in view'):(ps.length.toLocaleString()+' places');
   const shown=inView.map(p=>({p,d:haversine(center[0],center[1],p.lat,p.lng)})).sort((a,b)=>a.d-b.d).slice(0,40);
-  document.getElementById('dsc-list').innerHTML=shown.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)} · ${Math.round(d)} km${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#B3AEBC;font-weight:700;padding:24px">No places in view — pan the map or zoom out.</div>';
+  document.getElementById('dsc-list').innerHTML=shown.map(({p,d})=>`<div class="dsc-card" onclick="openPlaceDetail('${(p.id+'').replace(/'/g,"\\'")}')"><div class="dsc-ic" style="background:${catColor(p.category)}"><i class="ti ${catIcon(p.category)}"></i></div><div style="flex:1;min-width:0"><div class="dsc-nm">${cleanName(p.name)}</div><div class="dsc-meta">${catLabel(p.category)} · ${Math.round(d)} km${p.area?' · '+p.area:''}</div></div>${p.membership?'<span style="font-size:12px;font-weight:700;color:#2E8E5A">Free</span>':''}</div>`).join('')||'<div style="text-align:center;color:#9BA08F;font-weight:700;padding:24px">No places in view — pan the map or zoom out.</div>';
 }
 function dscFilter(f){_dfilter=f;document.querySelectorAll('#dsc-filters .fchip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderDiscover()}
 function dscSearch(v){_dquery=v||'';clearTimeout(_dsearchTimer);_dsearchTimer=setTimeout(()=>showSuggestions(_dquery),280);}
@@ -1031,7 +1032,7 @@ async function showSuggestions(q){
     const d=await r.json();
     if(_dquery.trim()!==q)return;
     let loc;
-    if(d&&d.length)loc=d.map(x=>{const parts=(x.display_name||'').split(',');const nm=parts[0].trim();const sub=parts.slice(1,3).join(',').trim();return _sugRow(`pickLocation(${x.lat},${x.lon},'${nm.replace(/'/g,"\\'")}')`,'#FF7A45','ti-map-pin',nm,sub)}).join('');
+    if(d&&d.length)loc=d.map(x=>{const parts=(x.display_name||'').split(',');const nm=parts[0].trim();const sub=parts.slice(1,3).join(',').trim();return _sugRow(`pickLocation(${x.lat},${x.lon},'${nm.replace(/'/g,"\\'")}')`,'#31503F','ti-map-pin',nm,sub)}).join('');
     else loc='<div class="srow"><div class="ss">No matching towns — check spelling?</div></div>';
     box.innerHTML=head+'<div class="shead">Locations</div>'+loc;
   }catch(e){box.innerHTML=head||'';if(!head)box.classList.remove('on')}
@@ -1048,7 +1049,7 @@ function toggleClosed(id){S.closedPlaces=S.closedPlaces||[];const was=isClosed(i
   save();closeSheet();toast(was?'Marked open again ♥':'Marked closed — hidden from Discover');
   const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on'))renderDiscover();}
 function toggleFav(id){const p=findPlace(id);if(!p)return;S.favourites=S.favourites||[];const was=isFav(id);if(was)S.favourites=S.favourites.filter(f=>(f.id+'')!==(id+''));else S.favourites.push(snapOf(p));save();
-  const b=document.getElementById('pd-fav');if(b)b.style.background=isFav(id)?'#FF7A45':'rgba(43,42,51,.45)';
+  const b=document.getElementById('pd-fav');if(b)b.style.background=isFav(id)?'#31503F':'rgba(43,42,51,.45)';
   toast(was?'Removed from saved':'Saved ♥');
   const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on')&&_dfilter==='fav')renderDiscover();}
 function openDayChooser(id){let rows='';
@@ -1056,7 +1057,7 @@ function openDayChooser(id){let rows='';
     const lbl=i===0?'Today':i===1?'Tomorrow':dd.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
     const has=S.dayPlace&&S.dayPlace[k];
     rows+=`<button class="btn ${i===0?'':'ghost'}" style="margin-top:9px;justify-content:space-between" onclick="planPlaceOnDay('${(id+'').replace(/'/g,"\\'")}','${k}')"><span>${lbl}</span>${has?`<span class="muted" style="font-size:12px">${cleanName(has.name)}</span>`:''}</button>`;}
-  openSheet(`<h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:22px;color:#2B2A33;margin:2px 0 4px">Plan a day here</h2><p style="font-size:14px;color:#9BA08F;font-weight:600;margin-bottom:6px">Pick a day to make this the outing.</p><div style="max-height:56vh;overflow-y:auto">${rows}</div>`);}
+  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 4px">Plan a day here</h2><p style="font-size:14px;color:#9BA08F;font-weight:600;margin-bottom:6px">Pick a day to make this the outing.</p><div style="max-height:56vh;overflow-y:auto">${rows}</div>`);}
 function planPlaceOnDay(id,k){const p=findPlace(id);if(!p)return;S.dayPlace=S.dayPlace||{};S.dayPlace[k]=snapOf(p);save();closeSheet();
   const lbl=k===dkey(today)?'today':new Date(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
   toast('Planned for '+lbl);if(k===dkey(today))renderToday();}
@@ -1098,9 +1099,9 @@ function openPlaceDetail(id){
   openSheet(`
    <div id="pd-hero" style="margin:-8px -22px 12px;height:170px;background:${catColor(p.category)};overflow:hidden;position:relative">
      <div id="pd-heroimg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><i class="ti ${catIcon(p.category)}" style="font-size:50px;color:#fff;opacity:.92"></i></div>
-     <button id="pd-fav" onclick="toggleFav('${idEsc}')" aria-label="Save" style="position:absolute;top:12px;right:12px;z-index:3;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:${isFav(p.id)?'#FF7A45':'rgba(43,42,51,.45)'}"><i class="ti ti-heart" style="font-size:19px"></i></button>
+     <button id="pd-fav" onclick="toggleFav('${idEsc}')" aria-label="Save" style="position:absolute;top:12px;right:12px;z-index:3;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:${isFav(p.id)?'#31503F':'rgba(43,42,51,.45)'}"><i class="ti ti-heart" style="font-size:19px"></i></button>
    </div>
-   <h2 style="font-family:'Fredoka',sans-serif;font-weight:500;font-size:23px;color:#2B2A33;margin:0 0 4px;line-height:1.1">${nm}</h2>
+   <h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:23px;color:#23281F;margin:0 0 4px;line-height:1.1">${nm}</h2>
    <div style="font-size:13.5px;font-weight:700;color:#9BA08F;margin-bottom:11px">${catLabel(p.category)}${p.area?' · '+p.area:''}${dist!=null?' · '+Math.round(dist)+' km away':''}</div>
    ${free?`<div style="margin-bottom:13px">${free}</div>`:''}
    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">
@@ -1110,14 +1111,14 @@ function openPlaceDetail(id){
      ${p.opening_hours?`<span class="dchip"><i class="ti ti-clock"></i>${(p.opening_hours+'').slice(0,38)}</span>`:''}
    </div>
    <p id="pd-desc" style="font-size:15px;font-weight:600;color:#6F6B7A;line-height:1.5;margin:0 0 18px">${hasWiki?'Loading description…':(p.website?'Tap Website below for full details.':'No description yet.')}</p>
-   <div onclick="openDayChooser('${idEsc}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#FF7A45;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Plan a day here <i class="ti ti-calendar-plus"></i></div>
+   <div onclick="openDayChooser('${idEsc}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#31503F;color:#fff;font-family:'Young Serif',serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Plan a day here <i class="ti ti-calendar-plus"></i></div>
    <div style="display:flex;gap:10px;margin-top:10px">
-     <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#56B6E8;vertical-align:-2px"></i> Directions</div>
-     ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#2B2A33;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#A98BEA;vertical-align:-2px"></i> Website</div>`:''}
+     <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#23281F;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#6E8796;vertical-align:-2px"></i> Directions</div>
+     ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#23281F;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#4A6B57;vertical-align:-2px"></i> Website</div>`:''}
    </div>
    ${isClosed(p.id)
      ? `<div style="margin-top:14px;text-align:center"><div style="font-size:13px;font-weight:700;color:#C2410C;background:#FBE3D5;padding:11px;border-radius:12px;margin-bottom:9px"><i class="ti ti-circle-x" style="vertical-align:-2px"></i> Marked closed — hidden from Discover</div><div onclick="toggleClosed('${idEsc}')" style="font-size:13.5px;font-weight:700;color:#2E8E5A;cursor:pointer">Mark as open again</div></div>`
-     : `<div onclick="toggleClosed('${idEsc}')" style="margin-top:16px;text-align:center;font-size:12.5px;font-weight:700;color:#B3AEBC;cursor:pointer"><i class="ti ti-flag" style="vertical-align:-2px"></i> Report permanently closed</div>`}`);
+     : `<div onclick="toggleClosed('${idEsc}')" style="margin-top:16px;text-align:center;font-size:12.5px;font-weight:700;color:#9BA08F;cursor:pointer"><i class="ti ti-flag" style="vertical-align:-2px"></i> Report permanently closed</div>`}`);
   if(hasWiki)placeMedia(p).then(m=>{
     if(m.image){const h=document.getElementById('pd-hero');const hi=document.getElementById('pd-heroimg');if(h&&hi){
       const w=h.offsetWidth||360;

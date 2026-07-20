@@ -417,7 +417,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 20)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.5 (build 21)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -562,6 +562,7 @@ async function cloudLoad(){
       if(!S.pack)S.pack={};
       if(!S.history)S.history=[];
       if(!S.closedPlaces)S.closedPlaces=[];
+      migrateDayPlace();
       localStorage.setItem(LS, JSON.stringify(S));
       return true;
     }
@@ -580,6 +581,7 @@ sb.channel('household')
           S = payload.new.state;
           _cloudEverLoaded=true;
           if(!S.dayMeals)S.dayMeals={};
+          migrateDayPlace();
           localStorage.setItem(LS, JSON.stringify(S));
           const cur=document.querySelector('.screen.on');
           if(cur){const id=cur.id; if(id==='today')renderToday(); else go(id);}
@@ -597,6 +599,7 @@ if(S.plans){for(const k in S.plans){if('am'in S.plans[k]||'pm'in S.plans[k]){S.p
 // old commitments used weekday/nap instead of a real date — clear them
 if(!S.dayMeals)S.dayMeals={};
 if(S.commitments&&S.commitments.some(c=>!c.date)){S.commitments=S.commitments.filter(c=>c.date);S.plans={}}
+migrateDayPlace();_origSave();
 _origSave();
 
 /* age in months */
@@ -704,24 +707,30 @@ function renderToday(){
   let title,desc,chips=[];_todayAct=null;
   const illimg=document.getElementById('t-adv-illimg');
   if(illimg&&_advDefaultSVG==null)_advDefaultSVG=illimg.innerHTML;
-  const dp=S.dayPlace&&S.dayPlace[dkey(today)];
+  // one primitive: today's items are commitments. A commitment with a linked
+  // place shows the rich adventure card; otherwise a plain "locked in" event.
+  const coms=commitmentsFor(today);
+  const hero=coms.find(c=>c.place)||coms[0]||null;
+  const dp=hero&&hero.place;
   if(dp){
     _todayAct='place:'+dp.id;
     title=cleanName(dp.name);desc=catLabel(dp.category)+(dp.area?' · '+dp.area:'');
     const mem=dp.membership?dp.membership.toUpperCase()+' · free':dp.cost;
-    chips=[];if(mem)chips.push(['ti-ticket',mem]);chips.push([dp.indoor?'ti-home':'ti-tree',dp.indoor?'Indoor':'Outdoors']);
+    chips=[];const tl=evTimeLabel(hero);if(tl)chips.push(['ti-clock',tl]);
+    if(napClash(hero.time,hero.end))chips.push(['ti-alert-triangle','Clashes with a nap','clash']);
+    if(mem)chips.push(['ti-ticket',mem]);chips.push([dp.indoor?'ti-home':'ti-tree',dp.indoor?'Indoor':'Outdoors']);
     document.getElementById('t-adv-tag').textContent='TODAY\'S ADVENTURE';
     if(illimg){illimg.innerHTML=`<div style="width:100%;height:100%;background:${catColor(dp.category)};display:flex;align-items:center;justify-content:center"><i class="ti ${catIcon(dp.category)}" style="font-size:46px;color:#fff;opacity:.9"></i></div>`;
       if(dp.notes)placeMedia(dp).then(m=>{if(m.image){const ii=document.getElementById('t-adv-illimg');if(ii){const u=(m.image+'').replace(/'/g,'%27');const fb=((m.imageFallback||m.image)+'').replace(/'/g,'%27');ii.innerHTML=`<img src="${u}" onerror="this.onerror=null;this.src='${fb}'" alt="" style="width:100%;height:100%;object-fit:cover;display:block">`}}});}
   }else{
     if(illimg&&_advDefaultSVG!=null)illimg.innerHTML=_advDefaultSVG;
-    if(p.commit){
-      title=p.commit.name;
-      desc=(p.commit.location?p.commit.location+' · ':'')+'booked'+(p.commit.weekly?' · every week':'');
-      chips=[];const tl=evTimeLabel(p.commit);if(tl)chips.push(['ti-clock',tl]);
-      if(napClash(p.commit.time,p.commit.end))chips.push(['ti-alert-triangle','Clashes with a nap','clash']);
-      if(!chips.length)chips.push(['ti-calendar','Booked']);
-      document.getElementById('t-adv-tag').textContent='BOOKED TODAY';
+    if(hero){
+      title=hero.name;
+      desc=(hero.location?hero.location+' · ':'')+'locked in'+(hero.weekly?' · every week':'');
+      chips=[];const tl=evTimeLabel(hero);if(tl)chips.push(['ti-clock',tl]);
+      if(napClash(hero.time,hero.end))chips.push(['ti-alert-triangle','Clashes with a nap','clash']);
+      if(!chips.length)chips.push(['ti-calendar','Locked in']);
+      document.getElementById('t-adv-tag').textContent='TODAY';
     }else{
       title='Nothing planned';
       desc='Tap to find something for today, or leave it be — no pressure';
@@ -747,8 +756,8 @@ function renderToday(){
 
   // today's meals
   const k=dkey(today);
-  const meals=[['#A65A40','Breakfast',dayMeal(today,'bf'),"openMealEditor('"+k+"','bf')"],
-               ['#6E8796','Lunch',dayMeal(today,'ln'),"openMealEditor('"+k+"','ln')"],
+  const meals=[['#A65A40','Breakfast',dayMeal(today,'bf')||'Plan breakfast',"openMealEditor('"+k+"','bf')"],
+               ['#6E8796','Lunch',dayMeal(today,'ln')||'Plan lunch',"openMealEditor('"+k+"','ln')"],
                ['#31503F','Dinner',dayMeal(today,'dn')||'Plan dinner',"openMealEditor('"+k+"','dn')"]];
   document.getElementById('t-meals-list').innerHTML=meals.map((m,i)=>`<div class="mrow" style="${i<2?'border-bottom:1px solid #F2EEE3':''}" onclick="${m[3]}"><span class="mdot" style="background:${m[0]}"></span><div style="flex:1;font-size:14.5px;font-weight:700;color:#23281F">${m[2]}</div><span style="font-size:12px;font-weight:600;color:#9BA08F">${m[1]}</span></div>`).join('');
 }
@@ -774,7 +783,7 @@ function mealIsSet(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];return !!(m&&m
 function autoMeal(d,sec){const a=S.meals[sec];if(!a||!a.length)return sec==='dn'?'':'Your choice';
   const idx=(new Date(d).getDate())%a.length;return a[idx].nm}
 function dayMeal(d,sec){const m=S.dayMeals&&S.dayMeals[dkey(d)];
-  if(m&&m[sec])return m[sec];return autoMeal(d,sec)}
+  return (m&&m[sec])||'';}  // no auto-allocate — empty until the user sets it
 function togglePack(it){const k=dkey(today)+'|'+it;S.pack[k]=!S.pack[k];save();renderToday()}
 function swapSlot(id){const a=actById(id);openSheet(`
   <h2 style="font-size:22px">${a.emoji} ${a.nm}</h2>
@@ -863,14 +872,23 @@ function saveMeal(sec,i){const nm=val('mf-nm').trim();if(!nm){toast('Give it a n
 
 /* commitments form */
 /* ---------- CALENDAR ---------- */
-let _calMonth=null,_evType='class';
+let _calMonth=null,_calSel=null,_evType='class';
 const typeColor=t=>({class:'#4A6B57',appointment:'#6E8796',outing:'#7E9474',visitor:'#A65A40'}[t]||'#31503F');
 const typeIcon=t=>({class:'ti-music',appointment:'ti-stethoscope',outing:'ti-map-pin',visitor:'ti-users'}[t]||'ti-calendar');
 function evTimeLabel(c){if(!c.time)return '';return c.end?c.time+'–'+c.end:c.time}
+// one primitive: every day-item is a commitment. Old Discover "planned" places
+// (S.dayPlace) are folded into commitments as outing-events carrying c.place.
+function migrateDayPlace(){
+  if(!S.dayPlace||!Object.keys(S.dayPlace).length)return;
+  if(!S.commitments)S.commitments=[];
+  for(const k in S.dayPlace){const dp=S.dayPlace[k];if(!dp)continue;
+    const dup=S.commitments.some(c=>c.place&&c.date===k&&(c.place.id+'')===(dp.id+''));
+    if(!dup)S.commitments.push({name:(dp.name||'').split(';')[0].trim(),date:k,time:'',end:'',location:dp.area||'',weekly:false,type:'outing',place:dp});}
+  S.dayPlace={};
+}
 function eventsForDay(d){const out=[];const k=dkey(d);
   S.commitments.forEach((c,idx)=>{const m=c.weekly?(d>=new Date(c.date)&&new Date(c.date).getDay()===d.getDay()):c.date===k;
-    if(m)out.push({name:c.name,time:evTimeLabel(c),color:typeColor(c.type),icon:typeIcon(c.type),sub:(c.location||'')+(c.weekly?(c.location?' · ':'')+'weekly':''),clash:napClash(c.time,c.end),del:"delCommitFromSheet('"+k+"',"+idx+")",delQ:"delCommitFromSheet('"+k+"',"+idx+",false)"})});
-  if(S.dayPlace&&S.dayPlace[k]){const p=S.dayPlace[k];out.push({name:cleanName(p.name),time:'',color:catColor(p.category),icon:'ti-map-pin',sub:catLabel(p.category)+(p.area?' · '+p.area:''),clash:false,del:"unplanDay('"+k+"')",delQ:"unplanDay('"+k+"',false)"})}
+    if(m){const pl=c.place;out.push({name:pl?cleanName(pl.name):c.name,time:evTimeLabel(c),color:pl?catColor(pl.category):typeColor(c.type),icon:pl?catIcon(pl.category):typeIcon(c.type),sub:(c.location||(pl?catLabel(pl.category):'')||'')+(c.weekly?((c.location||pl)?' · ':'')+'weekly':''),clash:napClash(c.time,c.end),edit:"openCommit('"+k+"',"+idx+")",del:"delCommitFromSheet('"+k+"',"+idx+")",delQ:"delCommitFromSheet('"+k+"',"+idx+",false)"})}});
   return out;}
 function renderCalendar(){
   if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);
@@ -879,31 +897,71 @@ function renderCalendar(){
   const days=new Date(mo.getFullYear(),mo.getMonth()+1,0).getDate();
   const blanks=(new Date(mo.getFullYear(),mo.getMonth(),1).getDay()+6)%7;
   let html='';for(let i=0;i<blanks;i++)html+='<div></div>';
-  for(let dn=1;dn<=days;dn++){const d=new Date(mo.getFullYear(),mo.getMonth(),dn);const k=dkey(d);const isT=k===dkey(today);const ev=eventsForDay(d);
-    html+=`<div class="c-cell ${isT?'today':''}" onclick="selCalDay('${k}')"><span>${dn}</span><span class="c-dot" style="background:${ev.length?(isT?'#fff':ev[0].color):'transparent'}"></span></div>`;}
+  const sel=_calSel||dkey(today);
+  for(let dn=1;dn<=days;dn++){const d=new Date(mo.getFullYear(),mo.getMonth(),dn);const k=dkey(d);const isT=k===dkey(today);const isS=k===sel;const ev=eventsForDay(d);
+    html+=`<div class="c-cell ${isT?'today':''}" onclick="selCalDay('${k}')" style="${isS&&!isT?'box-shadow:inset 0 0 0 2px #31503F;border-radius:50%':''}"><span>${dn}</span><span class="c-dot" style="background:${ev.length?(isT?'#fff':ev[0].color):'transparent'}"></span></div>`;}
   document.getElementById('c-grid').innerHTML=html;
   renderComing();}
-function renderComing(){let items=[];for(let i=0;i<35;i++){const d=new Date(today);d.setDate(d.getDate()+i);eventsForDay(d).forEach(e=>items.push({d,e}))}items=items.slice(0,12);
-  document.getElementById('c-coming').innerHTML=items.length?items.map(({d,e})=>{const when=dkey(d)===dkey(today)?'Today':d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    return `<div class="c-up" onclick="selCalDay('${dkey(d)}')" style="cursor:pointer"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${when}${e.time?' · '+e.time:''}${e.sub?' · '+e.sub:''}${e.clash?' · <span style="color:#C9585A">⚠ nap clash</span>':''}</div></div><i class="ti ti-x" onclick="event.stopPropagation();${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`}).join(''):'<div style="text-align:center;color:#9BA08F;font-weight:700;padding:18px">Nothing booked yet — tap Add.</div>';}
+function renderComing(){const sel=_calSel||dkey(today);const d=new Date(sel);
+  const items=eventsForDay(d);
+  const lbl=sel===dkey(today)?'Today':d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+  const lblEl=document.querySelector('.c-coming-label');if(lblEl)lblEl.textContent=lbl;
+  document.getElementById('c-coming').innerHTML=items.length?items.map(e=>
+    `<div class="c-up"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time?e.time:''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div>${e.edit?`<i class="ti ti-pencil" onclick="${e.edit}" style="font-size:17px;color:#9BA08F;cursor:pointer;padding:4px"></i>`:''}<i class="ti ti-x" onclick="${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`).join(''):`<div style="text-align:center;color:#9BA08F;font-weight:700;padding:18px">Nothing on ${sel===dkey(today)?'today':'this day'} — tap Add.</div>`;}
 function calNav(n){if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);_calMonth=new Date(_calMonth.getFullYear(),_calMonth.getMonth()+n,1);renderCalendar()}
-function selCalDay(k){const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+function selCalDay(k){_calSel=k;renderCalendar();const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">${lbl}</h2>
-   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div><i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
+   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div>${e.edit?`<i class="ti ti-pencil" onclick="${e.edit}" style="font-size:18px;color:#9BA08F;cursor:pointer"></i>`:''}<i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
    <button class="btn" style="margin-top:16px" onclick="openCommit('${k}')">+ Add to this day</button>`);}
 function delCommitFromSheet(k,i,reopen){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();if(reopen!==false)selCalDay(k)}
-function unplanDay(k,reopen){if(S.dayPlace)delete S.dayPlace[k];save();renderCalendar();if(k===dkey(today))renderToday();if(reopen!==false)selCalDay(k)}
-function openCommit(k){const dateK=k||dkey(today);_evType='class';
+let _editIdx=null,_evPlace=null;
+// 15-min interval options for the time selects; keeps an off-grid legacy value if present
+function timeOptions(sel){sel=sel||'';let o='<option value="">—</option>',found=false;
+  for(let h=0;h<24;h++)for(let m=0;m<60;m+=15){const t=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');if(t===sel)found=true;o+=`<option value="${t}"${t===sel?' selected':''}>${t}</option>`}
+  if(sel&&!found)o=`<option value="${sel}" selected>${sel}</option>`+o;
+  return o;}
+function placeLinkHTML(){
+  if(_evPlace){const pl=_evPlace;
+    return `<div style="margin-top:14px;display:flex;align-items:center;gap:10px;background:#F1EFE8;border-radius:13px;padding:11px 13px">
+      <span style="width:26px;height:26px;border-radius:7px;background:${catColor(pl.category)};display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ${catIcon(pl.category)}" style="color:#fff;font-size:15px"></i></span>
+      <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#23281F">${cleanName(pl.name)}</div><div style="font-size:12px;font-weight:600;color:#9BA08F">${catLabel(pl.category)}${pl.area?' · '+pl.area:''}</div></div>
+      <i class="ti ti-x" onclick="unlinkEvPlace()" style="font-size:17px;color:#9BA08F;cursor:pointer"></i></div>`;}
+  return `<label style="margin-top:14px;display:block">Link a place <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label>
+    <input id="c-place-q" placeholder="Search Discover places…" autocomplete="off" oninput="evPlaceSearch(this.value)">
+    <div id="c-place-res"></div>`;}
+function refreshPlaceWrap(){const w=document.getElementById('c-place-wrap');if(w)w.innerHTML=placeLinkHTML();}
+function unlinkEvPlace(){_evPlace=null;refreshPlaceWrap();}
+function linkEvPlace(id){const p=(PLACES||[]).find(x=>(x.id+'')===(id+''))||findPlace(id);if(!p)return;
+  _evPlace=snapOf(p);
+  const nm=document.getElementById('c-nm');if(nm&&!nm.value.trim())nm.value=cleanName(p.name);
+  const loc=document.getElementById('c-loc');if(loc&&!loc.value.trim())loc.value=p.area||'';
+  try{pickEvType('outing')}catch(e){_evType='outing'}
+  refreshPlaceWrap();}
+async function evPlaceSearch(v){const res=document.getElementById('c-place-res');if(!res)return;
+  const q=(v||'').trim().toLowerCase();
+  if(q.length<2){res.innerHTML='';return}
+  if(!PLACES){res.innerHTML='<div style="padding:9px 2px;font-size:13px;font-weight:600;color:#9BA08F">Loading places…</div>';await loadPlaces();
+    const cur=document.getElementById('c-place-q');if(!cur||cur.value.trim().toLowerCase()!==q)return;}
+  const pm=(PLACES||[]).filter(p=>!isClosed(p.id)&&cleanName(p.name).toLowerCase().includes(q)).slice(0,6);
+  res.innerHTML=pm.length?pm.map(p=>`<div onclick="linkEvPlace('${(p.id+'').replace(/'/g,"\\'")}')" style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #F0EADD;cursor:pointer"><span style="width:24px;height:24px;border-radius:7px;background:${catColor(p.category)};display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ${catIcon(p.category)}" style="color:#fff;font-size:14px"></i></span><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#23281F">${cleanName(p.name)}</div><div style="font-size:12px;font-weight:600;color:#9BA08F">${catLabel(p.category)}${p.area?' · '+p.area:''}</div></div></div>`).join(''):'<div style="padding:9px 2px;font-size:13px;font-weight:600;color:#9BA08F">No matches in Discover</div>';}
+function openCommit(k,editIdx,place){
+  const ex=(editIdx!=null)?S.commitments[editIdx]:null;_editIdx=ex?editIdx:null;
+  _evPlace=ex?(ex.place||null):(place||null);
+  const dateK=ex?ex.date:(k||dkey(today));_evType=ex?(ex.type||'class'):(_evPlace?'outing':'class');
+  const on=ex&&ex.weekly;
+  const nameV=ex?(ex.name||''):(_evPlace?cleanName(_evPlace.name):'');
+  const locV=ex?(ex.location||''):(_evPlace?(_evPlace.area||''):'');
   const types=[['class','Class','#4A6B57'],['appointment','Appointment','#6E8796'],['outing','Outing','#7E9474'],['visitor','Visitor','#A65A40']];
-  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">Add to calendar</h2>
-   <input id="c-nm" placeholder="What is it? e.g. Hartbeeps, GP visit">
+  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">${ex?'Edit event':'Add to calendar'}</h2>
+   <input id="c-nm" placeholder="What is it? e.g. Hartbeeps, GP visit" value="${escA(nameV)}">
    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9BA08F;font-weight:700;margin:14px 2px 8px">Type</div>
-   <div id="c-types" style="display:flex;flex-wrap:wrap;gap:8px">${types.map(([t,l,c])=>`<span class="c-typechip" data-t="${t}" onclick="pickEvType('${t}')" style="font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;background:${t==='class'?c:'#F1EFE8'};color:${t==='class'?'#fff':'#6F6B7A'}">${l}</span>`).join('')}</div>
+   <div id="c-types" style="display:flex;flex-wrap:wrap;gap:8px">${types.map(([t,l,c])=>`<span class="c-typechip" data-t="${t}" onclick="pickEvType('${t}')" style="font-size:13px;font-weight:700;padding:9px 14px;border-radius:999px;cursor:pointer;background:${t===_evType?c:'#F1EFE8'};color:${t===_evType?'#fff':'#6F6B7A'}">${l}</span>`).join('')}</div>
    <div style="margin-top:14px"><label>Date</label><input id="c-date" type="date" value="${dateK}"></div>
-   <div style="display:flex;gap:11px;margin-top:12px"><div style="flex:1;min-width:0"><label>Starts</label><input id="c-time" type="time"></div><div style="flex:1;min-width:0"><label>Ends <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-end" type="time"></div></div>
-   <label>Where <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Oxted Hall">
-   <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#4A6B57"></i><div style="flex:1;font-size:15px;font-weight:700;color:#23281F">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff"></div><input type="checkbox" id="c-weekly" style="display:none"></div>
-   <button class="btn" style="margin-top:18px" onclick="saveCommit()">Add event</button>`);}
+   <div style="display:flex;gap:11px;margin-top:12px"><div style="flex:1;min-width:0"><label>Starts</label><select id="c-time">${timeOptions(ex&&ex.time)}</select></div><div style="flex:1;min-width:0"><label>Ends <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><select id="c-end">${timeOptions(ex&&ex.end)}</select></div></div>
+   <label>Where <span class="muted" style="text-transform:none;letter-spacing:0">(optional)</span></label><input id="c-loc" placeholder="e.g. Oxted Hall" value="${escA(locV)}">
+   <div id="c-place-wrap">${placeLinkHTML()}</div>
+   <div onclick="document.getElementById('c-weekly').checked=!document.getElementById('c-weekly').checked;syncWeekly()" style="display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer"><i class="ti ti-repeat" style="font-size:19px;color:#4A6B57"></i><div style="flex:1;font-size:15px;font-weight:700;color:#23281F">Repeats weekly</div><div class="box" id="c-wbox" style="width:24px;height:24px;border-radius:8px;border:1.6px solid ${on?'#7E9474':'var(--line)'};background:${on?'#7E9474':'transparent'};display:flex;align-items:center;justify-content:center;color:#fff">${on?'✓':''}</div><input type="checkbox" id="c-weekly" ${on?'checked':''} style="display:none"></div>
+   <button class="btn" style="margin-top:18px" onclick="saveCommit()">${ex?'Save changes':'Add event'}</button>`);}
 function pickEvType(t){_evType=t;const c={class:'#4A6B57',appointment:'#6E8796',outing:'#7E9474',visitor:'#A65A40'};document.querySelectorAll('#c-types .c-typechip').forEach(x=>{const on=x.dataset.t===t;x.style.background=on?c[x.dataset.t]:'#F1EFE8';x.style.color=on?'#fff':'#6F6B7A'})}
 function syncWeekly(){const on=document.getElementById('c-weekly').checked;const b=document.getElementById('c-wbox');if(b){b.style.background=on?'#7E9474':'transparent';b.style.borderColor=on?'#7E9474':'var(--line)';b.textContent=on?'✓':''}}
 function saveCommit(){const name=(val('c-nm')||'').trim();if(!name){toast('Give it a name');return}
@@ -911,7 +969,10 @@ function saveCommit(){const name=(val('c-nm')||'').trim();if(!name){toast('Give 
   const start=val('c-time')||'',end=val('c-end')||'';
   if(start&&end&&end<=start){toast('End time is before the start');return}
   const c={name,date,time:start,end:end,location:val('c-loc')||'',weekly:document.getElementById('c-weekly').checked,type:_evType};
-  S.commitments.push(c);S.plans={};save();closeSheet();renderCalendar();renderToday();toast(c.weekly?'Weekly event added':'Event added')}
+  if(_evPlace)c.place=_evPlace;
+  const editing=_editIdx!=null;if(editing)S.commitments[_editIdx]=c;else S.commitments.push(c);_editIdx=null;_evPlace=null;
+  S.plans={};save();closeSheet();renderCalendar();renderToday();toast(editing?'Event updated':(c.weekly?'Weekly event added':'Event added'))}
+function addPlaceToCalendar(id){const p=findPlace(id);if(!p)return;closeSheet();openCommit(dkey(today),null,snapOf(p));}
 function reopenPlace(id){S.closedPlaces=(S.closedPlaces||[]).filter(x=>(x+'')!==(id+''));save();toast('Reopened ♥');
   const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on'))renderDiscover();openProfile();}
 function openProfile(){
@@ -932,6 +993,7 @@ function openProfile(){
 function saveProfile(){S.baby={name:val('p-nm'),dob:val('p-dob'),naps:val('p-naps'),feeds:val('p-feeds'),likes:val('p-likes').split(',').map(s=>s.trim()).filter(Boolean)};
   S.plans={};save();closeSheet();renderToday();toast('Profile saved')}
 const val=(id)=>document.getElementById(id)?.value||'';
+const escA=(s)=>(s==null?'':(''+s)).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 function bagPills(){return (S.bag||[]).map(it=>`<span onclick="removeBag('${(it+'').replace(/'/g,"\\'")}')" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#2E8E5A;background:#DBF4E6;padding:8px 13px;border-radius:999px;margin:0 7px 8px 0;cursor:pointer">${it} <i class="ti ti-x" style="font-size:13px;opacity:.65"></i></span>`).join('')
   +`<span onclick="addBagItem()" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#9BA08F;background:#F1EFE8;padding:8px 13px;border-radius:999px;cursor:pointer"><i class="ti ti-plus" style="font-size:13px"></i>Add</span>`}
 function addBagItem(){const v=prompt('Add to your bag:');if(v&&v.trim()){S.bag=S.bag||[];S.bag.push(v.trim());save();const el=document.getElementById('bag-pills');if(el)el.innerHTML=bagPills();renderToday()}}
@@ -1041,7 +1103,7 @@ function pickPlace(id){const box=document.getElementById('dsc-sug');if(box)box.c
 function pickLocation(lat,lng,label){_dsearchPt=[+lat,+lng];_dsearchLabel=label;const i=document.getElementById('dsc-q');if(i)i.value=label;const box=document.getElementById('dsc-sug');if(box)box.classList.remove('on');if(_dmap)_dmap.setView(_dsearchPt,11);renderDiscover()}
 function dscNearMe(){if(!navigator.geolocation){toast('Location not available');return}toast('Finding you…');navigator.geolocation.getCurrentPosition(pos=>{_dgeo=[pos.coords.latitude,pos.coords.longitude];if(_dmap)_dmap.setView(_dgeo,11);renderDiscover()},()=>toast('Could not get location'))}
 function snapOf(p){return {id:p.id,name:p.name,category:p.category,area:p.area,lat:p.lat,lng:p.lng,cost:p.cost,membership:p.membership,indoor:p.indoor,rain_ok:p.rain_ok,sun_ok:p.sun_ok,website:p.website,opening_hours:p.opening_hours,notes:p.notes}}
-function findPlace(id){id=id+'';let p=(PLACES||[]).find(x=>(x.id+'')===id);if(p)return p;for(const k in (S.dayPlace||{})){if(S.dayPlace[k]&&(S.dayPlace[k].id+'')===id)return S.dayPlace[k]}return (S.favourites||[]).find(x=>(x.id+'')===id)||null}
+function findPlace(id){id=id+'';let p=(PLACES||[]).find(x=>(x.id+'')===id);if(p)return p;for(const c of (S.commitments||[])){if(c.place&&(c.place.id+'')===id)return c.place}return (S.favourites||[]).find(x=>(x.id+'')===id)||null}
 function isFav(id){return (S.favourites||[]).some(f=>(f.id+'')===(id+''))}
 function isClosed(id){return (S.closedPlaces||[]).some(x=>(x+'')===(id+''))}
 function toggleClosed(id){S.closedPlaces=S.closedPlaces||[];const was=isClosed(id);
@@ -1052,15 +1114,6 @@ function toggleFav(id){const p=findPlace(id);if(!p)return;S.favourites=S.favouri
   const b=document.getElementById('pd-fav');if(b)b.style.background=isFav(id)?'#31503F':'rgba(43,42,51,.45)';
   toast(was?'Removed from saved':'Saved ♥');
   const dsc=document.getElementById('discover');if(dsc&&dsc.classList.contains('on')&&_dfilter==='fav')renderDiscover();}
-function openDayChooser(id){let rows='';
-  for(let i=0;i<14;i++){const dd=new Date(today);dd.setDate(dd.getDate()+i);const k=dkey(dd);
-    const lbl=i===0?'Today':i===1?'Tomorrow':dd.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
-    const has=S.dayPlace&&S.dayPlace[k];
-    rows+=`<button class="btn ${i===0?'':'ghost'}" style="margin-top:9px;justify-content:space-between" onclick="planPlaceOnDay('${(id+'').replace(/'/g,"\\'")}','${k}')"><span>${lbl}</span>${has?`<span class="muted" style="font-size:12px">${cleanName(has.name)}</span>`:''}</button>`;}
-  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 4px">Plan a day here</h2><p style="font-size:14px;color:#9BA08F;font-weight:600;margin-bottom:6px">Pick a day to make this the outing.</p><div style="max-height:56vh;overflow-y:auto">${rows}</div>`);}
-function planPlaceOnDay(id,k){const p=findPlace(id);if(!p)return;S.dayPlace=S.dayPlace||{};S.dayPlace[k]=snapOf(p);save();closeSheet();
-  const lbl=k===dkey(today)?'today':new Date(k).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
-  toast('Planned for '+lbl);if(k===dkey(today))renderToday();}
 const cleanName=n=>(n||'').split(';')[0].trim();
 const _mediaCache={};
 async function placeMedia(p){
@@ -1111,7 +1164,7 @@ function openPlaceDetail(id){
      ${p.opening_hours?`<span class="dchip"><i class="ti ti-clock"></i>${(p.opening_hours+'').slice(0,38)}</span>`:''}
    </div>
    <p id="pd-desc" style="font-size:15px;font-weight:600;color:#6F6B7A;line-height:1.5;margin:0 0 18px">${hasWiki?'Loading description…':(p.website?'Tap Website below for full details.':'No description yet.')}</p>
-   <div onclick="openDayChooser('${idEsc}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#31503F;color:#fff;font-family:'Young Serif',serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Plan a day here <i class="ti ti-calendar-plus"></i></div>
+   <div onclick="addPlaceToCalendar('${idEsc}')" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#31503F;color:#fff;font-family:'Young Serif',serif;font-weight:600;font-size:16px;padding:15px;border-radius:16px;cursor:pointer">Add to calendar <i class="ti ti-calendar-plus"></i></div>
    <div style="display:flex;gap:10px;margin-top:10px">
      <div onclick="window.open('${mapsUrl}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#23281F;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-map-2" style="color:#6E8796;vertical-align:-2px"></i> Directions</div>
      ${p.website?`<div onclick="window.open('${(p.website+'').replace(/'/g,'%27')}','_blank')" style="flex:1;text-align:center;background:#F6F2E9;color:#23281F;font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer"><i class="ti ti-external-link" style="color:#4A6B57;vertical-align:-2px"></i> Website</div>`:''}

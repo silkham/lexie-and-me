@@ -418,7 +418,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='The Week Ahead · v1.6 (build 22)';  /* bump build N on each deploy */
+const APP_VERSION='The Week Ahead · v1.6 (build 23)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1225,7 +1225,7 @@ async function publishToLifeOS(){
       // lookup (dayMeal has no auto-fill), so an unplanned day stays empty →
       // dismissed → LifeOS shows a quiet "Plan meals" link.
       const dm=S.dayMeals&&S.dayMeals[dkey(d)]||{};
-      const menu=[dm.bf,dm.ln].filter(Boolean).join(' · ');
+      const menu=[dm.bf,dm.ln,dm.dn].filter(Boolean).join(' · ');  // breakfast/lunch/dinner slots, in order; skip unset
       rows.push({
         household_id:hid, app:LIFEOS_APP, kind:'task',
         key:'meal-'+LIFEOS_DOW[d.getDay()],           // meal slot per weekday → self-cleaning

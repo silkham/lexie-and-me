@@ -275,7 +275,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 #meals .mslot .mdotm{width:8px;height:8px;border-radius:50%;flex:none}
 #meals .mslot .ml{font-size:11px;font-weight:800;color:#C7C2B8;width:14px}
 #meals .mslot .mv{flex:1;font-size:14px;font-weight:700;color:#23281F}
-#meals .mslot .mv.empty{color:#C7C2B8;font-weight:600}
+#meals .mslot .mv.empty{color:#C7C2B8;font-weight:600;padding:0;text-align:left}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -417,7 +417,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.5 (build 21)';  /* bump build N on each deploy */
+const APP_VERSION='Lexie & Me · v1.6 (build 22)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -909,10 +909,7 @@ function renderComing(){const sel=_calSel||dkey(today);const d=new Date(sel);
   document.getElementById('c-coming').innerHTML=items.length?items.map(e=>
     `<div class="c-up"><span class="c-updot" style="background:${e.color}"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time?e.time:''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div>${e.edit?`<i class="ti ti-pencil" onclick="${e.edit}" style="font-size:17px;color:#9BA08F;cursor:pointer;padding:4px"></i>`:''}<i class="ti ti-x" onclick="${e.delQ}" style="font-size:18px;color:#C9585A;cursor:pointer;padding:4px;margin:-4px"></i></div>`).join(''):`<div style="text-align:center;color:#9BA08F;font-weight:700;padding:18px">Nothing on ${sel===dkey(today)?'today':'this day'} — tap Add.</div>`;}
 function calNav(n){if(!_calMonth)_calMonth=new Date(today.getFullYear(),today.getMonth(),1);_calMonth=new Date(_calMonth.getFullYear(),_calMonth.getMonth()+n,1);renderCalendar()}
-function selCalDay(k){_calSel=k;renderCalendar();const d=new Date(k);const ev=eventsForDay(d);const lbl=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-  openSheet(`<h2 style="font-family:'Young Serif',serif;font-weight:500;font-size:22px;color:#23281F;margin:2px 0 8px">${lbl}</h2>
-   ${ev.length?ev.map(e=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0EADD"><span style="width:11px;height:11px;border-radius:50%;background:${e.color};flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#23281F">${e.name}</div><div style="font-size:13px;font-weight:600;color:#9BA08F">${e.time||''}${e.sub?(e.time?' · ':'')+e.sub:''}${e.clash?(e.time||e.sub?' · ':'')+'<span style="color:#C9585A">⚠ nap clash</span>':''}</div></div>${e.edit?`<i class="ti ti-pencil" onclick="${e.edit}" style="font-size:18px;color:#9BA08F;cursor:pointer"></i>`:''}<i class="ti ti-x" onclick="${e.del}" style="font-size:18px;color:#C9585A;cursor:pointer"></i></div>`).join(''):'<p style="font-size:14px;color:#9BA08F;font-weight:600;margin:0 0 4px">Nothing planned this day.</p>'}
-   <button class="btn" style="margin-top:16px" onclick="openCommit('${k}')">+ Add to this day</button>`);}
+function selCalDay(k){_calSel=k;renderCalendar();}  // select the day → inline "Coming up" list shows it; no pop-up sheet
 function delCommitFromSheet(k,i,reopen){S.commitments.splice(i,1);S.plans={};save();renderCalendar();renderToday();if(reopen!==false)selCalDay(k)}
 let _editIdx=null,_evPlace=null;
 // 15-min interval options for the time selects; keeps an off-grid legacy value if present
@@ -1222,6 +1219,22 @@ async function publishToLifeOS(){
         due:dkey(d),
         state:'good',
         status: e ? 'open' : 'dismissed'               // nothing that day → LifeOS shows Plan / No activity
+      });
+      // Meals lane — breakfast + lunch from the weekly plan (S.dayMeals). Raw
+      // lookup (dayMeal has no auto-fill), so an unplanned day stays empty →
+      // dismissed → LifeOS shows a quiet "Plan meals" link.
+      const dm=S.dayMeals&&S.dayMeals[dkey(d)]||{};
+      const menu=[dm.bf,dm.ln].filter(Boolean).join(' · ');
+      rows.push({
+        household_id:hid, app:LIFEOS_APP, kind:'task',
+        key:'meal-'+LIFEOS_DOW[d.getDay()],           // meal slot per weekday → self-cleaning
+        title: menu || 'No meals planned',
+        detail: null,
+        cta_url:'https://silkham.github.io/lexie-and-me/#meals',
+        cta_label:'Plan meals',
+        due:dkey(d),
+        state:'good',
+        status: menu ? 'open' : 'dismissed'
       });
     }
     // Guard: never wipe the hub with a phantom empty week. If we've never adopted

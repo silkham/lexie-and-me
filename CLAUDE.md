@@ -102,6 +102,12 @@ hub; `state='warn'`. The
 `household_state` sync runs under the same authed JWT — its RLS is now membership-scoped
 (build 19, see Privacy above), so the login is what lets it read/write. See `../LifeOS/CLAUDE.md`.
 
+**Meals → LifeOS (build 22, 2026-07-21):** `publishToLifeOS()` now emits a **second row per
+day** — `key='meal-<dow>'` (same `app='lexie'`, `kind='task'`) — built from `S.dayMeals`
+(breakfast · lunch, raw lookup so unplanned stays empty → `dismissed`). This feeds a compact
+"Meals" line under the Activity/Workout lanes on the LifeOS hub's 7-day plan. NB the hub's
+loose-task filter must exclude both `day-*` and `meal-*` keys (handled in LifeOS build v0.6.0).
+
 **Dropped:** the AI concierge was removed entirely on 2026-06-24 per user request.
 
 ## Git

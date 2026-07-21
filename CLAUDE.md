@@ -14,6 +14,15 @@ live_url: https://silkham.github.io/lexie-and-me/
      Changelog is pulled live from git commit history, so don't maintain one here. -->
 
 ## Status
+**Renamed (build 22, 2026-07-21): the app is now branded "The Week Ahead"** (planning-first,
+less child-specific). This is a **display-name change only** — the repo/folder stay
+`lexie-and-me`/`Lexie & Me`, the `lexieme.v1` localStorage key, `HOUSEHOLD_ID`, Supabase
+project/tables, and the `silkham.github.io/lexie-and-me/` deploy URL are all unchanged (so no
+data migration). Renamed strings: `<title>`, login `<h1>`, `APP_VERSION`, `manifest.json`
+(name/short_name/description), `sw.js` header. Content still refers to Lexie the child (naps,
+profile). Favicon/app icon (`icon.svg` + the three PNGs) redesigned to a pine calendar-page
+mark in the build-20 palette (retired the old candy sun/leaf icon).
+
 Live and working: the whole planner — Today/Discover/Meals/Calendar, weather, activity &
 meal libraries — plus two-phone cloud sync (Supabase `household_state`) and an installable
 PWA (manifest + service worker). As of build 13 the app is **gated on a Supabase Auth

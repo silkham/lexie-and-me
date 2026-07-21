@@ -1,7 +1,7 @@
 {
-  "name": "Lexie & Me",
-  "short_name": "Lexie",
-  "description": "Gentle, baby-led day planner for Lexie in Oxted.",
+  "name": "The Week Ahead",
+  "short_name": "Week Ahead",
+  "description": "A calm household day-planner for gentle family days.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

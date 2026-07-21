@@ -9,8 +9,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFF8EF">
-<title>Lexie &amp; Me</title>
+<title>The Week Ahead</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -287,7 +288,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <!-- ===== auth gate — LifeOS integration needs a signed-in household ===== -->
 <div id="authGate" style="position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:var(--bg);padding:24px">
   <form id="authForm" style="width:100%;max-width:340px;background:var(--tile);border:1px solid var(--line);border-radius:20px;padding:30px 26px;box-shadow:0 16px 44px rgba(43,42,51,.12)">
-    <h1 style="font-family:'Young Serif',serif;font-weight:400;margin:0 0 6px;font-size:27px;color:var(--ink)">Lexie &amp; Me</h1>
+    <h1 style="font-family:'Young Serif',serif;font-weight:400;margin:0 0 6px;font-size:27px;color:var(--ink)">The Week Ahead</h1>
     <p style="margin:0 0 22px;font-family:'Newsreader',serif;font-style:italic;font-size:16px;color:var(--ink2)">Sign in to sync your household.</p>
     <input id="authEmail" type="email" autocomplete="email" placeholder="Email" required
       style="width:100%;padding:13px 14px;margin-bottom:11px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);color:var(--ink);font-family:inherit;font-size:15px">
@@ -417,7 +418,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='Lexie & Me · v1.6 (build 22)';  /* bump build N on each deploy */
+const APP_VERSION='The Week Ahead · v1.6 (build 22)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});

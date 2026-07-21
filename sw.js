@@ -1,4 +1,4 @@
-/* Lexie & Me — service worker (offline + installable PWA)
+/* The Week Ahead — service worker (offline + installable PWA)
    Bump VERSION on every deploy so old caches are wiped on activate. */
 const VERSION = 'build-22';
 const CORE    = 'lexieme-core-'    + VERSION;

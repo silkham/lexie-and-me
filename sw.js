@@ -1,6 +1,6 @@
 /* The Week Ahead — service worker (offline + installable PWA)
    Bump VERSION on every deploy so old caches are wiped on activate. */
-const VERSION = 'build-23';
+const VERSION = 'build-24';
 const CORE    = 'lexieme-core-'    + VERSION;
 const RUNTIME = 'lexieme-runtime-' + VERSION;
 

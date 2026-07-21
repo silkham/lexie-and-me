@@ -418,7 +418,7 @@ label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--i
 <script>
 /* ---------- STATE (offline-first; Supabase-ready shape) ---------- */
 const LS='lexieme.v1';
-const APP_VERSION='The Week Ahead · v1.6 (build 23)';  /* bump build N on each deploy */
+const APP_VERSION='The Week Ahead · v1.6 (build 24)';  /* bump build N on each deploy */
 let today=new Date();
 function refreshToday(){const n=new Date();const changed=dkey(n)!==dkey(today);today=n;return changed}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&refreshToday()){getWeather();renderToday()}});
@@ -1225,7 +1225,10 @@ async function publishToLifeOS(){
       // lookup (dayMeal has no auto-fill), so an unplanned day stays empty →
       // dismissed → LifeOS shows a quiet "Plan meals" link.
       const dm=S.dayMeals&&S.dayMeals[dkey(d)]||{};
-      const menu=[dm.bf,dm.ln,dm.dn].filter(Boolean).join(' · ');  // breakfast/lunch/dinner slots, in order; skip unset
+      // One icon-prefixed segment per set slot, newline-joined → LifeOS renders each
+      // meal on its own line so the icon associates it to its slot. 🥣 bf / 🥪 ln / 🍽️ dn.
+      const seg=(ic,t)=>t?ic+' '+t:null;
+      const menu=[seg('🥣',dm.bf),seg('🥪',dm.ln),seg('🍽️',dm.dn)].filter(Boolean).join('\n');
       rows.push({
         household_id:hid, app:LIFEOS_APP, kind:'task',
         key:'meal-'+LIFEOS_DOW[d.getDay()],           // meal slot per weekday → self-cleaning

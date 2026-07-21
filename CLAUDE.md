@@ -115,11 +115,14 @@ hub; `state='warn'`. The
 **second row per day** — `key='meal-<dow>'` (same `app='lexie'`, `kind='task'`) — built from
 `S.dayMeals`. **Per-day slots are `bf`/`ln`/`dn` (breakfast/lunch/dinner)** — note this differs
 from the `meals:{bf,ln}` *idea-library* shape; the day planner has all three, and in practice
-breakfast + dinner are the ones filled. Title = `[dm.bf,dm.ln,dm.dn].filter(Boolean).join(' · ')`
-(raw lookup, so unplanned stays empty → `dismissed`). *(Build 22 shipped with `bf·ln` only,
-which dropped every dinner → "only showing breakfast"; build 23 added `dn`.)* This feeds a
-compact "Meals" line under the Activity/Workout lanes on the LifeOS hub's 7-day plan. NB the
-hub's loose-task filter must exclude both `day-*` and `meal-*` keys (handled in LifeOS v0.6.0).
+breakfast + dinner are the ones filled. Title (build 24) = one **icon-prefixed segment per set slot, newline-joined** —
+`[seg('🥣',dm.bf),seg('🥪',dm.ln),seg('🍽️',dm.dn)].filter(Boolean).join('\n')` — so LifeOS
+renders each meal on its own row with the icon as its slot label (LifeOS `mealLine` splits on
+`\n`). Raw lookup, so unplanned stays empty → `dismissed`. *(Build 22 shipped `bf·ln` only →
+dropped every dinner ("only breakfast"); build 23 added `dn` with a ` · ` join; build 24
+switched to per-meal icons + newline segments.)* This feeds a compact "Meals" line under the
+Activity/Workout lanes on the LifeOS hub's 7-day plan. NB the hub's loose-task filter must
+exclude both `day-*` and `meal-*` keys (handled in LifeOS v0.6.0).
 
 **Dropped:** the AI concierge was removed entirely on 2026-06-24 per user request.
 
